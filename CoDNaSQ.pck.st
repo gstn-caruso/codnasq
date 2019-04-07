@@ -1,22 +1,22 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3686] on 7 April 2019 at 7:10:07 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3695] on 12 April 2019 at 12:00:52 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 0!
+!provides: 'CoDNaSQ' 1 1!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #CoDNaSQ!
 
 
-!classDefinition: #HomeController category: #CoDNaSQ!
-RootController subclass: #HomeController
+!classDefinition: #ProteinsController category: #CoDNaSQ!
+RootController subclass: #ProteinsController
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ'!
-!classDefinition: 'HomeController class' category: #CoDNaSQ!
-HomeController class
+!classDefinition: 'ProteinsController class' category: #CoDNaSQ!
+ProteinsController class
 	instanceVariableNames: ''!
 
 
-!HomeController methodsFor: 'as yet unclassified' stamp: 'GC 4/7/2019 19:08:38'!
+!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 4/7/2019 19:08:38'!
 index: request
 
 	^ request 
