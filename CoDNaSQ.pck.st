@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3695] on 12 April 2019 at 12:18:41 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3695] on 12 April 2019 at 12:30:07 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 3!
+!provides: 'CoDNaSQ' 1 4!
 !requires: 'JSON' 1 18 nil!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #CoDNaSQ!
@@ -17,10 +17,18 @@ ProteinsController class
 	instanceVariableNames: ''!
 
 
-!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 4/12/2019 00:18:09'!
+!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 4/12/2019 00:29:55'!
 import: request
+	| content contentStream json |
+	
+	content _ request multipartFields at: 'proteinsJson'.
+	contentStream _ ReadStream on: content.
+	
+	json _ Json readFrom: contentStream.
 
-	self halt.! !
+	request 
+		send200Response: '<img src="https://httpstatusdogs.com/img/201.jpg">' 
+		contentType: 'text/html;'! !
 
 !ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 4/12/2019 00:10:27'!
 index: request
