@@ -1,12 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 18 May 2019 at 3:12:10 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 18 May 2019 at 7:04:20 pm'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 32!
+!provides: 'CoDNaSQ' 1 36!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
 SystemOrganization addCategory: #'CoDNaSQ-Web'!
 SystemOrganization addCategory: #'CoDNaSQ-Web-Tests'!
 SystemOrganization addCategory: #'CoDNaSQ-Model-Test'!
+SystemOrganization addCategory: #'CoDNaSQ-Web-View'!
 
 
 !classDefinition: #ProteinsControllerTest category: #'CoDNaSQ-Web-Tests'!
@@ -79,14 +80,24 @@ RootController subclass: #ProteinsController
 ProteinsController class
 	instanceVariableNames: ''!
 
-!classDefinition: #ClusterView category: #'CoDNaSQ-Web'!
+!classDefinition: #ClusterView category: #'CoDNaSQ-Web-View'!
 View subclass: #ClusterView
 	instanceVariableNames: 'pdbId'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'CoDNaSQ-Web'!
-!classDefinition: 'ClusterView class' category: #'CoDNaSQ-Web'!
+	category: 'CoDNaSQ-Web-View'!
+!classDefinition: 'ClusterView class' category: #'CoDNaSQ-Web-View'!
 ClusterView class
+	instanceVariableNames: ''!
+
+!classDefinition: #HomePage category: #'CoDNaSQ-Web-View'!
+View subclass: #HomePage
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-View'!
+!classDefinition: 'HomePage class' category: #'CoDNaSQ-Web-View'!
+HomePage class
 	instanceVariableNames: ''!
 
 !classDefinition: #Cluster category: #'CoDNaSQ-Model'!
@@ -304,34 +315,13 @@ import: request
 		send200Response: response
 		contentType: 'text/html;'! !
 
-!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 03:10:03'!
-searchBar
-	| fieldsets |
-	
-	fieldsets _ Div containing: { 
-		FormInput type: 'text' name: 'search' placeholder: 'Search by PDB ID' .
-		FormInput type: 'submit' name: 'Search' value: 'Search'
-	}.
-	
-	^ HtmlForm action: '/proteins/search' method: 'post' enctype: 'url-encoded' fieldsets: fieldsets.! !
-
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 03:11:07'!
+!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 13:55:21'!
 index: request
-	|heading examples importLink someClusterId subHeading proteinPairAmount|
-	
-	someClusterId _ ClusterRepository instance someElement :: ifNil: [ '' ] ifNotNil: [ :cluster | cluster pdbId ] .
-	proteinPairAmount _ ProteinPairRepository instance count asString.
-		
-	heading _ Heading with: 'Welcome to Conformational diversity of Native State database Quaternary'.
-	subHeading _ Heading with: 'Currently there are ', proteinPairAmount, ' protein pairs.' level: 3.
-	
-	examples _ Hyperlink to: ('/proteins/show/', someClusterId) with: someClusterId.
-	importLink _ Hyperlink to: '/proteins/new' with: 'Click here to upload more proteins'.
 
 	^ self respondSuccessfully: request 
-		   with: (Div containing: { heading . subHeading . self searchBar . LineBreak . examples . LineBreak . importLink })! !
+		   with: HomePage new! !
 
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/9/2019 17:20:20'!
+!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 17:01:43'!
 new: request
 	| uploadFileForm codnasHeading formHeading form formContent |
 	
@@ -344,33 +334,30 @@ new: request
 		FormInput type: 'submit' name: 'Submit' value: 'Submit'
 	}.
 	
-	form _ HtmlForm action: '/proteins/import' method: 'post' enctype: 'multipart/form-data' fieldsets: formContent.
+	form _ HtmlForm action: '/proteins/import' method: 'post' enctype: 'multipart/form-data' containing: formContent.
 	uploadFileForm _ Div containing: { codnasHeading . formHeading . form }.
 
 	^ self respondSuccessfully: request with: uploadFileForm ! !
 
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 02:54:58'!
+!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 12:44:47'!
 search: request
 	| pdbId |
 	
 	pdbId _ request fields at: 'search'.
 	
-	^ request
-		send200Response: (ClusterView renderFor: pdbId)
-		contentType: 'text/html; charset=utf-8'! !
+	^ self respondSuccessfully: request 
+		   with: (ClusterView forPdb: pdbId)! !
 
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/14/2019 02:26:41'!
+!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 18:02:46'!
 show: request
 	| pdbId proteinView |
 	
 	pdbId _ request url substrings: '/' :: last.
-	proteinView _ ClusterView renderFor: pdbId.
+	proteinView _ ClusterView forPdb: pdbId.
 
-	^ request
-		send200Response: proteinView
-		contentType: 'text/html; charset=utf-8'! !
+	^ self respondSuccessfully: request with: proteinView ! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/17/2019 04:35:53'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 19:00:02'!
 body
 	| maxResolution minResolution cluster conformer |
 	
@@ -380,72 +367,107 @@ body
 	maxResolution _ cluster maxResolution asString.
 	minResolution _ cluster minResolution asString.
 	
-	^	'<div class="row">',
-			'<div class="card large">',
-				'<div class="section"><h2>General information</h2></div>',
-				'<p>PDB ID: ', cluster pdbId, '</p>',
-				'<p>Name: ', conformer type, '</p>',
-				'<p>Organism: ', conformer source asLowercase capitalized, '</p>',
-			'</div></div>',
-			'<div class="row"><div class="card large">',
-				'<div class="section"><h2>Structural</h2></div>',
-				'<p>Oligomeric State ', cluster oligomericState, '</p>',
-				'<p>Conformers ', cluster size asString, '</p>',
-				'<p>Resolution: ', '[', minResolution, ' - ', maxResolution, ']', '</p>',
-				'<p>RMSD: [??? - ???] </p>',
-				'<p>RMSD avg: ???</p>',
-			'</div></div>',
-			'<div class="row"><div class="card fluid">',
-				'<div class="section"><h2>Conformers</h2></div>',
-				(self conformers: cluster),
-			'</div></div>',
-		'</div>'! !
+	^ Div class: #(row) containing: {
+		Div class: #('col-sm-12') containing: {
+			Div class: #('col-sm-12') containing: { Heading with: 'General information' level: 2 } .
+			Div class: #('col-sm-12') containing: {
+				Paragraph with: 'PDB ID: ', cluster pdbId .
+				Paragraph with: 'Name: ', conformer type .
+				Paragraph with: 'Organism: ', conformer source asLowercase capitalized
+			}
+		} .
+		Div class: #('col-sm-12') containing: {
+			Div class: #('col-sm-12') containing: { Heading with: 'Structural' level: 2 } .
+			Div class: #('col-sm-12') containing: {
+				Paragraph with: 'Oligomeric State: ', cluster oligomericState .
+				Paragraph with: 'Conformers: #', cluster size asString .
+				Paragraph with: 'Resolution: [', minResolution, ' - ', maxResolution,']'
+			}
+		} .
+		Div class: #('col-sm-12') containing: {
+			Div class: #('col-sm-12') containing: { Heading with: 'Conformers' level: 2 } . 
+			Div class: #('col-sm-12') containing: { self conformers: cluster }
+		}
+	} :: render! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 03:10:59'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 18:46:18'!
 conformers: cluster
-	| conformersList sameClusterProteins |
-	
-	conformersList _ ReadWriteStream on: ''.
-	conformersList nextPutAll: '<table class="striped">
-		<thead>
-			<th>PDB id</th>
-			<th>Biological Assembly</th>
-			<th>Resolution</th>
-			<th>Method</th>
-			<th>Longitude</th>
-			<th>Type</th>
-			<th>Species</th>
-		</thead>'.
-		
-	conformersList nextPutAll: '<tbody>'.
-	
-	sameClusterProteins _ cluster allConformers.
-	sameClusterProteins do: [ :sameClusterProtein | 
-		conformersList nextPutAll: 
-			'<tr>',
-				'<td>', sameClusterProtein pdbId asString, '</td>',
-				'<td>', sameClusterProtein biologicalAssembly asString, '</td>',
-				'<td>', sameClusterProtein resolution asString, '</td>',
-				'<td>', sameClusterProtein method asString, '</td>',
-				'<td>', sameClusterProtein aminoAcidLongitude asString, '</td>',
-				'<td>', sameClusterProtein type asString, '</td>',
-				'<td>', sameClusterProtein source asString, '</td>',
-			'</tr>'
-	].
 
-	conformersList nextPutAll: '</tbody></table>'.
+	^ Table 
+		headers: #('PDB id' 'Biological Assembly' 'Resolution' 'Method' 'Longitude' 'Type' 'Species') 
+		rows: (cluster allConformers collect: [ :each | 
+			{ 
+				each pdbId asString . 
+				each biologicalAssembly asString . 
+				each resolution asString . 
+				each method asString . 
+				each aminoAcidLongitude asString . 
+				each type asString . 
+				each source asString 
+			}
+		])
 	
-	^ conformersList contents! !
+	! !
 
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:27:51'!
 pdbId: aPdbId
 
 	pdbId _ aPdbId! !
 
-!ClusterView class methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:27:23'!
-renderFor: aPdbId
+!ClusterView class methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 12:44:31'!
+forPdb: aPdbId
 
-	^ self new pdbId: aPdbId; render! !
+	^ self new pdbId: aPdbId! !
+
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 18:00:05'!
+body
+	|heading importLink proteinPairAmount|
+
+	proteinPairAmount _ ProteinPairRepository instance count asString.
+		
+	heading _ Div class: #(row) containing: {
+		Heading with: (Smaller with: 'Currently there are ', proteinPairAmount, ' protein pairs.' :: render) level: 3
+	}.
+	
+	importLink _ Hyperlink to: '/proteins/new' with: 'Click here to upload more proteins'.
+	
+	^ Div containing: {
+		Header containing: {
+			Heading with: 'Welcome to Conformational diversity of Native State database Quaternary'
+		} .
+		Div class: #(container) containing: {
+			Div class: #(row) containing: { heading } .
+			Div class: #(row) containing: {  
+				Div class: #('col-sm-12') containing: { 
+					Div class: #(row) containing: {
+						Div class: #('col-sm-6' 'col-sm-offset-3') containing: { self searchBar }
+					}
+				} . 
+				Div class: #('col-sm-12') containing: { importLink } 
+			}
+		} 
+	}:: render! !
+
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 18:04:45'!
+searchBar
+	| formContent |
+	
+	formContent _ Div class: #('row' 'col-sm-12') containing: { 
+		Div class: #('row' 'col-sm-12') containing: {
+			FormInput type: 'text' name: 'search' placeholder: 'Search by PDB ID' css: #('col-sm') .
+			FormInput type: 'submit' name: 'Search' value: 'Search'
+		} .
+		Div class: #('col-sm') containing: {
+			Span with: (Smaller with: 'Example entries: ' ::render) .
+			Smaller with: (Hyperlink to: ('/proteins/show/2vcq') with: '2vcq' :: render) .
+			Span with: (Smaller with: ' | ' :: render) .
+			Smaller with: (Hyperlink to: ('/proteins/show/4ha3') with: '4ha3' :: render) .
+			Span with: (Smaller with: ' | ' :: render) .
+			Smaller with: (Hyperlink to: ('/proteins/show/3tjt') with: '3tjt' :: render)
+		}
+	}.
+	
+	^ HtmlForm action: '/proteins/search' method: 'post' enctype: 'url-encoded' containing: formContent! !
 
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:38:00'!
 = anObject
