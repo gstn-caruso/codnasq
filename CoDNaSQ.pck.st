@@ -1,11 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 17 May 2019 at 2:59:17 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 18 May 2019 at 3:12:10 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 30!
+!provides: 'CoDNaSQ' 1 32!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
 SystemOrganization addCategory: #'CoDNaSQ-Web'!
 SystemOrganization addCategory: #'CoDNaSQ-Web-Tests'!
+SystemOrganization addCategory: #'CoDNaSQ-Model-Test'!
 
 
 !classDefinition: #ProteinsControllerTest category: #'CoDNaSQ-Web-Tests'!
@@ -16,6 +17,16 @@ TestCase subclass: #ProteinsControllerTest
 	category: 'CoDNaSQ-Web-Tests'!
 !classDefinition: 'ProteinsControllerTest class' category: #'CoDNaSQ-Web-Tests'!
 ProteinsControllerTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ClusterTest category: #'CoDNaSQ-Model-Test'!
+TestCase subclass: #ClusterTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Model-Test'!
+!classDefinition: 'ClusterTest class' category: #'CoDNaSQ-Model-Test'!
+ClusterTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #NewProteinsPath category: #'CoDNaSQ-Web'!
@@ -46,6 +57,16 @@ StaticPath subclass: #RootPath
 	category: 'CoDNaSQ-Web'!
 !classDefinition: 'RootPath class' category: #'CoDNaSQ-Web'!
 RootPath class
+	instanceVariableNames: ''!
+
+!classDefinition: #SearchProteinsPath category: #'CoDNaSQ-Web'!
+StaticPath subclass: #SearchProteinsPath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'SearchProteinsPath class' category: #'CoDNaSQ-Web'!
+SearchProteinsPath class
 	instanceVariableNames: ''!
 
 !classDefinition: #ProteinsController category: #'CoDNaSQ-Web'!
@@ -156,6 +177,40 @@ test_when_well_formated_csv_is_received_it_creates_two_conformers_and_a_protein_
 		 by: 1
 	! !
 
+!ClusterTest methodsFor: 'as yet unclassified' stamp: 'GC 5/17/2019 04:01:02'!
+testWhenThereAreNoConformersIsZero
+
+	self assert: 0 equals: Cluster new size! !
+
+!ClusterTest methodsFor: 'as yet unclassified' stamp: 'GC 5/17/2019 04:00:29'!
+testWhenThereIsAProteinPairPairIsTwo
+	| cluster proteinPair aConformer anotherConformer |
+	
+	aConformer _ Conformer pdbId: '2f' biologicalAssembly: 2 resolution: 2.7 method: 'diff' aminoAcidLongitude: 8 type: 'type' source: 'source'.
+	anotherConformer _ Conformer pdbId: '3f' biologicalAssembly: 2 resolution: 2.7 method: 'diff' aminoAcidLongitude: 8 type: 'type' source: 'source'.
+	
+	cluster  _ Cluster new.
+	proteinPair _ ProteinPair with: aConformer with: anotherConformer.
+	
+	cluster addProteinPair: proteinPair.
+
+	self assert: 2 equals: cluster size! !
+
+!ClusterTest methodsFor: 'as yet unclassified' stamp: 'GC 5/17/2019 04:34:49'!
+testWhenThereIsAProteinPairPairWithARepeatedConformerIsThree
+	| cluster aConformer anotherConformer thirdConformer|
+	
+	aConformer _ Conformer pdbId: '2f' biologicalAssembly: 2 resolution: 2.7 method: 'diff' aminoAcidLongitude: 8 type: 'type' source: 'source'.
+	anotherConformer _ Conformer pdbId: '3f' biologicalAssembly: 2 resolution: 2.7 method: 'diff' aminoAcidLongitude: 8 type: 'type' source: 'source'.
+	thirdConformer _ Conformer pdbId: '1f' biologicalAssembly: 2 resolution: 2.7 method: 'diff' aminoAcidLongitude: 8 type: 'type' source: 'source'.
+	
+	cluster  _ Cluster new.
+	
+	cluster addProteinPair: (ProteinPair with: aConformer with: anotherConformer).
+	cluster addProteinPair: (ProteinPair with: aConformer with: thirdConformer).
+
+	self assert: 3 equals: cluster size! !
+
 !NewProteinsPath methodsFor: 'as yet unclassified' stamp: 'GC 5/7/2019 01:02:10'!
 handle
 
@@ -185,6 +240,16 @@ handle
 canHandle: aRequest
 
 	^ aRequest url = '/' or: [ aRequest url = '/proteins' ]! !
+
+!SearchProteinsPath methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 02:43:32'!
+handle
+
+	^ ProteinsController new :: search: request! !
+
+!SearchProteinsPath class methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 02:43:47'!
+canHandle: aRequest
+
+	^ aRequest url = '/proteins/search'! !
 
 !ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:50:27'!
 deserializeConformers: csvFile
@@ -239,9 +304,20 @@ import: request
 		send200Response: response
 		contentType: 'text/html;'! !
 
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/14/2019 03:06:04'!
+!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 03:10:03'!
+searchBar
+	| fieldsets |
+	
+	fieldsets _ Div containing: { 
+		FormInput type: 'text' name: 'search' placeholder: 'Search by PDB ID' .
+		FormInput type: 'submit' name: 'Search' value: 'Search'
+	}.
+	
+	^ HtmlForm action: '/proteins/search' method: 'post' enctype: 'url-encoded' fieldsets: fieldsets.! !
+
+!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 03:11:07'!
 index: request
-	|heading examples importLink someClusterId subHeading proteinPairAmount |
+	|heading examples importLink someClusterId subHeading proteinPairAmount|
 	
 	someClusterId _ ClusterRepository instance someElement :: ifNil: [ '' ] ifNotNil: [ :cluster | cluster pdbId ] .
 	proteinPairAmount _ ProteinPairRepository instance count asString.
@@ -252,7 +328,8 @@ index: request
 	examples _ Hyperlink to: ('/proteins/show/', someClusterId) with: someClusterId.
 	importLink _ Hyperlink to: '/proteins/new' with: 'Click here to upload more proteins'.
 
-	^ self respondSuccessfully: request with: (Div containing: { heading . subHeading . examples . LineBreak . importLink } )! !
+	^ self respondSuccessfully: request 
+		   with: (Div containing: { heading . subHeading . self searchBar . LineBreak . examples . LineBreak . importLink })! !
 
 !ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/9/2019 17:20:20'!
 new: request
@@ -272,6 +349,16 @@ new: request
 
 	^ self respondSuccessfully: request with: uploadFileForm ! !
 
+!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 02:54:58'!
+search: request
+	| pdbId |
+	
+	pdbId _ request fields at: 'search'.
+	
+	^ request
+		send200Response: (ClusterView renderFor: pdbId)
+		contentType: 'text/html; charset=utf-8'! !
+
 !ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/14/2019 02:26:41'!
 show: request
 	| pdbId proteinView |
@@ -283,7 +370,7 @@ show: request
 		send200Response: proteinView
 		contentType: 'text/html; charset=utf-8'! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 03:23:02'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/17/2019 04:35:53'!
 body
 	| maxResolution minResolution cluster conformer |
 	
@@ -302,7 +389,8 @@ body
 			'</div></div>',
 			'<div class="row"><div class="card large">',
 				'<div class="section"><h2>Structural</h2></div>',
-				'<p>Conformers: ', cluster oligomericState, '</p>',
+				'<p>Oligomeric State ', cluster oligomericState, '</p>',
+				'<p>Conformers ', cluster size asString, '</p>',
 				'<p>Resolution: ', '[', minResolution, ' - ', maxResolution, ']', '</p>',
 				'<p>RMSD: [??? - ???] </p>',
 				'<p>RMSD avg: ???</p>',
@@ -430,6 +518,10 @@ pdbId: aPdbId oligomericState: anOligomericState
 prefixedPdbId
 
 	^ 'CQ', pdbId! !
+
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/17/2019 04:01:52'!
+size
+	^ self allConformers size! !
 
 !Cluster class methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:45:34'!
 pdbId: aPdbId oligomericState: anOligomericState
