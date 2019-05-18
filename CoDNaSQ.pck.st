@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 17 May 2019 at 4:36:29 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 18 May 2019 at 3:12:10 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 31!
+!provides: 'CoDNaSQ' 1 32!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -57,6 +57,16 @@ StaticPath subclass: #RootPath
 	category: 'CoDNaSQ-Web'!
 !classDefinition: 'RootPath class' category: #'CoDNaSQ-Web'!
 RootPath class
+	instanceVariableNames: ''!
+
+!classDefinition: #SearchProteinsPath category: #'CoDNaSQ-Web'!
+StaticPath subclass: #SearchProteinsPath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'SearchProteinsPath class' category: #'CoDNaSQ-Web'!
+SearchProteinsPath class
 	instanceVariableNames: ''!
 
 !classDefinition: #ProteinsController category: #'CoDNaSQ-Web'!
@@ -231,6 +241,16 @@ canHandle: aRequest
 
 	^ aRequest url = '/' or: [ aRequest url = '/proteins' ]! !
 
+!SearchProteinsPath methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 02:43:32'!
+handle
+
+	^ ProteinsController new :: search: request! !
+
+!SearchProteinsPath class methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 02:43:47'!
+canHandle: aRequest
+
+	^ aRequest url = '/proteins/search'! !
+
 !ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:50:27'!
 deserializeConformers: csvFile
 	| csvLines |
@@ -284,9 +304,20 @@ import: request
 		send200Response: response
 		contentType: 'text/html;'! !
 
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/14/2019 03:06:04'!
+!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 03:10:03'!
+searchBar
+	| fieldsets |
+	
+	fieldsets _ Div containing: { 
+		FormInput type: 'text' name: 'search' placeholder: 'Search by PDB ID' .
+		FormInput type: 'submit' name: 'Search' value: 'Search'
+	}.
+	
+	^ HtmlForm action: '/proteins/search' method: 'post' enctype: 'url-encoded' fieldsets: fieldsets.! !
+
+!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 03:11:07'!
 index: request
-	|heading examples importLink someClusterId subHeading proteinPairAmount |
+	|heading examples importLink someClusterId subHeading proteinPairAmount|
 	
 	someClusterId _ ClusterRepository instance someElement :: ifNil: [ '' ] ifNotNil: [ :cluster | cluster pdbId ] .
 	proteinPairAmount _ ProteinPairRepository instance count asString.
@@ -297,7 +328,8 @@ index: request
 	examples _ Hyperlink to: ('/proteins/show/', someClusterId) with: someClusterId.
 	importLink _ Hyperlink to: '/proteins/new' with: 'Click here to upload more proteins'.
 
-	^ self respondSuccessfully: request with: (Div containing: { heading . subHeading . examples . LineBreak . importLink } )! !
+	^ self respondSuccessfully: request 
+		   with: (Div containing: { heading . subHeading . self searchBar . LineBreak . examples . LineBreak . importLink })! !
 
 !ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/9/2019 17:20:20'!
 new: request
@@ -316,6 +348,16 @@ new: request
 	uploadFileForm _ Div containing: { codnasHeading . formHeading . form }.
 
 	^ self respondSuccessfully: request with: uploadFileForm ! !
+
+!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 02:54:58'!
+search: request
+	| pdbId |
+	
+	pdbId _ request fields at: 'search'.
+	
+	^ request
+		send200Response: (ClusterView renderFor: pdbId)
+		contentType: 'text/html; charset=utf-8'! !
 
 !ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/14/2019 02:26:41'!
 show: request
