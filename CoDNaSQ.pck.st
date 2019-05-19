@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 19 May 2019 at 1:58:31 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 19 May 2019 at 2:38:28 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 37!
+!provides: 'CoDNaSQ' 1 38!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -112,7 +112,7 @@ Cluster class
 
 !classDefinition: #Conformer category: #'CoDNaSQ-Model'!
 Object subclass: #Conformer
-	instanceVariableNames: 'pdbId biologicalAssembly resolution method aminoAcidLongitude type source'
+	instanceVariableNames: 'pdbId biologicalAssembly resolution method aminoAcidLongitude type source cluster'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Model'!
@@ -262,13 +262,14 @@ canHandle: aRequest
 
 	^ aRequest url = '/proteins/search'! !
 
-!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:50:27'!
+!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:36:01'!
 deserializeConformers: csvFile
 	| csvLines |
 	
 	csvLines _ csvFile lines collect: [:line | line substrings: ';' ] :: reject: [ :element | element isEmptyOrNil ].
 			
-	^ csvLines allButFirst collect: [ :csvLine | | aConformer anotherConformer proteinPair cluster |	
+	^ csvLines allButFirst collect: [ :csvLine | | aConformer anotherConformer proteinPair cluster |
+		cluster _ ClusterRepository instance findOrCreate: (csvLine at: 1) oligomericState: (csvLine at: 2).	
 		aConformer _ Conformer 
 			pdbId: (csvLine at: 3)
 			biologicalAssembly: (csvLine at: 4) 
@@ -276,7 +277,8 @@ deserializeConformers: csvFile
 			method: (csvLine at: 21)
 			aminoAcidLongitude: (csvLine at: 23)
 			type: (csvLine at: 25)
-			source: (csvLine at: 27). 
+			source: (csvLine at: 27)
+			cluster: cluster. 
 		
 		anotherConformer _ Conformer 
 			pdbId: (csvLine at: 5)
@@ -285,10 +287,10 @@ deserializeConformers: csvFile
 			method: (csvLine at: 22)
 			aminoAcidLongitude: (csvLine at: 24)
 			type: (csvLine at: 26)
-			source: (csvLine at: 28).
+			source: (csvLine at: 28)
+			cluster: cluster.
 
 		proteinPair _ ProteinPair with: aConformer with: anotherConformer.
-		cluster _ ClusterRepository instance findOrCreate: (csvLine at: 1) oligomericState: (csvLine at: 2).
 		
 		cluster addProteinPair: proteinPair.
 				
@@ -357,11 +359,11 @@ show: request
 
 	^ self respondSuccessfully: request with: proteinView ! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 19:00:02'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:11:02'!
 body
 	| maxResolution minResolution cluster conformer |
 	
-	cluster _ ClusterRepository instance find: pdbId.
+	cluster _ ClusterRepository instance find: 'CQ',pdbId.
 	conformer _ ConformerRepository instance find: pdbId.
 		
 	maxResolution _ cluster maxResolution asString.
@@ -448,7 +450,7 @@ body
 		} 
 	}:: render! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 18:04:45'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:14:17'!
 searchBar
 	| formContent |
 	
@@ -535,16 +537,11 @@ pdbId
 
 	^ pdbId! !
 
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:45:52'!
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:05:09'!
 pdbId: aPdbId oligomericState: anOligomericState
 
-	pdbId _ aPdbId.
+	pdbId _ 'CQ', aPdbId.
 	oligomericState _ anOligomericState ! !
-
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 18:52:16'!
-prefixedPdbId
-
-	^ 'CQ', pdbId! !
 
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/17/2019 04:01:52'!
 size
@@ -580,6 +577,16 @@ biologicalAssembly: aBiologicalAssembly
 
 	biologicalAssembly _ aBiologicalAssembly! !
 
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:33:24'!
+cluster
+	
+	^ cluster ! !
+
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:33:20'!
+cluster: aCluster
+
+	cluster _ aCluster ! !
+
 !Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 01:57:43'!
 hash
 
@@ -613,8 +620,8 @@ pdbId: aPdbID
 
 	pdbId _ aPdbID ! !
 
-!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/10/2019 01:47:05'!
-pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod aminoAcidLongitude: anAminoAcidLongitude type: proteinType source: aProteinSource
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:34:23'!
+pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod aminoAcidLongitude: anAminoAcidLongitude type: proteinType source: aProteinSource cluster: aCluster
 
 	pdbId _ aPdbID.
 	biologicalAssembly _ aBiologicalAssembly.
@@ -622,7 +629,8 @@ pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution me
 	method _ aSnapshotMethod.
 	aminoAcidLongitude _ anAminoAcidLongitude.
 	type _ proteinType.
-	source _ aProteinSource! !
+	source _ aProteinSource.
+	cluster _ aCluster! !
 
 !Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:23:45'!
 resolution
@@ -659,10 +667,15 @@ method
 	
 	^method! !
 
-!Conformer class methodsFor: 'instance creation' stamp: 'GC 5/10/2019 01:44:21'!
+!Conformer class methodsFor: 'instance creation' stamp: 'GC 5/19/2019 02:35:26'!
 pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod aminoAcidLongitude: aminoAcidLongitude type: proteinType source: aProteinSource
 
-	^ self new :: pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod aminoAcidLongitude: aminoAcidLongitude type: proteinType source: aProteinSource! !
+	^ self pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod aminoAcidLongitude: aminoAcidLongitude type: proteinType source: aProteinSource cluster: ''! !
+
+!Conformer class methodsFor: 'instance creation' stamp: 'GC 5/19/2019 02:34:45'!
+pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod aminoAcidLongitude: aminoAcidLongitude type: proteinType source: aProteinSource cluster: aCluster
+
+	^ self new :: pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod aminoAcidLongitude: aminoAcidLongitude type: proteinType source: aProteinSource cluster: aCluster! !
 
 !ProteinPair methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 03:34:14'!
 = anObject
