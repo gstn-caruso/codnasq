@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 19 May 2019 at 2:38:28 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 19 May 2019 at 3:01:32 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 38!
+!provides: 'CoDNaSQ' 1 39!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -262,14 +262,14 @@ canHandle: aRequest
 
 	^ aRequest url = '/proteins/search'! !
 
-!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:36:01'!
+!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 03:00:29'!
 deserializeConformers: csvFile
 	| csvLines |
 	
 	csvLines _ csvFile lines collect: [:line | line substrings: ';' ] :: reject: [ :element | element isEmptyOrNil ].
 			
 	^ csvLines allButFirst collect: [ :csvLine | | aConformer anotherConformer proteinPair cluster |
-		cluster _ ClusterRepository instance findOrCreate: (csvLine at: 1) oligomericState: (csvLine at: 2).	
+		cluster _ ClusterRepository instance findOrCreate: ('CQ', (csvLine at: 1)) oligomericState: (csvLine at: 2).	
 		aConformer _ Conformer 
 			pdbId: (csvLine at: 3)
 			biologicalAssembly: (csvLine at: 4) 
@@ -537,10 +537,10 @@ pdbId
 
 	^ pdbId! !
 
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:05:09'!
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:58:47'!
 pdbId: aPdbId oligomericState: anOligomericState
 
-	pdbId _ 'CQ', aPdbId.
+	pdbId _ aPdbId.
 	oligomericState _ anOligomericState ! !
 
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/17/2019 04:01:52'!
@@ -784,6 +784,11 @@ someElement
 	^ [ conformers atRandom ]
 		on: Error
 		do: [ nil ]! !
+
+!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:54:18'!
+whereCluster: aCluster 
+
+	^ conformers select: [ :conformer | conformer cluster = aCluster ] ! !
 
 !ConformerRepository class methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 17:56:56'!
 instance
