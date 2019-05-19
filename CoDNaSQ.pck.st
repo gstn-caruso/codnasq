@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 18 May 2019 at 7:04:20 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 19 May 2019 at 1:58:31 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 36!
+!provides: 'CoDNaSQ' 1 37!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -487,6 +487,11 @@ allConformers
 		allConformers add: (proteinPair secondProtein); yourself
 	]! !
 
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 01:58:18'!
+hash
+
+	^ self pdbId hash! !
+
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:37:40'!
 initialize
 	
@@ -574,6 +579,11 @@ biologicalAssembly
 biologicalAssembly: aBiologicalAssembly
 
 	biologicalAssembly _ aBiologicalAssembly! !
+
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 01:57:43'!
+hash
+
+	^ self pdbId hash! !
 
 !Conformer methodsFor: 'as yet unclassified' stamp: 'GC 4/20/2019 03:12:52'!
 initialize
@@ -665,6 +675,11 @@ pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution me
 firstProtein
 
 	^ firstProtein ! !
+
+!ProteinPair methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 01:57:12'!
+hash
+
+	^ firstProtein pdbId hash bitXor: secondProtein pdbId hash! !
 
 !ProteinPair methodsFor: 'as yet unclassified' stamp: 'GC 5/3/2019 01:35:31'!
 initialize
