@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 19 May 2019 at 3:01:32 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 23 May 2019 at 9:41:37 pm'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 39!
+!provides: 'CoDNaSQ' 1 40!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -88,6 +88,16 @@ View subclass: #ClusterView
 	category: 'CoDNaSQ-Web-View'!
 !classDefinition: 'ClusterView class' category: #'CoDNaSQ-Web-View'!
 ClusterView class
+	instanceVariableNames: ''!
+
+!classDefinition: #ConformerSearchResultView category: #'CoDNaSQ-Web-View'!
+View subclass: #ConformerSearchResultView
+	instanceVariableNames: 'conformers'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-View'!
+!classDefinition: 'ConformerSearchResultView class' category: #'CoDNaSQ-Web-View'!
+ConformerSearchResultView class
 	instanceVariableNames: ''!
 
 !classDefinition: #HomePage category: #'CoDNaSQ-Web-View'!
@@ -341,14 +351,22 @@ new: request
 
 	^ self respondSuccessfully: request with: uploadFileForm ! !
 
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 12:44:47'!
+!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/22/2019 02:15:34'!
 search: request
-	| pdbId |
+	| query criteria |
 	
-	pdbId _ request fields at: 'search'.
+	query _ request fields at: 'query'.
+	criteria _ request fields at: 'criteria'.
 	
-	^ self respondSuccessfully: request 
-		   with: (ClusterView forPdb: pdbId)! !
+	^ criteria caseOf: {
+		[ 'cluster-id' ]    
+			-> [ self respondSuccessfully: request  with: (ClusterView forPdb: query) ].
+		[ 'type' ]	
+			-> [ |conformersByType|
+				conformersByType _ ConformerRepository instance likeType: query.
+				self respondSuccessfully: request with: (ConformerSearchResultView containing: conformersByType) 
+		]
+	}! !
 
 !ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 18:02:46'!
 show: request
@@ -421,6 +439,35 @@ forPdb: aPdbId
 
 	^ self new pdbId: aPdbId! !
 
+!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 5/22/2019 02:23:19'!
+body
+
+	^ Table 
+		headers: #('PDB id' 'Biological Assembly' 'Resolution' 'Method' 'Longitude' 'Type' 'Species') 
+		rows: (conformers collect: [ :each | 
+			{ 
+				Hyperlink to: ('/proteins/show/', each pdbId asString) with: each pdbId asString :: render. 
+				each biologicalAssembly asString . 
+				each resolution asString . 
+				each method asString . 
+				each aminoAcidLongitude asString . 
+				each type asString . 
+				each source asString 
+			}
+		]) :: render
+	
+	! !
+
+!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 5/22/2019 02:07:08'!
+conformers: conformersToDisplay
+
+	conformers  _ conformersToDisplay! !
+
+!ConformerSearchResultView class methodsFor: 'as yet unclassified' stamp: 'GC 5/22/2019 02:05:53'!
+containing: conformers
+
+	^ self new :: conformers: conformers! !
+
 !HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 18:00:05'!
 body
 	|heading importLink proteinPairAmount|
@@ -450,14 +497,19 @@ body
 		} 
 	}:: render! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:14:17'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/22/2019 01:55:06'!
 searchBar
 	| formContent |
 	
 	formContent _ Div class: #('row' 'col-sm-12') containing: { 
 		Div class: #('row' 'col-sm-12') containing: {
-			FormInput type: 'text' name: 'search' placeholder: 'Search by PDB ID' css: #('col-sm') .
-			FormInput type: 'submit' name: 'Search' value: 'Search'
+			FormInput type: 'text' name: 'query' placeholder: 'Search by...' css: #('col-sm').
+			Select name: 'criteria' withOptions: { 
+				{ 'cluster-id' . 'Cluster ID' } .
+				{ 'type' . 'Conformer type' } .
+				{ 'source' . 'Conformer source' }
+			}.
+			FormInput type: 'submit' name: '' value: 'Search'
 		} .
 		Div class: #('col-sm') containing: {
 			Span with: (Smaller with: 'Example entries: ' ::render) .
@@ -469,7 +521,7 @@ searchBar
 		}
 	}.
 	
-	^ HtmlForm action: '/proteins/search' method: 'post' enctype: 'url-encoded' containing: formContent! !
+	^ HtmlForm action: '/proteins/search' method: 'get' enctype: 'url-encoded' containing: formContent! !
 
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:38:00'!
 = anObject
@@ -772,6 +824,11 @@ find: pdbId
 initialize
 
 	conformers _ Set new! !
+
+!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/22/2019 02:18:42'!
+likeType: conformerType 
+
+	^ conformers select: [ :conformer | conformer type :: includesSubstring: conformerType caseSensitive: false ]! !
 
 !ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 19:02:11'!
 saveAll: manyConformers
