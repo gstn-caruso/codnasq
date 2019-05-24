@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 23 May 2019 at 10:14:01 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 24 May 2019 at 1:32:49 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 41!
+!provides: 'CoDNaSQ' 1 43!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -110,6 +110,26 @@ View subclass: #HomePage
 HomePage class
 	instanceVariableNames: ''!
 
+!classDefinition: #MainView category: #'CoDNaSQ-Web-View'!
+View subclass: #MainView
+	instanceVariableNames: 'partial'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-View'!
+!classDefinition: 'MainView class' category: #'CoDNaSQ-Web-View'!
+MainView class
+	instanceVariableNames: ''!
+
+!classDefinition: #NewProtein category: #'CoDNaSQ-Web-View'!
+View subclass: #NewProtein
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-View'!
+!classDefinition: 'NewProtein class' category: #'CoDNaSQ-Web-View'!
+NewProtein class
+	instanceVariableNames: ''!
+
 !classDefinition: #Cluster category: #'CoDNaSQ-Model'!
 Object subclass: #Cluster
 	instanceVariableNames: 'pdbId oligomericState proteinPairs'
@@ -179,6 +199,16 @@ Object subclass: #ProteinsRepository
 !classDefinition: 'ProteinsRepository class' category: #'CoDNaSQ-Persistence'!
 ProteinsRepository class
 	instanceVariableNames: 'instance'!
+
+!classDefinition: #ConformersTable category: #'CoDNaSQ-Web-View'!
+Object subclass: #ConformersTable
+	instanceVariableNames: 'conformers'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-View'!
+!classDefinition: 'ConformersTable class' category: #'CoDNaSQ-Web-View'!
+ConformersTable class
+	instanceVariableNames: ''!
 
 
 !Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 03:43:05'!
@@ -333,23 +363,10 @@ index: request
 	^ self respondSuccessfully: request 
 		   with: HomePage new! !
 
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 17:01:43'!
+!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/24/2019 00:22:17'!
 new: request
-	| uploadFileForm codnasHeading formHeading form formContent |
-	
-	codnasHeading _ Heading with: 'Welcome to Conformational diversity of Native State database Quaternary'.
-	formHeading _ Heading with: 'Here you will be able to upload new proteins' level: 3.
-	
-	formContent _ Div containing: { 
-		FormInput type: 'file' name: 'proteinsCSV' . 
-		LineBreak . 
-		FormInput type: 'submit' name: 'Submit' value: 'Submit'
-	}.
-	
-	form _ HtmlForm action: '/proteins/import' method: 'post' enctype: 'multipart/form-data' containing: formContent.
-	uploadFileForm _ Div containing: { codnasHeading . formHeading . form }.
 
-	^ self respondSuccessfully: request with: uploadFileForm ! !
+	^ self respondSuccessfully: request with: (NewProtein new)! !
 
 !ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/23/2019 21:56:01'!
 search: request
@@ -373,27 +390,32 @@ search: request
 		]
 	}! !
 
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 18:02:46'!
+!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/24/2019 00:44:27'!
 show: request
 	| pdbId proteinView |
 	
-	pdbId _ request url substrings: '/' :: last.
+	pdbId _ request url findTokens: '/' :: last :: findTokens: 'CQ' :: last.
 	proteinView _ ClusterView forPdb: pdbId.
 
 	^ self respondSuccessfully: request with: proteinView ! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:11:02'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:26:26'!
 body
+
+	^ MainView withPartial: self clusterDetails :: body! !
+
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 01:24:24'!
+clusterDetails
 	| maxResolution minResolution cluster conformer |
 	
-	cluster _ ClusterRepository instance find: 'CQ',pdbId.
 	conformer _ ConformerRepository instance find: pdbId.
+	cluster _ conformer cluster.
 		
 	maxResolution _ cluster maxResolution asString.
 	minResolution _ cluster minResolution asString.
 	
 	^ Div class: #(row) containing: {
-		Div class: #('col-sm-12') containing: {
+		Div class: #('col-sm-12' card fluid) containing: {
 			Div class: #('col-sm-12') containing: { Heading with: 'General information' level: 2 } .
 			Div class: #('col-sm-12') containing: {
 				Paragraph with: 'PDB ID: ', cluster pdbId .
@@ -401,7 +423,7 @@ body
 				Paragraph with: 'Organism: ', conformer source asLowercase capitalized
 			}
 		} .
-		Div class: #('col-sm-12') containing: {
+		Div class: #('col-sm-12' card fluid) containing: {
 			Div class: #('col-sm-12') containing: { Heading with: 'Structural' level: 2 } .
 			Div class: #('col-sm-12') containing: {
 				Paragraph with: 'Oligomeric State: ', cluster oligomericState .
@@ -409,29 +431,16 @@ body
 				Paragraph with: 'Resolution: [', minResolution, ' - ', maxResolution,']'
 			}
 		} .
-		Div class: #('col-sm-12') containing: {
+		Div class: #('col-sm-12' card fluid) containing: {
 			Div class: #('col-sm-12') containing: { Heading with: 'Conformers' level: 2 } . 
 			Div class: #('col-sm-12') containing: { self conformers: cluster }
 		}
-	} :: render! !
+	}! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 18:46:18'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 01:30:05'!
 conformers: cluster
 
-	^ Table 
-		headers: #('PDB id' 'Biological Assembly' 'Resolution' 'Method' 'Longitude' 'Type' 'Species') 
-		rows: (cluster allConformers collect: [ :each | 
-			{ 
-				each pdbId asString . 
-				each biologicalAssembly asString . 
-				each resolution asString . 
-				each method asString . 
-				each aminoAcidLongitude asString . 
-				each type asString . 
-				each source asString 
-			}
-		])
-	
+	^ ConformersTable renderWith: cluster allConformers 
 	! !
 
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:27:51'!
@@ -444,22 +453,10 @@ forPdb: aPdbId
 
 	^ self new pdbId: aPdbId! !
 
-!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 5/22/2019 02:23:19'!
+!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:24:50'!
 body
 
-	^ Table 
-		headers: #('PDB id' 'Biological Assembly' 'Resolution' 'Method' 'Longitude' 'Type' 'Species') 
-		rows: (conformers collect: [ :each | 
-			{ 
-				Hyperlink to: ('/proteins/show/', each pdbId asString) with: each pdbId asString :: render. 
-				each biologicalAssembly asString . 
-				each resolution asString . 
-				each method asString . 
-				each aminoAcidLongitude asString . 
-				each type asString . 
-				each source asString 
-			}
-		]) :: render
+	^ MainView withPartial: self results :: body
 	
 	! !
 
@@ -468,39 +465,42 @@ conformers: conformersToDisplay
 
 	conformers  _ conformersToDisplay! !
 
+!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 01:29:41'!
+results
+
+	^ ConformersTable renderWith: conformers
+	
+	! !
+
 !ConformerSearchResultView class methodsFor: 'as yet unclassified' stamp: 'GC 5/22/2019 02:05:53'!
 containing: conformers
 
 	^ self new :: conformers: conformers! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 18:00:05'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:59:27'!
 body
-	|heading importLink proteinPairAmount|
-
-	proteinPairAmount _ ProteinPairRepository instance count asString.
 		
-	heading _ Div class: #(row) containing: {
-		Heading with: (Smaller with: 'Currently there are ', proteinPairAmount, ' protein pairs.' :: render) level: 3
-	}.
-	
-	importLink _ Hyperlink to: '/proteins/new' with: 'Click here to upload more proteins'.
-	
-	^ Div containing: {
-		Header containing: {
-			Heading with: 'Welcome to Conformational diversity of Native State database Quaternary'
-		} .
-		Div class: #(container) containing: {
-			Div class: #(row) containing: { heading } .
+	^ MainView withPartial: (Div containing: {
+		Div class: #(row) containing: { self heading } .
 			Div class: #(row) containing: {  
 				Div class: #('col-sm-12') containing: { 
 					Div class: #(row) containing: {
 						Div class: #('col-sm-6' 'col-sm-offset-3') containing: { self searchBar }
 					}
-				} . 
-				Div class: #('col-sm-12') containing: { importLink } 
+				}
 			}
-		} 
-	}:: render! !
+		}) :: body! !
+
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 00:11:26'!
+heading
+	| proteinPairAmount |
+
+	proteinPairAmount _ ProteinPairRepository instance count asString.
+		
+	^ Div class: #(row) containing: {
+		Heading with: (Smaller with: 'Currently there are ', proteinPairAmount, ' protein pairs.' :: render) level: 3.
+		Div class: #('col-sm-12') containing: { Hyperlink to: '/proteins/new' with: (Smaller with: 'Upload more proteins' :: render) }
+	}! !
 
 !HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/22/2019 01:55:06'!
 searchBar
@@ -527,6 +527,37 @@ searchBar
 	}.
 	
 	^ HtmlForm action: '/proteins/search' method: 'get' enctype: 'url-encoded' containing: formContent! !
+
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:56:19'!
+body
+
+	^ Div containing: {
+		Header css: #(sticky) containing: {
+			Heading with: (Hyperlink to: '/' with: 'Conformational diversity of Native State database Quaternary' :: render)
+		} .
+		Div class: #(container) containing: { partial } 
+	}:: render! !
+
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:09:01'!
+partial: partialView
+
+	partial _ partialView ! !
+
+!MainView class methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:21:14'!
+withPartial: partialView
+
+	^ self new :: partial: partialView! !
+
+!NewProtein methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 00:22:24'!
+body
+	
+	^ MainView withPartial: (Div containing: {
+		Heading with: 'Here you will be able to upload new proteins' level: 3.
+		HtmlForm action: '/proteins/import' method: 'post' enctype: 'multipart/form-data' containing: (Div containing:{ 
+			FormInput type: 'file' name: 'proteinsCSV' .
+			FormInput type: 'submit' name: 'Submit' value: 'Submit'
+		})
+	}) :: body! !
 
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:38:00'!
 = anObject
@@ -779,10 +810,13 @@ with: aConformer with: anotherConformer
 with: aConformer with: anotherConformer
 	^ self new :: with: aConformer with: anotherConformer! !
 
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:06:37'!
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 00:38:20'!
 find: aClusterId 
+	|idToSearch|
 
-	^ clusters detect: [ :cluster | cluster pdbId = aClusterId ] ! !
+	idToSearch _ aClusterId findTokens: 'CQ' :: last.
+
+	^ clusters detect: [ :cluster | cluster pdbId = ('CQ', idToSearch) ] ! !
 
 !ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:08:10'!
 findOrCreate: aClusterId oligomericState: anOligomericState 
@@ -944,3 +978,41 @@ save: aProtein
 someFromCluster: aPDBID
 
 	^ self all detect: [ :protein | protein code1 = aPDBID ]! !
+
+!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 01:28:28'!
+conformers: someConformers
+
+	conformers _ someConformers ! !
+
+!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 01:32:08'!
+render
+
+	^ Table 
+		headers: #('PDB id' 'Biological Assembly' 'Resolution' 'Method' 'Longitude' 'Type' 'Species') 
+		rows: (conformers collect: [ :each | |typeLink typeLinkUrl sourceLinkUrl sourceLink|
+			typeLinkUrl _ '/proteins/search?query={1}&criteria=type' format: {each type copyReplaceAll: ' ' with: '+' } .
+			typeLink _ Hyperlink 
+							to: typeLinkUrl
+							with: each type asLowercase capitalized :: render.
+							
+			sourceLinkUrl _ '/proteins/search?query={1}&criteria=source' format: { each source copyReplaceAll: ' ' with: '+' } .
+			sourceLink _ Hyperlink 
+							to: sourceLinkUrl
+							with: each source asLowercase capitalized :: render.
+			{ 
+				Hyperlink to: ('/proteins/show/', each cluster pdbId asString) with: each pdbId asString :: render . 
+				each biologicalAssembly asString . 
+				each resolution asString . 
+				each method asString . 
+				each aminoAcidLongitude asString . 
+				typeLink . 
+				sourceLink 
+			}
+		]) :: style: 'max-height:unset'
+	
+	! !
+
+!ConformersTable class methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 01:28:50'!
+renderWith: someConformers
+
+	^ self new :: conformers: someConformers :: render! !
