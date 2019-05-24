@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 23 May 2019 at 9:41:37 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 23 May 2019 at 10:14:01 pm'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 40!
+!provides: 'CoDNaSQ' 1 41!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -351,7 +351,7 @@ new: request
 
 	^ self respondSuccessfully: request with: uploadFileForm ! !
 
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/22/2019 02:15:34'!
+!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/23/2019 21:56:01'!
 search: request
 	| query criteria |
 	
@@ -365,6 +365,11 @@ search: request
 			-> [ |conformersByType|
 				conformersByType _ ConformerRepository instance likeType: query.
 				self respondSuccessfully: request with: (ConformerSearchResultView containing: conformersByType) 
+		].
+		[ 'source' ]
+			-> [ |conformersBySource|
+				conformersBySource _ ConformerRepository instance likeSource: query.
+				self respondSuccessfully: request with: (ConformerSearchResultView containing: conformersBySource)
 		]
 	}! !
 
@@ -824,6 +829,11 @@ find: pdbId
 initialize
 
 	conformers _ Set new! !
+
+!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 21:55:56'!
+likeSource: conformerSource
+
+	^ conformers select: [ :conformer | conformer source :: includesSubstring: conformerSource caseSensitive: false ]! !
 
 !ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/22/2019 02:18:42'!
 likeType: conformerType 
