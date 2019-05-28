@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 27 May 2019 at 11:20:10 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 27 May 2019 at 11:31:12 pm'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 44!
+!provides: 'CoDNaSQ' 1 45!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -132,7 +132,7 @@ NewProtein class
 
 !classDefinition: #Cluster category: #'CoDNaSQ-Model'!
 Object subclass: #Cluster
-	instanceVariableNames: 'pdbId oligomericState proteinPairs'
+	instanceVariableNames: 'pdbId oligomericState conformerPairs'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Model'!
@@ -150,14 +150,14 @@ Object subclass: #Conformer
 Conformer class
 	instanceVariableNames: ''!
 
-!classDefinition: #ProteinPair category: #'CoDNaSQ-Model'!
-Object subclass: #ProteinPair
-	instanceVariableNames: 'firstProtein secondProtein alignmentType alignmentRanking structuralSimilarity queryCoverage targetCoverage'
+!classDefinition: #ConformerPair category: #'CoDNaSQ-Model'!
+Object subclass: #ConformerPair
+	instanceVariableNames: 'alignmentType alignmentRanking structuralSimilarity queryCoverage targetCoverage first second'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Model'!
-!classDefinition: 'ProteinPair class' category: #'CoDNaSQ-Model'!
-ProteinPair class
+!classDefinition: 'ConformerPair class' category: #'CoDNaSQ-Model'!
+ConformerPair class
 	instanceVariableNames: ''!
 
 !classDefinition: #ClusterRepository category: #'CoDNaSQ-Persistence'!
@@ -170,6 +170,16 @@ Object subclass: #ClusterRepository
 ClusterRepository class
 	instanceVariableNames: 'instance'!
 
+!classDefinition: #ConformerPairRepository category: #'CoDNaSQ-Persistence'!
+Object subclass: #ConformerPairRepository
+	instanceVariableNames: 'conformerPairs'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Persistence'!
+!classDefinition: 'ConformerPairRepository class' category: #'CoDNaSQ-Persistence'!
+ConformerPairRepository class
+	instanceVariableNames: 'instance'!
+
 !classDefinition: #ConformerRepository category: #'CoDNaSQ-Persistence'!
 Object subclass: #ConformerRepository
 	instanceVariableNames: 'conformers'
@@ -178,26 +188,6 @@ Object subclass: #ConformerRepository
 	category: 'CoDNaSQ-Persistence'!
 !classDefinition: 'ConformerRepository class' category: #'CoDNaSQ-Persistence'!
 ConformerRepository class
-	instanceVariableNames: 'instance'!
-
-!classDefinition: #ProteinPairRepository category: #'CoDNaSQ-Persistence'!
-Object subclass: #ProteinPairRepository
-	instanceVariableNames: 'proteinPairs'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'CoDNaSQ-Persistence'!
-!classDefinition: 'ProteinPairRepository class' category: #'CoDNaSQ-Persistence'!
-ProteinPairRepository class
-	instanceVariableNames: 'instance'!
-
-!classDefinition: #ProteinsRepository category: #'CoDNaSQ-Persistence'!
-Object subclass: #ProteinsRepository
-	instanceVariableNames: 'proteins'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'CoDNaSQ-Persistence'!
-!classDefinition: 'ProteinsRepository class' category: #'CoDNaSQ-Persistence'!
-ProteinsRepository class
 	instanceVariableNames: 'instance'!
 
 !classDefinition: #ConformersTable category: #'CoDNaSQ-Web-View'!
@@ -216,15 +206,15 @@ printOn: aStream
 
 	aStream nextPutAll: 'Conformer: ', pdbId ! !
 
-!ProteinsControllerTest methodsFor: 'deserializeConformers' stamp: 'GC 5/13/2019 00:46:49'!
-test_when_well_formated_csv_is_received_it_creates_two_conformers_and_a_protein_pair_for_each
+!ProteinsControllerTest methodsFor: 'deserializeConformers' stamp: 'GC 5/27/2019 23:25:05'!
+test_when_well_formated_csv_is_received_it_creates_two_conformers_and_a_conformer_pair_for_each
 	| csvFile |
 	
 	csvFile _ '"cluster_ID";"Oligomeric_State";"code1";"BA1";"code2";"BA2";"T";"R";"S";"Sq";"St";"L";"Lq";"Lt";"Sr";"RMSD";"Is";"P";"resolution1";"resolution2";"method1";"method2";"long1";"long2";"protein_type1";"protein_type2";"source1";"source2"
 1l3b;4;1l3b;2;1kxz;1;b;1;732;98;98;744;100;100;0.90;0.92;100;0;2.65;2.7;diffraction;diffraction;768;768;Precorrin-6y methyltransferase/putative decarboxylase;Precorrin-6y methyltransferase/putative decarboxylase;METHANOTHERMOBACTER THERMAUTOTROPHICUS;METHANOTHERMOBACTER THERMAUTOTROPHICUS'.
  
 	self assert: [ ProteinsController new deserializeConformers: csvFile ] 
-	  	 changes: [ ProteinPairRepository instance count ]  
+	  	 changes: [ ConformerPairRepository instance count ]  
 		 by: 1
 	! !
 
@@ -233,22 +223,22 @@ testWhenThereAreNoConformersIsZero
 
 	self assert: 0 equals: Cluster new size! !
 
-!ClusterTest methodsFor: 'as yet unclassified' stamp: 'GC 5/17/2019 04:00:29'!
-testWhenThereIsAProteinPairPairIsTwo
-	| cluster proteinPair aConformer anotherConformer |
+!ClusterTest methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:27:00'!
+testWhenThereIsAConformerPairItIsTwo
+	| cluster conformerPair aConformer anotherConformer |
 	
 	aConformer _ Conformer pdbId: '2f' biologicalAssembly: 2 resolution: 2.7 method: 'diff' aminoAcidLongitude: 8 type: 'type' source: 'source'.
 	anotherConformer _ Conformer pdbId: '3f' biologicalAssembly: 2 resolution: 2.7 method: 'diff' aminoAcidLongitude: 8 type: 'type' source: 'source'.
 	
 	cluster  _ Cluster new.
-	proteinPair _ ProteinPair with: aConformer with: anotherConformer.
+	conformerPair _ ConformerPair with: aConformer with: anotherConformer.
 	
-	cluster addProteinPair: proteinPair.
+	cluster addConformerPair: conformerPair.
 
 	self assert: 2 equals: cluster size! !
 
-!ClusterTest methodsFor: 'as yet unclassified' stamp: 'GC 5/17/2019 04:34:49'!
-testWhenThereIsAProteinPairPairWithARepeatedConformerIsThree
+!ClusterTest methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:22:04'!
+testWhenThereIsAConformerPairPairWithARepeatedConformerIsThree
 	| cluster aConformer anotherConformer thirdConformer|
 	
 	aConformer _ Conformer pdbId: '2f' biologicalAssembly: 2 resolution: 2.7 method: 'diff' aminoAcidLongitude: 8 type: 'type' source: 'source'.
@@ -257,8 +247,8 @@ testWhenThereIsAProteinPairPairWithARepeatedConformerIsThree
 	
 	cluster  _ Cluster new.
 	
-	cluster addProteinPair: (ProteinPair with: aConformer with: anotherConformer).
-	cluster addProteinPair: (ProteinPair with: aConformer with: thirdConformer).
+	cluster addConformerPair: (ConformerPair with: aConformer with: anotherConformer).
+	cluster addConformerPair: (ConformerPair with: aConformer with: thirdConformer).
 
 	self assert: 3 equals: cluster size! !
 
@@ -302,13 +292,13 @@ canHandle: aRequest
 
 	^ aRequest url = '/proteins/search'! !
 
-!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 03:00:29'!
+!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:28:10'!
 deserializeConformers: csvFile
 	| csvLines |
 	
 	csvLines _ csvFile lines collect: [:line | line substrings: ';' ] :: reject: [ :element | element isEmptyOrNil ].
 			
-	^ csvLines allButFirst collect: [ :csvLine | | aConformer anotherConformer proteinPair cluster |
+	^ csvLines allButFirst collect: [ :csvLine | | aConformer anotherConformer conformerPair cluster |
 		cluster _ ClusterRepository instance findOrCreate: ('CQ', (csvLine at: 1)) oligomericState: (csvLine at: 2).	
 		aConformer _ Conformer 
 			pdbId: (csvLine at: 3)
@@ -330,12 +320,12 @@ deserializeConformers: csvFile
 			source: (csvLine at: 28)
 			cluster: cluster.
 
-		proteinPair _ ProteinPair with: aConformer with: anotherConformer.
+		conformerPair _ ConformerPair with: aConformer with: anotherConformer.
 		
-		cluster addProteinPair: proteinPair.
+		cluster addConformerPair: conformerPair.
 				
 		ConformerRepository instance saveAll: { aConformer . anotherConformer }.
-		ProteinPairRepository instance save: proteinPair.
+		ConformerPairRepository instance save: conformerPair.
 		
 	]! !
 
@@ -491,14 +481,14 @@ body
 			}
 		}) :: body! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 00:11:26'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:25:30'!
 heading
-	| proteinPairAmount |
+	| conformerPairAmount |
 
-	proteinPairAmount _ ProteinPairRepository instance count asString.
+	conformerPairAmount _ ConformerPairRepository instance count asString.
 		
 	^ Div class: #(row) containing: {
-		Heading with: (Smaller with: 'Currently there are ', proteinPairAmount, ' protein pairs.' :: render) level: 3.
+		Heading with: (Smaller with: 'Currently there are ', conformerPairAmount, ' conformer pairs.' :: render) level: 3.
 		Div class: #('col-sm-12') containing: { Hyperlink to: '/proteins/new' with: (Smaller with: 'Upload more proteins' :: render) }
 	}! !
 
@@ -564,17 +554,17 @@ body
 
 	^ (anObject isKindOf: self class) and: [ self pdbId = anObject pdbId ]! !
 
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:50:22'!
-addProteinPair: proteinPair
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:22:37'!
+addConformerPair: conformerPair
 
-	proteinPairs add: proteinPair! !
+	conformerPairs add: conformerPair! !
 
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 03:45:41'!
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:26:12'!
 allConformers
 
-	^ proteinPairs inject: (Set new) into: [ :allConformers :proteinPair | 
-		allConformers add: (proteinPair firstProtein).
-		allConformers add: (proteinPair secondProtein); yourself
+	^ conformerPairs inject: (Set new) into: [ :allConformers :conformerPair | 
+		allConformers add: (conformerPair first).
+		allConformers add: (conformerPair second); yourself
 	]! !
 
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 01:58:18'!
@@ -582,35 +572,35 @@ hash
 
 	^ self pdbId hash! !
 
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:37:40'!
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:22:37'!
 initialize
 	
 	super initialize.
 	
 	pdbId _ ''.
 	oligomericState _ ''.
-	proteinPairs _ Set new! !
+	conformerPairs _ Set new! !
 
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:22:11'!
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:26:21'!
 maxResolution
 	| allConformerResolutions |
 	
 	allConformerResolutions _ Set new.
-	proteinPairs do: [ :proteinPair |  
-		allConformerResolutions add: (proteinPair firstProtein resolution).
-		allConformerResolutions add: (proteinPair secondProtein resolution)
+	conformerPairs do: [ :conformerPair |  
+		allConformerResolutions add: (conformerPair first resolution).
+		allConformerResolutions add: (conformerPair second resolution)
 	].
 
 	^ allConformerResolutions max! !
 
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:24:31'!
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:26:27'!
 minResolution
 	| allConformerResolutions |
 	
 	allConformerResolutions _ Set new.
-	proteinPairs do: [ :proteinPair |  
-		allConformerResolutions add: (proteinPair firstProtein resolution).
-		allConformerResolutions add: (proteinPair secondProtein resolution)
+	conformerPairs do: [ :conformerPair |  
+		allConformerResolutions add: (conformerPair first resolution).
+		allConformerResolutions add: (conformerPair second resolution)
 	].
 
 	^ allConformerResolutions min! !
@@ -765,30 +755,30 @@ pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution me
 
 	^ self new :: pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod aminoAcidLongitude: aminoAcidLongitude type: proteinType source: aProteinSource cluster: aCluster! !
 
-!ProteinPair methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 03:34:14'!
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:17'!
 = anObject
 
 	^ anObject isMemberOf: self class ::
-		and: [ self firstProtein = anObject firstProtein ] ::
-		and: [ self secondProtein = anObject secondProtein ]! !
+		and: [ self first = anObject first ] ::
+		and: [ self second = anObject second ]! !
 
-!ProteinPair methodsFor: 'as yet unclassified' stamp: 'GC 5/10/2019 03:48:31'!
-firstProtein
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:23:57'!
+first
 
-	^ firstProtein ! !
+	^ first ! !
 
-!ProteinPair methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 01:57:12'!
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:22'!
 hash
 
-	^ firstProtein pdbId hash bitXor: secondProtein pdbId hash! !
+	^ first pdbId hash bitXor: second pdbId hash! !
 
-!ProteinPair methodsFor: 'as yet unclassified' stamp: 'GC 5/3/2019 01:35:31'!
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:22'!
 initialize
 
 	super initialize.
 	
-	firstProtein _ Conformer new.
-	secondProtein _ Conformer new.
+	first _ Conformer new.
+	second _ Conformer new.
 	alignmentType _ ''.
 	alignmentRanking _ ''.
 	structuralSimilarity _ ''.
@@ -796,17 +786,17 @@ initialize
 	targetCoverage _ ''.
 	! !
 
-!ProteinPair methodsFor: 'as yet unclassified' stamp: 'GC 5/10/2019 03:48:22'!
-secondProtein
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:22'!
+second
 
-	^ secondProtein ! !
+	^ second ! !
 
-!ProteinPair methodsFor: 'as yet unclassified' stamp: 'GC 5/10/2019 01:48:21'!
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:22'!
 with: aConformer with: anotherConformer
-	firstProtein _ aConformer.
-	secondProtein _ anotherConformer! !
+	first _ aConformer.
+	second _ anotherConformer! !
 
-!ProteinPair class methodsFor: 'instance creation' stamp: 'GC 5/10/2019 01:47:43'!
+!ConformerPair class methodsFor: 'instance creation' stamp: 'GC 5/10/2019 01:47:43'!
 with: aConformer with: anotherConformer
 	^ self new :: with: aConformer with: anotherConformer! !
 
@@ -843,6 +833,37 @@ someElement
 		do: [ nil ]! !
 
 !ClusterRepository class methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:32:09'!
+instance
+
+	instance ifNil: [ instance _ self new ].
+	
+	^ instance! !
+
+!ConformerPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:27:24'!
+count
+
+	^ conformerPairs size! !
+
+!ConformerPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:27:24'!
+find: aConformerPdbId
+
+	^ conformerPairs select: [ :pair | 
+		pair first pdbId = aConformerPdbId 
+		or: [ pair second pdbId = aConformerPdbId ]
+	]! !
+
+!ConformerPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:27:24'!
+initialize
+
+	conformerPairs _ Set new! !
+
+!ConformerPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:27:31'!
+save: conformerPair
+
+	conformerPairs add: conformerPair 
+	! !
+
+!ConformerPairRepository class methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 19:00:19'!
 instance
 
 	instance ifNil: [ instance _ self new ].
@@ -897,87 +918,6 @@ instance
 	instance ifNil: [ instance _ self new ].
 	
 	^ instance! !
-
-!ProteinPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/13/2019 00:30:03'!
-count
-
-	^ proteinPairs size! !
-
-!ProteinPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 03:31:42'!
-find: aConformerPdbId
-
-	^ proteinPairs select: [ :pair | 
-		pair firstProtein pdbId = aConformerPdbId 
-		or: [ pair secondProtein pdbId = aConformerPdbId ]
-	]! !
-
-!ProteinPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 18:54:53'!
-initialize
-
-	proteinPairs _ Set new! !
-
-!ProteinPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 18:55:04'!
-save: aProteinPair
-
-	proteinPairs add: aProteinPair 
-	! !
-
-!ProteinPairRepository class methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 19:00:19'!
-instance
-
-	instance ifNil: [ instance _ self new ].
-	
-	^ instance! !
-
-!ProteinsRepository methodsFor: 'as yet unclassified' stamp: 'GC 4/18/2019 15:07:08'!
-addAll: manyProteins
-
-	proteins addAll: manyProteins! !
-
-!ProteinsRepository methodsFor: 'as yet unclassified' stamp: 'GC 4/18/2019 15:04:34'!
-all
-
-	^ proteins! !
-
-!ProteinsRepository methodsFor: 'as yet unclassified' stamp: 'GC 4/12/2019 00:33:34'!
-initialize
-
-	proteins _ Set new! !
-
-!ProteinsRepository methodsFor: 'as yet unclassified' stamp: 'GC 4/18/2019 23:53:18'!
-maxResolutionOfCluster: aPDBID
-	| allFromCluster allResolutions |
-
-	allFromCluster _ self all select: [ :a | a code1 = aPDBID ].
-	allResolutions _ allFromCluster collect: [ :b | b resolution1 asNumber ].
-	allResolutions addAll: (allFromCluster collect: [ :c | c resolution2 asNumber ]).
-	
-	^ allResolutions max asString ! !
-
-!ProteinsRepository methodsFor: 'as yet unclassified' stamp: 'GC 4/18/2019 23:53:26'!
-minResolutionOfCluster: aPDBID
-	| allFromCluster allResolutions |
-
-	allFromCluster _ self all select: [ :p | p code1 = aPDBID ].
-	allResolutions _ allFromCluster collect: [ :e | e resolution1 asNumber].
-	allResolutions addAll: (allFromCluster collect: [ :clusterProtein | clusterProtein resolution2 asNumber]).
-	
-	^ allResolutions min asString! !
-
-!ProteinsRepository methodsFor: 'as yet unclassified' stamp: 'GC 4/18/2019 23:10:37'!
-sameClusterProteins: aProtein
-
-	^ self all select: [ :protein | protein code1 = aProtein code1 ]! !
-
-!ProteinsRepository methodsFor: 'as yet unclassified' stamp: 'GC 4/18/2019 15:02:38'!
-save: aProtein
-
-	proteins add: aProtein! !
-
-!ProteinsRepository methodsFor: 'as yet unclassified' stamp: 'GC 4/18/2019 23:41:14'!
-someFromCluster: aPDBID
-
-	^ self all detect: [ :protein | protein code1 = aPDBID ]! !
 
 !ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 01:28:28'!
 conformers: someConformers
