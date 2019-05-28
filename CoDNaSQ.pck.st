@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 24 May 2019 at 1:32:49 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 27 May 2019 at 11:20:10 pm'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 43!
+!provides: 'CoDNaSQ' 1 44!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -528,12 +528,12 @@ searchBar
 	
 	^ HtmlForm action: '/proteins/search' method: 'get' enctype: 'url-encoded' containing: formContent! !
 
-!MainView methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:56:19'!
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 16:16:19'!
 body
 
 	^ Div containing: {
 		Header css: #(sticky) containing: {
-			Heading with: (Hyperlink to: '/' with: 'Conformational diversity of Native State database Quaternary' :: render)
+			Heading with: (Hyperlink to: '/' with: 'Conformational Diversity of Native State - Quaternary' :: render)
 		} .
 		Div class: #(container) containing: { partial } 
 	}:: render! !
