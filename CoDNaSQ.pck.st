@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 27 May 2019 at 11:31:12 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 29 May 2019 at 2:03:51 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 45!
+!provides: 'CoDNaSQ' 1 46!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -82,7 +82,7 @@ ProteinsController class
 
 !classDefinition: #ClusterView category: #'CoDNaSQ-Web-View'!
 View subclass: #ClusterView
-	instanceVariableNames: 'pdbId'
+	instanceVariableNames: 'aCluster'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Web-View'!
@@ -132,7 +132,7 @@ NewProtein class
 
 !classDefinition: #Cluster category: #'CoDNaSQ-Model'!
 Object subclass: #Cluster
-	instanceVariableNames: 'pdbId oligomericState conformerPairs'
+	instanceVariableNames: 'oligomericState conformerPairs id'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Model'!
@@ -142,7 +142,7 @@ Cluster class
 
 !classDefinition: #Conformer category: #'CoDNaSQ-Model'!
 Object subclass: #Conformer
-	instanceVariableNames: 'pdbId biologicalAssembly resolution method aminoAcidLongitude type source cluster'
+	instanceVariableNames: 'pdbId biologicalAssembly resolution method source cluster name length'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Model'!
@@ -292,7 +292,7 @@ canHandle: aRequest
 
 	^ aRequest url = '/proteins/search'! !
 
-!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:28:10'!
+!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:04:03'!
 deserializeConformers: csvFile
 	| csvLines |
 	
@@ -305,7 +305,7 @@ deserializeConformers: csvFile
 			biologicalAssembly: (csvLine at: 4) 
 			resolution: (csvLine at: 19) 
 			method: (csvLine at: 21)
-			aminoAcidLongitude: (csvLine at: 23)
+			length: (csvLine at: 23)
 			type: (csvLine at: 25)
 			source: (csvLine at: 27)
 			cluster: cluster. 
@@ -315,7 +315,7 @@ deserializeConformers: csvFile
 			biologicalAssembly: (csvLine at: 6) 
 			resolution: (csvLine at: 20) 
 			method: (csvLine at: 22)
-			aminoAcidLongitude: (csvLine at: 24)
+			length: (csvLine at: 24)
 			type: (csvLine at: 26)
 			source: (csvLine at: 28)
 			cluster: cluster.
@@ -358,7 +358,7 @@ new: request
 
 	^ self respondSuccessfully: request with: (NewProtein new)! !
 
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/23/2019 21:56:01'!
+!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/29/2019 00:59:38'!
 search: request
 	| query criteria |
 	
@@ -367,7 +367,10 @@ search: request
 	
 	^ criteria caseOf: {
 		[ 'cluster-id' ]    
-			-> [ self respondSuccessfully: request  with: (ClusterView forPdb: query) ].
+			-> [ |cluster|
+				cluster _ ClusterRepository instance find: query.
+				self respondSuccessfully: request  with: (ClusterView forCluster: cluster) 
+		].
 		[ 'type' ]	
 			-> [ |conformersByType|
 				conformersByType _ ConformerRepository instance likeType: query.
@@ -380,50 +383,60 @@ search: request
 		]
 	}! !
 
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/24/2019 00:44:27'!
+!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/29/2019 00:56:34'!
 show: request
-	| pdbId proteinView |
+	| pdbId clusterView cluster |
 	
-	pdbId _ request url findTokens: '/' :: last :: findTokens: 'CQ' :: last.
-	proteinView _ ClusterView forPdb: pdbId.
+	pdbId _ request url findTokens: '/' :: last.
+	cluster _ ClusterRepository instance find: pdbId.
+	clusterView _ ClusterView forCluster: cluster.
 
-	^ self respondSuccessfully: request with: proteinView ! !
+	^ self respondSuccessfully: request with: clusterView ! !
 
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:26:26'!
 body
 
 	^ MainView withPartial: self clusterDetails :: body! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 01:24:24'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/28/2019 00:10:30'!
+cluster
+
+	^ aCluster! !
+
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/28/2019 00:10:12'!
+cluster: clusterToRender
+
+	aCluster _ clusterToRender! !
+
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:13:20'!
 clusterDetails
-	| maxResolution minResolution cluster conformer |
+	| maxResolution minResolution conformer |
 	
-	conformer _ ConformerRepository instance find: pdbId.
-	cluster _ conformer cluster.
+	conformer _ self cluster allConformers atRandom.
 		
-	maxResolution _ cluster maxResolution asString.
-	minResolution _ cluster minResolution asString.
+	maxResolution _ self cluster maxResolution asString.
+	minResolution _ self cluster minResolution asString.
 	
 	^ Div class: #(row) containing: {
 		Div class: #('col-sm-12' card fluid) containing: {
-			Div class: #('col-sm-12') containing: { Heading with: 'General information' level: 2 } .
+			Div class: #('col-sm-12') containing: { Heading with: 'Cluster information' level: 2 } .
 			Div class: #('col-sm-12') containing: {
-				Paragraph with: 'PDB ID: ', cluster pdbId .
+				Paragraph with: 'Cluster ID: ', self cluster id .
 				Paragraph with: 'Name: ', conformer type .
 				Paragraph with: 'Organism: ', conformer source asLowercase capitalized
 			}
 		} .
 		Div class: #('col-sm-12' card fluid) containing: {
-			Div class: #('col-sm-12') containing: { Heading with: 'Structural' level: 2 } .
+			Div class: #('col-sm-12') containing: { Heading with: 'Structural information' level: 2 } .
 			Div class: #('col-sm-12') containing: {
-				Paragraph with: 'Oligomeric State: ', cluster oligomericState .
-				Paragraph with: 'Conformers: #', cluster size asString .
+				Paragraph with: 'Oligomeric State: ', self cluster oligomericStateName .
+				Paragraph with: 'Conformers: ', self cluster size asString .
 				Paragraph with: 'Resolution: [', minResolution, ' - ', maxResolution,']'
 			}
 		} .
 		Div class: #('col-sm-12' card fluid) containing: {
 			Div class: #('col-sm-12') containing: { Heading with: 'Conformers' level: 2 } . 
-			Div class: #('col-sm-12') containing: { self conformers: cluster }
+			Div class: #('col-sm-12') containing: { self conformers: self cluster }
 		}
 	}! !
 
@@ -433,15 +446,10 @@ conformers: cluster
 	^ ConformersTable renderWith: cluster allConformers 
 	! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:27:51'!
-pdbId: aPdbId
+!ClusterView class methodsFor: 'as yet unclassified' stamp: 'GC 5/28/2019 00:07:56'!
+forCluster: clusterToDisplay
 
-	pdbId _ aPdbId! !
-
-!ClusterView class methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 12:44:31'!
-forPdb: aPdbId
-
-	^ self new pdbId: aPdbId! !
+	^ self new cluster: clusterToDisplay! !
 
 !ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:24:50'!
 body
@@ -492,7 +500,7 @@ heading
 		Div class: #('col-sm-12') containing: { Hyperlink to: '/proteins/new' with: (Smaller with: 'Upload more proteins' :: render) }
 	}! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/22/2019 01:55:06'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 00:57:48'!
 searchBar
 	| formContent |
 	
@@ -508,11 +516,11 @@ searchBar
 		} .
 		Div class: #('col-sm') containing: {
 			Span with: (Smaller with: 'Example entries: ' ::render) .
-			Smaller with: (Hyperlink to: ('/proteins/show/2vcq') with: '2vcq' :: render) .
+			Smaller with: (Hyperlink to: ('/proteins/show/CQ2vcq') with: 'CQ2vcq' :: render) .
 			Span with: (Smaller with: ' | ' :: render) .
-			Smaller with: (Hyperlink to: ('/proteins/show/4ha3') with: '4ha3' :: render) .
+			Smaller with: (Hyperlink to: ('/proteins/show/CQ4ha3') with: 'CQ4ha3' :: render) .
 			Span with: (Smaller with: ' | ' :: render) .
-			Smaller with: (Hyperlink to: ('/proteins/show/3tjt') with: '3tjt' :: render)
+			Smaller with: (Hyperlink to: ('/proteins/show/CQ3tjt') with: 'CQ3tjt' :: render)
 		}
 	}.
 	
@@ -549,10 +557,10 @@ body
 		})
 	}) :: body! !
 
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:38:00'!
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
 = anObject
 
-	^ (anObject isKindOf: self class) and: [ self pdbId = anObject pdbId ]! !
+	^ (anObject isKindOf: self class) and: [ self id = anObject id ]! !
 
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:22:37'!
 addConformerPair: conformerPair
@@ -567,17 +575,28 @@ allConformers
 		allConformers add: (conformerPair second); yourself
 	]! !
 
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 01:58:18'!
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
 hash
 
-	^ self pdbId hash! !
+	^ self id hash! !
 
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:22:37'!
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
+id
+
+	^ id! !
+
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:09'!
+id: aPdbId oligomericState: anOligomericState
+
+	id _ aPdbId.
+	oligomericState _ anOligomericState ! !
+
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:46:21'!
 initialize
 	
 	super initialize.
 	
-	pdbId _ ''.
+	id _ ''.
 	oligomericState _ ''.
 	conformerPairs _ Set new! !
 
@@ -610,40 +629,45 @@ oligomericState
 
 	^ oligomericState ! !
 
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:09:16'!
-pdbId
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:20:49'!
+oligomericStateName
 
-	^ pdbId! !
-
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:58:47'!
-pdbId: aPdbId oligomericState: anOligomericState
-
-	pdbId _ aPdbId.
-	oligomericState _ anOligomericState ! !
+	^ oligomericState asNumber caseOf: {
+		[ 1 ] -> [ 'Monomer' ].
+		[ 2 ] -> [ 'Dimer' ].
+		[ 3 ] -> [ 'Trimer' ].
+		[ 4 ] -> [ 'Tetramer' ].
+		[ 5 ] -> [ 'Pentamer' ].
+		[ 6 ] -> [ 'Hexamer' ].
+		[ 7 ] -> [ 'Heptamer' ].
+		[ 8 ] -> [ 'Octamer' ].
+		[ 9 ] -> [ 'Nonamer' ].
+		[ 10 ] -> [ 'Decamer' ].
+		[ 11 ] -> [ 'Undecamer' ].
+		[ 12 ] -> [ 'Dodecamer' ].
+		[ 13 ] -> [ 'Tridecamer' ].
+		[ 14 ] -> [ 'Tetradecamer' ].
+		[ 15 ] -> [ 'Pentadecamer' ].
+		[ 16 ] -> [ 'Hexadecamer' ].
+		[ 17 ] -> [ 'Heptadecamer' ].
+		[ 18 ] -> [ 'Octadecamer' ].
+		[ 19 ] -> [ 'Nonadecamer' ].
+		[ 20 ] -> [ 'Eicosamer' ]
+	} otherwise: [ self oligomericState asString, '-mer']! !
 
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/17/2019 04:01:52'!
 size
 	^ self allConformers size! !
 
-!Cluster class methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:45:34'!
-pdbId: aPdbId oligomericState: anOligomericState
+!Cluster class methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:09'!
+id: aPdbId oligomericState: anOligomericState
 
-	^ self new :: pdbId: aPdbId oligomericState: anOligomericState! !
+	^ self new :: id: aPdbId oligomericState: anOligomericState! !
 
-!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/11/2019 14:23:26'!
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/28/2019 00:13:30'!
 = anObject
 
 	^ (anObject isKindOf: self class) and: [ self pdbId = anObject pdbId ]! !
-
-!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:51:51'!
-aminoAcidLongitude
-
-	^ aminoAcidLongitude! !
-
-!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 4/20/2019 03:14:48'!
-aminoAcidLongitude: anAminoacidLongitude
-
-	aminoAcidLongitude _ anAminoacidLongitude ! !
 
 !Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:51:30'!
 biologicalAssembly
@@ -665,12 +689,12 @@ cluster: aCluster
 
 	cluster _ aCluster ! !
 
-!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 01:57:43'!
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/28/2019 00:12:39'!
 hash
 
 	^ self pdbId hash! !
 
-!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 4/20/2019 03:12:52'!
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:03:24'!
 initialize
 
 	super initialize.
@@ -679,9 +703,19 @@ initialize
 	biologicalAssembly _ ''.
 	resolution _ ''.
 	method _ ''.
-	aminoAcidLongitude _ ''.
-	type _ ''.
+	length _ ''.
+	name _ ''.
 	source _ ''! !
+
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:03:44'!
+length
+
+	^ length! !
+
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:03:34'!
+length: anAminoacidLongitude
+
+	length _ anAminoacidLongitude ! !
 
 !Conformer methodsFor: 'as yet unclassified' stamp: 'GC 4/20/2019 03:14:24'!
 method: aSnapshotMethod
@@ -698,15 +732,15 @@ pdbId: aPdbID
 
 	pdbId _ aPdbID ! !
 
-!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:34:23'!
-pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod aminoAcidLongitude: anAminoAcidLongitude type: proteinType source: aProteinSource cluster: aCluster
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:04:03'!
+pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod length: anAminoAcidLongitude type: proteinType source: aProteinSource cluster: aCluster
 
 	pdbId _ aPdbID.
 	biologicalAssembly _ aBiologicalAssembly.
 	resolution _ aResolution.
 	method _ aSnapshotMethod.
-	aminoAcidLongitude _ anAminoAcidLongitude.
-	type _ proteinType.
+	length _ anAminoAcidLongitude.
+	name _ proteinType.
 	source _ aProteinSource.
 	cluster _ aCluster! !
 
@@ -730,30 +764,30 @@ source: aProteinSource
 
 	source _ aProteinSource! !
 
-!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:30:06'!
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:00:26'!
 type
 
-	^ type! !
+	^ name! !
 
-!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 4/20/2019 03:15:06'!
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:00:26'!
 type: proteinType
 
-	type _ proteinType ! !
+	name _ proteinType ! !
 
 !Conformer methodsFor: 'accessing' stamp: 'GC 5/14/2019 03:22:29'!
 method
 	
 	^method! !
 
-!Conformer class methodsFor: 'instance creation' stamp: 'GC 5/19/2019 02:35:26'!
+!Conformer class methodsFor: 'instance creation' stamp: 'GC 5/29/2019 01:04:03'!
 pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod aminoAcidLongitude: aminoAcidLongitude type: proteinType source: aProteinSource
 
-	^ self pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod aminoAcidLongitude: aminoAcidLongitude type: proteinType source: aProteinSource cluster: ''! !
+	^ self pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod length: aminoAcidLongitude type: proteinType source: aProteinSource cluster: ''! !
 
-!Conformer class methodsFor: 'instance creation' stamp: 'GC 5/19/2019 02:34:45'!
-pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod aminoAcidLongitude: aminoAcidLongitude type: proteinType source: aProteinSource cluster: aCluster
+!Conformer class methodsFor: 'instance creation' stamp: 'GC 5/29/2019 01:04:03'!
+pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod length: aminoAcidLongitude type: proteinType source: aProteinSource cluster: aCluster
 
-	^ self new :: pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod aminoAcidLongitude: aminoAcidLongitude type: proteinType source: aProteinSource cluster: aCluster! !
+	^ self new :: pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution method: aSnapshotMethod length: aminoAcidLongitude type: proteinType source: aProteinSource cluster: aCluster! !
 
 !ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:17'!
 = anObject
@@ -767,10 +801,10 @@ first
 
 	^ first ! !
 
-!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:22'!
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
 hash
 
-	^ first pdbId hash bitXor: second pdbId hash! !
+	^ first id hash bitXor: second id hash! !
 
 !ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:22'!
 initialize
@@ -800,21 +834,18 @@ with: aConformer with: anotherConformer
 with: aConformer with: anotherConformer
 	^ self new :: with: aConformer with: anotherConformer! !
 
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 00:38:20'!
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:51:41'!
 find: aClusterId 
-	|idToSearch|
 
-	idToSearch _ aClusterId findTokens: 'CQ' :: last.
+	^ clusters detect: [ :cluster | cluster id = aClusterId ] ! !
 
-	^ clusters detect: [ :cluster | cluster pdbId = ('CQ', idToSearch) ] ! !
-
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:08:10'!
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
 findOrCreate: aClusterId oligomericState: anOligomericState 
 
 	^ clusters 
-		detect: [ :cluster | cluster pdbId = aClusterId ] 
+		detect: [ :cluster | cluster id = aClusterId ] 
 		ifNone: [ | newCluster | 
-			newCluster _ Cluster pdbId: aClusterId oligomericState: anOligomericState.
+			newCluster _ Cluster id: aClusterId oligomericState: anOligomericState.
 			clusters add: newCluster.
 			
 			^ newCluster
@@ -824,13 +855,6 @@ findOrCreate: aClusterId oligomericState: anOligomericState
 initialize
 
 	clusters _ Set new! !
-
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 03:05:28'!
-someElement
-	
-	^ [ clusters atRandom ]
-		on: Error
-		do: [ nil ]! !
 
 !ClusterRepository class methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:32:09'!
 instance
@@ -844,12 +868,12 @@ count
 
 	^ conformerPairs size! !
 
-!ConformerPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:27:24'!
+!ConformerPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
 find: aConformerPdbId
 
 	^ conformerPairs select: [ :pair | 
-		pair first pdbId = aConformerPdbId 
-		or: [ pair second pdbId = aConformerPdbId ]
+		pair first id = aConformerPdbId 
+		or: [ pair second id = aConformerPdbId ]
 	]! !
 
 !ConformerPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:27:24'!
@@ -875,10 +899,10 @@ count
 
 	^ conformers size! !
 
-!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:29:14'!
+!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
 find: pdbId 
 
-	^ conformers detect: [ :conformer | conformer pdbId = pdbId ] ! !
+	^ conformers detect: [ :conformer | conformer id = pdbId ] ! !
 
 !ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 17:56:38'!
 initialize
@@ -900,18 +924,6 @@ saveAll: manyConformers
 
 	conformers addAll: manyConformers! !
 
-!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:03:46'!
-someElement
-	
-	^ [ conformers atRandom ]
-		on: Error
-		do: [ nil ]! !
-
-!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:54:18'!
-whereCluster: aCluster 
-
-	^ conformers select: [ :conformer | conformer cluster = aCluster ] ! !
-
 !ConformerRepository class methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 17:56:56'!
 instance
 
@@ -924,7 +936,7 @@ conformers: someConformers
 
 	conformers _ someConformers ! !
 
-!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 01:32:08'!
+!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:03:44'!
 render
 
 	^ Table 
@@ -940,11 +952,11 @@ render
 							to: sourceLinkUrl
 							with: each source asLowercase capitalized :: render.
 			{ 
-				Hyperlink to: ('/proteins/show/', each cluster pdbId asString) with: each pdbId asString :: render . 
+				Hyperlink to: ('/proteins/show/', each cluster id asString) with: each pdbId asString :: render . 
 				each biologicalAssembly asString . 
 				each resolution asString . 
 				each method asString . 
-				each aminoAcidLongitude asString . 
+				each length asString . 
 				typeLink . 
 				sourceLink 
 			}
