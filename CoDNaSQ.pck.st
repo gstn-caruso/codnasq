@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 30 May 2019 at 2:13:09 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 30 May 2019 at 5:05:09 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 48!
+!provides: 'CoDNaSQ' 1 49!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -160,35 +160,45 @@ Object subclass: #ConformerPair
 ConformerPair class
 	instanceVariableNames: ''!
 
+!classDefinition: #Repository category: #'CoDNaSQ-Persistence'!
+Object subclass: #Repository
+	instanceVariableNames: 'elements'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Persistence'!
+!classDefinition: 'Repository class' category: #'CoDNaSQ-Persistence'!
+Repository class
+	instanceVariableNames: 'instance'!
+
 !classDefinition: #ClusterRepository category: #'CoDNaSQ-Persistence'!
-Object subclass: #ClusterRepository
-	instanceVariableNames: 'clusters'
+Repository subclass: #ClusterRepository
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Persistence'!
 !classDefinition: 'ClusterRepository class' category: #'CoDNaSQ-Persistence'!
 ClusterRepository class
-	instanceVariableNames: 'instance'!
+	instanceVariableNames: ''!
 
 !classDefinition: #ConformerPairRepository category: #'CoDNaSQ-Persistence'!
-Object subclass: #ConformerPairRepository
-	instanceVariableNames: 'conformerPairs'
+Repository subclass: #ConformerPairRepository
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Persistence'!
 !classDefinition: 'ConformerPairRepository class' category: #'CoDNaSQ-Persistence'!
 ConformerPairRepository class
-	instanceVariableNames: 'instance'!
+	instanceVariableNames: ''!
 
 !classDefinition: #ConformerRepository category: #'CoDNaSQ-Persistence'!
-Object subclass: #ConformerRepository
-	instanceVariableNames: 'conformers'
+Repository subclass: #ConformerRepository
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Persistence'!
 !classDefinition: 'ConformerRepository class' category: #'CoDNaSQ-Persistence'!
 ConformerRepository class
-	instanceVariableNames: 'instance'!
+	instanceVariableNames: ''!
 
 !classDefinition: #ConformersTable category: #'CoDNaSQ-Web-View'!
 Object subclass: #ConformersTable
@@ -825,102 +835,83 @@ with: aConformer with: anotherConformer
 with: aConformer with: anotherConformer
 	^ self new :: with: aConformer with: anotherConformer! !
 
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:51:41'!
+!Repository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:32:38'!
+count
+
+	^ elements size! !
+
+!Repository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:34:07'!
+destroyAll
+
+	elements removeAll! !
+
+!Repository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:33:44'!
+find: elementId
+
+	self subclassResponsibility! !
+
+!Repository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:32:29'!
+initialize
+
+	elements _ Set new! !
+
+!Repository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:36:23'!
+save: element
+
+	elements add: element 
+	! !
+
+!Repository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:35:35'!
+saveAll: manyElements
+
+	elements addAll: manyElements! !
+
+!Repository class methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:34:24'!
+instance
+
+	instance ifNil: [ instance _ self new ].
+	
+	^ instance! !
+
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:37:14'!
 find: aClusterId 
 
-	^ clusters detect: [ :cluster | cluster id = aClusterId ] ! !
+	^ elements detect: [ :cluster | cluster id = aClusterId ] ! !
 
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:37:01'!
 findOrCreate: aClusterId oligomericState: anOligomericState 
 
-	^ clusters 
+	^ elements 
 		detect: [ :cluster | cluster id = aClusterId ] 
 		ifNone: [ | newCluster | 
 			newCluster _ Cluster id: aClusterId oligomericState: anOligomericState.
-			clusters add: newCluster.
+			self save: newCluster.
 			
 			^ newCluster
 		]! !
 
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:31:58'!
-initialize
-
-	clusters _ Set new! !
-
-!ClusterRepository class methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 01:32:09'!
-instance
-
-	instance ifNil: [ instance _ self new ].
-	
-	^ instance! !
-
-!ConformerPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:27:24'!
-count
-
-	^ conformerPairs size! !
-
-!ConformerPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
+!ConformerPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:35:57'!
 find: aConformerPdbId
 
-	^ conformerPairs select: [ :pair | 
+	^ elements select: [ :pair | 
 		pair first id = aConformerPdbId 
 		or: [ pair second id = aConformerPdbId ]
 	]! !
 
-!ConformerPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:27:24'!
-initialize
-
-	conformerPairs _ Set new! !
-
-!ConformerPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:27:31'!
-save: conformerPair
-
-	conformerPairs add: conformerPair 
-	! !
-
-!ConformerPairRepository class methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 19:00:19'!
-instance
-
-	instance ifNil: [ instance _ self new ].
-	
-	^ instance! !
-
-!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 18:59:27'!
-count
-
-	^ conformers size! !
-
-!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
+!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:35:19'!
 find: pdbId 
 
-	^ conformers detect: [ :conformer | conformer id = pdbId ] ! !
+	^ elements detect: [ :conformer | conformer id = pdbId ] ! !
 
-!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 17:56:38'!
-initialize
-
-	conformers _ Set new! !
-
-!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 21:55:56'!
+!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:35:13'!
 likeSource: conformerSource
 
-	^ conformers select: [ :conformer | conformer source :: includesSubstring: conformerSource caseSensitive: false ]! !
+	^ elements select: [ :conformer | conformer source :: includesSubstring: conformerSource caseSensitive: false ]! !
 
-!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/22/2019 02:18:42'!
+!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:35:10'!
 likeType: conformerType 
 
-	^ conformers select: [ :conformer | conformer type :: includesSubstring: conformerType caseSensitive: false ]! !
-
-!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 19:02:11'!
-saveAll: manyConformers
-
-	conformers addAll: manyConformers! !
-
-!ConformerRepository class methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 17:56:56'!
-instance
-
-	instance ifNil: [ instance _ self new ].
-	
-	^ instance! !
+	^ elements select: [ :conformer | conformer type :: includesSubstring: conformerType caseSensitive: false ]! !
 
 !ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 01:28:28'!
 conformers: someConformers
