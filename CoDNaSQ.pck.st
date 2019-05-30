@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 30 May 2019 at 1:46:12 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 30 May 2019 at 2:13:09 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 47!
+!provides: 'CoDNaSQ' 1 48!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -927,11 +927,11 @@ conformers: someConformers
 
 	conformers _ someConformers ! !
 
-!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:31:33'!
+!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:11:24'!
 render
 
 	^ Table 
-		headers: #('PDB id' 'Biological Assembly' 'Resolution' 'Method' 'Longitude' 'Type' 'Species') 
+		headers: #('PDB id' 'Biological Assembly' 'Resolution' 'Method' 'Longitude' 'Name' 'Species') 
 		rows: (conformers collect: [ :each | |typeLink typeLinkUrl sourceLinkUrl sourceLink|
 			typeLinkUrl _ '/cluster/search?query={1}&criteria=type' format: {each type copyReplaceAll: ' ' with: '+' } .
 			typeLink _ Hyperlink 
