@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 30 May 2019 at 5:05:09 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 30 May 2019 at 7:00:10 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 49!
+!provides: 'CoDNaSQ' 1 50!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -38,6 +38,16 @@ StaticPath subclass: #ClusterShow
 	category: 'CoDNaSQ-Web'!
 !classDefinition: 'ClusterShow class' category: #'CoDNaSQ-Web'!
 ClusterShow class
+	instanceVariableNames: ''!
+
+!classDefinition: #ConformerShow category: #'CoDNaSQ-Web'!
+StaticPath subclass: #ConformerShow
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'ConformerShow class' category: #'CoDNaSQ-Web'!
+ConformerShow class
 	instanceVariableNames: ''!
 
 !classDefinition: #NewClusterPath category: #'CoDNaSQ-Web'!
@@ -80,6 +90,16 @@ RootController subclass: #ClusterController
 ClusterController class
 	instanceVariableNames: ''!
 
+!classDefinition: #ConformerController category: #'CoDNaSQ-Web'!
+RootController subclass: #ConformerController
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'ConformerController class' category: #'CoDNaSQ-Web'!
+ConformerController class
+	instanceVariableNames: ''!
+
 !classDefinition: #ClusterView category: #'CoDNaSQ-Web-View'!
 View subclass: #ClusterView
 	instanceVariableNames: 'aCluster'
@@ -98,6 +118,16 @@ View subclass: #ConformerSearchResultView
 	category: 'CoDNaSQ-Web-View'!
 !classDefinition: 'ConformerSearchResultView class' category: #'CoDNaSQ-Web-View'!
 ConformerSearchResultView class
+	instanceVariableNames: ''!
+
+!classDefinition: #ConformerView category: #'CoDNaSQ-Web-View'!
+View subclass: #ConformerView
+	instanceVariableNames: 'conformer'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-View'!
+!classDefinition: 'ConformerView class' category: #'CoDNaSQ-Web-View'!
+ConformerView class
 	instanceVariableNames: ''!
 
 !classDefinition: #HomePage category: #'CoDNaSQ-Web-View'!
@@ -152,7 +182,7 @@ Conformer class
 
 !classDefinition: #ConformerPair category: #'CoDNaSQ-Model'!
 Object subclass: #ConformerPair
-	instanceVariableNames: 'alignmentType alignmentRanking structuralSimilarity queryCoverage targetCoverage first second'
+	instanceVariableNames: 'alignmentType alignmentRanking structuralSimilarity queryCoverage targetCoverage first second l lq lt sr rmsd is p'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Model'!
@@ -271,6 +301,16 @@ handle
 canHandle: aRequest
 	
 	^ aRequest url beginsWith: '/cluster/show/'! !
+
+!ConformerShow methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:33:53'!
+handle
+
+	^ ConformerController new show: request! !
+
+!ConformerShow class methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:33:25'!
+canHandle: aRequest
+	
+	^ aRequest url beginsWith: '/conformer/show/'! !
 
 !NewClusterPath methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:17:48'!
 handle
@@ -403,6 +443,15 @@ show: request
 
 	^ self respondSuccessfully: request with: clusterView ! !
 
+!ConformerController methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:48:49'!
+show: request
+	| pdbId conformer |
+	
+	pdbId _ request url findTokens: '/' :: last.	
+	conformer _ ConformerRepository instance find: pdbId.
+
+	^ self respondSuccessfully: request with: (ConformerView forConformer: conformer)! !
+
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:26:26'!
 body
 
@@ -475,6 +524,62 @@ results
 containing: conformers
 
 	^ self new :: conformers: conformers! !
+
+!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:45:34'!
+body
+
+	^ MainView withPartial: self clusterDetails :: body! !
+
+!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:59:36'!
+clusterDetails
+	| maxResolution minResolution |
+		
+	maxResolution _ conformer cluster maxResolution asString.
+	minResolution _ conformer cluster minResolution asString.
+	
+	^ Div class: #(row) containing: {
+	Div class: #('col-sm-12' card fluid) containing: {
+			Div class: #('col-sm-12') containing: { Heading with: 'Conformer information' level: 2 } .
+			Div class: #('col-sm-12') containing: {
+				Paragraph with: 'PDB ID: ', conformer pdbId.
+				Paragraph with: 'Biological assembly: ', conformer biologicalAssembly.
+				Paragraph with: 'Resolution: ', conformer resolution asString.
+				Paragraph with: 'Method: ', conformer method.
+				Paragraph with: 'Length: ', conformer length.
+				Paragraph with: 'Name: ', conformer type.
+				Paragraph with: 'Source: ', conformer source.
+			}
+		} .
+		Div class: #('col-sm-12' card fluid) containing: {
+			Div class: #('col-sm-12') containing: { Heading with: 'Cluster information' level: 2 } .
+			Div class: #('col-sm-12') containing: {
+				Paragraph with: 'Cluster ID: ', conformer cluster id .
+				Paragraph with: 'Oligomeric State: ', conformer cluster oligomericStateName .
+				Paragraph with: 'Conformers: ', conformer cluster size asString .
+				Paragraph with: 'Resolution: [', minResolution, ' - ', maxResolution,']'
+			}
+		} .
+		Div class: #('col-sm-12' card fluid) containing: {
+			Div class: #('col-sm-12') containing: { Heading with: 'Siblings' level: 2 } . 
+			Div class: #('col-sm-12') containing: { self siblings}
+		}
+	}! !
+
+!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:46:33'!
+conformer: clusterToRender
+
+	conformer _ clusterToRender! !
+
+!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:47:32'!
+siblings
+
+	^ ConformersTable renderWith: conformer cluster allConformers 
+	! !
+
+!ConformerView class methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:46:25'!
+forConformer: conformerToDisplay
+
+	^ self new conformer: conformerToDisplay! !
 
 !HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:59:27'!
 body
@@ -807,7 +912,7 @@ hash
 
 	^ first pdbId hash bitXor: second pdbId hash! !
 
-!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:22'!
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:29:34'!
 initialize
 
 	super initialize.
@@ -819,6 +924,13 @@ initialize
 	structuralSimilarity _ ''.
 	queryCoverage _ ''.
 	targetCoverage _ ''.
+	l _ 0. 
+	lq _ 0. 
+	lt _ 0. 
+	sr _ 0. 
+	rmsd _ 0.  
+	is _ 0.  
+	p _ 0
 	! !
 
 !ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:22'!
@@ -898,10 +1010,10 @@ find: aConformerPdbId
 		or: [ pair second id = aConformerPdbId ]
 	]! !
 
-!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:35:19'!
+!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:36:17'!
 find: pdbId 
 
-	^ elements detect: [ :conformer | conformer id = pdbId ] ! !
+	^ elements detect: [ :conformer | conformer pdbId = pdbId ] ! !
 
 !ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:35:13'!
 likeSource: conformerSource
@@ -918,11 +1030,11 @@ conformers: someConformers
 
 	conformers _ someConformers ! !
 
-!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:11:24'!
+!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:58:25'!
 render
 
 	^ Table 
-		headers: #('PDB id' 'Biological Assembly' 'Resolution' 'Method' 'Longitude' 'Name' 'Species') 
+		headers: #('Cluster' 'PDB id' 'Biological Assembly' 'Resolution' 'Method' 'Longitude' 'Name' 'Species') 
 		rows: (conformers collect: [ :each | |typeLink typeLinkUrl sourceLinkUrl sourceLink|
 			typeLinkUrl _ '/cluster/search?query={1}&criteria=type' format: {each type copyReplaceAll: ' ' with: '+' } .
 			typeLink _ Hyperlink 
@@ -934,7 +1046,8 @@ render
 							to: sourceLinkUrl
 							with: each source asLowercase capitalized :: render.
 			{ 
-				Hyperlink to: ('/cluster/show/', each cluster id asString) with: each pdbId asString :: render . 
+				Hyperlink to: ('/cluster/show/', each cluster id asString) with: each cluster id asString :: render . 
+				Hyperlink to: ('/conformer/show/', each pdbId) with: each pdbId :: render .
 				each biologicalAssembly asString . 
 				each resolution asString . 
 				each method asString . 
