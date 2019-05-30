@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 29 May 2019 at 2:03:51 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 30 May 2019 at 1:46:12 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 46!
+!provides: 'CoDNaSQ' 1 47!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -10,14 +10,14 @@ SystemOrganization addCategory: #'CoDNaSQ-Model-Test'!
 SystemOrganization addCategory: #'CoDNaSQ-Web-View'!
 
 
-!classDefinition: #ProteinsControllerTest category: #'CoDNaSQ-Web-Tests'!
-TestCase subclass: #ProteinsControllerTest
+!classDefinition: #ClusterControllerTest category: #'CoDNaSQ-Web-Tests'!
+TestCase subclass: #ClusterControllerTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Web-Tests'!
-!classDefinition: 'ProteinsControllerTest class' category: #'CoDNaSQ-Web-Tests'!
-ProteinsControllerTest class
+!classDefinition: 'ClusterControllerTest class' category: #'CoDNaSQ-Web-Tests'!
+ClusterControllerTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ClusterTest category: #'CoDNaSQ-Model-Test'!
@@ -30,24 +30,24 @@ TestCase subclass: #ClusterTest
 ClusterTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #NewProteinsPath category: #'CoDNaSQ-Web'!
-StaticPath subclass: #NewProteinsPath
+!classDefinition: #ClusterShow category: #'CoDNaSQ-Web'!
+StaticPath subclass: #ClusterShow
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Web'!
-!classDefinition: 'NewProteinsPath class' category: #'CoDNaSQ-Web'!
-NewProteinsPath class
+!classDefinition: 'ClusterShow class' category: #'CoDNaSQ-Web'!
+ClusterShow class
 	instanceVariableNames: ''!
 
-!classDefinition: #ProteinShow category: #'CoDNaSQ-Web'!
-StaticPath subclass: #ProteinShow
+!classDefinition: #NewClusterPath category: #'CoDNaSQ-Web'!
+StaticPath subclass: #NewClusterPath
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Web'!
-!classDefinition: 'ProteinShow class' category: #'CoDNaSQ-Web'!
-ProteinShow class
+!classDefinition: 'NewClusterPath class' category: #'CoDNaSQ-Web'!
+NewClusterPath class
 	instanceVariableNames: ''!
 
 !classDefinition: #RootPath category: #'CoDNaSQ-Web'!
@@ -60,24 +60,24 @@ StaticPath subclass: #RootPath
 RootPath class
 	instanceVariableNames: ''!
 
-!classDefinition: #SearchProteinsPath category: #'CoDNaSQ-Web'!
-StaticPath subclass: #SearchProteinsPath
+!classDefinition: #SearchClusterPath category: #'CoDNaSQ-Web'!
+StaticPath subclass: #SearchClusterPath
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Web'!
-!classDefinition: 'SearchProteinsPath class' category: #'CoDNaSQ-Web'!
-SearchProteinsPath class
+!classDefinition: 'SearchClusterPath class' category: #'CoDNaSQ-Web'!
+SearchClusterPath class
 	instanceVariableNames: ''!
 
-!classDefinition: #ProteinsController category: #'CoDNaSQ-Web'!
-RootController subclass: #ProteinsController
+!classDefinition: #ClusterController category: #'CoDNaSQ-Web'!
+RootController subclass: #ClusterController
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Web'!
-!classDefinition: 'ProteinsController class' category: #'CoDNaSQ-Web'!
-ProteinsController class
+!classDefinition: 'ClusterController class' category: #'CoDNaSQ-Web'!
+ClusterController class
 	instanceVariableNames: ''!
 
 !classDefinition: #ClusterView category: #'CoDNaSQ-Web-View'!
@@ -206,14 +206,14 @@ printOn: aStream
 
 	aStream nextPutAll: 'Conformer: ', pdbId ! !
 
-!ProteinsControllerTest methodsFor: 'deserializeConformers' stamp: 'GC 5/27/2019 23:25:05'!
+!ClusterControllerTest methodsFor: 'deserializeConformers' stamp: 'GC 5/30/2019 01:17:48'!
 test_when_well_formated_csv_is_received_it_creates_two_conformers_and_a_conformer_pair_for_each
 	| csvFile |
 	
 	csvFile _ '"cluster_ID";"Oligomeric_State";"code1";"BA1";"code2";"BA2";"T";"R";"S";"Sq";"St";"L";"Lq";"Lt";"Sr";"RMSD";"Is";"P";"resolution1";"resolution2";"method1";"method2";"long1";"long2";"protein_type1";"protein_type2";"source1";"source2"
 1l3b;4;1l3b;2;1kxz;1;b;1;732;98;98;744;100;100;0.90;0.92;100;0;2.65;2.7;diffraction;diffraction;768;768;Precorrin-6y methyltransferase/putative decarboxylase;Precorrin-6y methyltransferase/putative decarboxylase;METHANOTHERMOBACTER THERMAUTOTROPHICUS;METHANOTHERMOBACTER THERMAUTOTROPHICUS'.
  
-	self assert: [ ProteinsController new deserializeConformers: csvFile ] 
+	self assert: [ ClusterController new deserializeConformers: csvFile ] 
 	  	 changes: [ ConformerPairRepository instance count ]  
 		 by: 1
 	! !
@@ -252,47 +252,47 @@ testWhenThereIsAConformerPairPairWithARepeatedConformerIsThree
 
 	self assert: 3 equals: cluster size! !
 
-!NewProteinsPath methodsFor: 'as yet unclassified' stamp: 'GC 5/7/2019 01:02:10'!
+!ClusterShow methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:17:48'!
 handle
 
-	^ ProteinsController new :: new: request! !
+	^ ClusterController new show: request! !
 
-!NewProteinsPath class methodsFor: 'as yet unclassified' stamp: 'GC 5/3/2019 03:10:53'!
-canHandle: aRequest
-
-	^ aRequest url = '/proteins/new'! !
-
-!ProteinShow methodsFor: 'as yet unclassified' stamp: 'GC 4/18/2019 18:27:40'!
-handle
-
-	^ ProteinsController new show: request! !
-
-!ProteinShow class methodsFor: 'as yet unclassified' stamp: 'GC 4/18/2019 18:24:24'!
+!ClusterShow class methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:31:19'!
 canHandle: aRequest
 	
-	^ aRequest url beginsWith: '/proteins/show/'! !
+	^ aRequest url beginsWith: '/cluster/show/'! !
 
-!RootPath methodsFor: 'as yet unclassified' stamp: 'GC 5/3/2019 01:56:52'!
+!NewClusterPath methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:17:48'!
 handle
 
-	^ ProteinsController new :: index: request! !
+	^ ClusterController new :: new: request! !
 
-!RootPath class methodsFor: 'as yet unclassified' stamp: 'GC 5/3/2019 01:57:23'!
+!NewClusterPath class methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:32:08'!
 canHandle: aRequest
 
-	^ aRequest url = '/' or: [ aRequest url = '/proteins' ]! !
+	^ aRequest url = '/cluster/new'! !
 
-!SearchProteinsPath methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 02:43:32'!
+!RootPath methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:17:48'!
 handle
 
-	^ ProteinsController new :: search: request! !
+	^ ClusterController new :: index: request! !
 
-!SearchProteinsPath class methodsFor: 'as yet unclassified' stamp: 'GC 5/18/2019 02:43:47'!
+!RootPath class methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:32:53'!
 canHandle: aRequest
 
-	^ aRequest url = '/proteins/search'! !
+	^ aRequest url = '/' or: [ aRequest url = '/cluster' ]! !
 
-!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:04:03'!
+!SearchClusterPath methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:17:48'!
+handle
+
+	^ ClusterController new :: search: request! !
+
+!SearchClusterPath class methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:32:57'!
+canHandle: aRequest
+
+	^ aRequest url = '/cluster/search'! !
+
+!ClusterController methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:04:03'!
 deserializeConformers: csvFile
 	| csvLines |
 	
@@ -329,7 +329,7 @@ deserializeConformers: csvFile
 		
 	]! !
 
-!ProteinsController methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 18:59:05'!
+!ClusterController methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 18:59:05'!
 import: request
 	| content response proteinCodes |
 	
@@ -347,18 +347,18 @@ import: request
 		send200Response: response
 		contentType: 'text/html;'! !
 
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 13:55:21'!
+!ClusterController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 13:55:21'!
 index: request
 
 	^ self respondSuccessfully: request 
 		   with: HomePage new! !
 
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/24/2019 00:22:17'!
+!ClusterController methodsFor: 'endpoints' stamp: 'GC 5/24/2019 00:22:17'!
 new: request
 
 	^ self respondSuccessfully: request with: (NewProtein new)! !
 
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/29/2019 00:59:38'!
+!ClusterController methodsFor: 'endpoints' stamp: 'GC 5/29/2019 00:59:38'!
 search: request
 	| query criteria |
 	
@@ -383,7 +383,7 @@ search: request
 		]
 	}! !
 
-!ProteinsController methodsFor: 'endpoints' stamp: 'GC 5/29/2019 00:56:34'!
+!ClusterController methodsFor: 'endpoints' stamp: 'GC 5/29/2019 00:56:34'!
 show: request
 	| pdbId clusterView cluster |
 	
@@ -408,11 +408,9 @@ cluster: clusterToRender
 
 	aCluster _ clusterToRender! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:13:20'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:42:45'!
 clusterDetails
-	| maxResolution minResolution conformer |
-	
-	conformer _ self cluster allConformers atRandom.
+	| maxResolution minResolution |
 		
 	maxResolution _ self cluster maxResolution asString.
 	minResolution _ self cluster minResolution asString.
@@ -422,13 +420,6 @@ clusterDetails
 			Div class: #('col-sm-12') containing: { Heading with: 'Cluster information' level: 2 } .
 			Div class: #('col-sm-12') containing: {
 				Paragraph with: 'Cluster ID: ', self cluster id .
-				Paragraph with: 'Name: ', conformer type .
-				Paragraph with: 'Organism: ', conformer source asLowercase capitalized
-			}
-		} .
-		Div class: #('col-sm-12' card fluid) containing: {
-			Div class: #('col-sm-12') containing: { Heading with: 'Structural information' level: 2 } .
-			Div class: #('col-sm-12') containing: {
 				Paragraph with: 'Oligomeric State: ', self cluster oligomericStateName .
 				Paragraph with: 'Conformers: ', self cluster size asString .
 				Paragraph with: 'Resolution: [', minResolution, ' - ', maxResolution,']'
@@ -489,7 +480,7 @@ body
 			}
 		}) :: body! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:25:30'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:31:40'!
 heading
 	| conformerPairAmount |
 
@@ -497,10 +488,10 @@ heading
 		
 	^ Div class: #(row) containing: {
 		Heading with: (Smaller with: 'Currently there are ', conformerPairAmount, ' conformer pairs.' :: render) level: 3.
-		Div class: #('col-sm-12') containing: { Hyperlink to: '/proteins/new' with: (Smaller with: 'Upload more proteins' :: render) }
+		Div class: #('col-sm-12') containing: { Hyperlink to: '/cluster/new' with: (Smaller with: 'Upload more proteins' :: render) }
 	}! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 00:57:48'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:32:04'!
 searchBar
 	| formContent |
 	
@@ -516,15 +507,15 @@ searchBar
 		} .
 		Div class: #('col-sm') containing: {
 			Span with: (Smaller with: 'Example entries: ' ::render) .
-			Smaller with: (Hyperlink to: ('/proteins/show/CQ2vcq') with: 'CQ2vcq' :: render) .
+			Smaller with: (Hyperlink to: ('/cluster/show/CQ2vcq') with: 'CQ2vcq' :: render) .
 			Span with: (Smaller with: ' | ' :: render) .
-			Smaller with: (Hyperlink to: ('/proteins/show/CQ4ha3') with: 'CQ4ha3' :: render) .
+			Smaller with: (Hyperlink to: ('/cluster/show/CQ4ha3') with: 'CQ4ha3' :: render) .
 			Span with: (Smaller with: ' | ' :: render) .
-			Smaller with: (Hyperlink to: ('/proteins/show/CQ3tjt') with: 'CQ3tjt' :: render)
+			Smaller with: (Hyperlink to: ('/cluster/show/CQ3tjt') with: 'CQ3tjt' :: render)
 		}
 	}.
 	
-	^ HtmlForm action: '/proteins/search' method: 'get' enctype: 'url-encoded' containing: formContent! !
+	^ HtmlForm action: '/cluster/search' method: 'get' enctype: 'url-encoded' containing: formContent! !
 
 !MainView methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 16:16:19'!
 body
@@ -546,12 +537,12 @@ withPartial: partialView
 
 	^ self new :: partial: partialView! !
 
-!NewProtein methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 00:22:24'!
+!NewProtein methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:32:11'!
 body
 	
 	^ MainView withPartial: (Div containing: {
 		Heading with: 'Here you will be able to upload new proteins' level: 3.
-		HtmlForm action: '/proteins/import' method: 'post' enctype: 'multipart/form-data' containing: (Div containing:{ 
+		HtmlForm action: '/cluster/import' method: 'post' enctype: 'multipart/form-data' containing: (Div containing:{ 
 			FormInput type: 'file' name: 'proteinsCSV' .
 			FormInput type: 'submit' name: 'Submit' value: 'Submit'
 		})
@@ -801,10 +792,10 @@ first
 
 	^ first ! !
 
-!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:20:35'!
 hash
 
-	^ first id hash bitXor: second id hash! !
+	^ first pdbId hash bitXor: second pdbId hash! !
 
 !ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:22'!
 initialize
@@ -936,23 +927,23 @@ conformers: someConformers
 
 	conformers _ someConformers ! !
 
-!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:03:44'!
+!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:31:33'!
 render
 
 	^ Table 
 		headers: #('PDB id' 'Biological Assembly' 'Resolution' 'Method' 'Longitude' 'Type' 'Species') 
 		rows: (conformers collect: [ :each | |typeLink typeLinkUrl sourceLinkUrl sourceLink|
-			typeLinkUrl _ '/proteins/search?query={1}&criteria=type' format: {each type copyReplaceAll: ' ' with: '+' } .
+			typeLinkUrl _ '/cluster/search?query={1}&criteria=type' format: {each type copyReplaceAll: ' ' with: '+' } .
 			typeLink _ Hyperlink 
 							to: typeLinkUrl
 							with: each type asLowercase capitalized :: render.
 							
-			sourceLinkUrl _ '/proteins/search?query={1}&criteria=source' format: { each source copyReplaceAll: ' ' with: '+' } .
+			sourceLinkUrl _ '/cluster/search?query={1}&criteria=source' format: { each source copyReplaceAll: ' ' with: '+' } .
 			sourceLink _ Hyperlink 
 							to: sourceLinkUrl
 							with: each source asLowercase capitalized :: render.
 			{ 
-				Hyperlink to: ('/proteins/show/', each cluster id asString) with: each pdbId asString :: render . 
+				Hyperlink to: ('/cluster/show/', each cluster id asString) with: each pdbId asString :: render . 
 				each biologicalAssembly asString . 
 				each resolution asString . 
 				each method asString . 
