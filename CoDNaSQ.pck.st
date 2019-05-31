@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 30 May 2019 at 7:00:10 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3779] on 31 May 2019 at 8:15:23 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 50!
+!provides: 'CoDNaSQ' 1 54!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -182,7 +182,7 @@ Conformer class
 
 !classDefinition: #ConformerPair category: #'CoDNaSQ-Model'!
 Object subclass: #ConformerPair
-	instanceVariableNames: 'alignmentType alignmentRanking structuralSimilarity queryCoverage targetCoverage first second l lq lt sr rmsd is p'
+	instanceVariableNames: 'alignmentType alignmentRanking structuralSimilarity queryCoverage targetCoverage first second l lq lt sr rmsd p ls'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Model'!
@@ -342,7 +342,7 @@ canHandle: aRequest
 
 	^ aRequest url = '/cluster/search'! !
 
-!ClusterController methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:04:03'!
+!ClusterController methodsFor: 'as yet unclassified' stamp: 'GC 5/31/2019 07:50:23'!
 deserializeConformers: csvFile
 	| csvLines |
 	
@@ -370,7 +370,21 @@ deserializeConformers: csvFile
 			source: (csvLine at: 28)
 			cluster: cluster.
 
-		conformerPair _ ConformerPair with: aConformer with: anotherConformer.
+		conformerPair _ ConformerPair 
+			with: aConformer 
+			with: anotherConformer
+			t: (csvLine at: 7) 
+			r: (csvLine at: 8) 
+			s: (csvLine at: 9) 
+			sq: (csvLine at: 10) 
+			st: (csvLine at: 11) 
+			l: (csvLine at: 12) 
+			lq: (csvLine at: 13) 
+			lt: (csvLine at: 14) 
+			sr: (csvLine at: 15) 
+			rmsd: (csvLine at: 16) 
+			ls: (csvLine at: 17) 
+			p: (csvLine at: 18).
 		
 		cluster addConformerPair: conformerPair.
 				
@@ -467,7 +481,7 @@ cluster: clusterToRender
 
 	aCluster _ clusterToRender! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:42:45'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/31/2019 07:28:27'!
 clusterDetails
 	| maxResolution minResolution |
 		
@@ -485,6 +499,10 @@ clusterDetails
 			}
 		} .
 		Div class: #('col-sm-12' card fluid) containing: {
+			Div class: #('col-sm-12') containing: { Heading with: 'Maximum RMSD Pair information' level: 2 } .
+			Div class: #('col-sm-12') containing: { self maximumRmsdPairDetailsOf: self cluster }
+		} .
+		Div class: #('col-sm-12' card fluid) containing: {
 			Div class: #('col-sm-12') containing: { Heading with: 'Conformers' level: 2 } . 
 			Div class: #('col-sm-12') containing: { self conformers: self cluster }
 		}
@@ -495,6 +513,26 @@ conformers: cluster
 
 	^ ConformersTable renderWith: cluster allConformers 
 	! !
+
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/31/2019 08:14:38'!
+maximumRmsdPairDetailsOf: cluster
+	| maximumPairByRMSD query target |
+	
+	maximumPairByRMSD _ ClusterRepository instance maximumPairByRMSDOf: cluster.
+	query _ maximumPairByRMSD first.
+	target _ maximumPairByRMSD second.
+	
+	^ Table 
+		headers: #( ' ' Query Target Comparison ) 
+		rows: {
+			{ 'PDB ID' . query pdbId . target pdbId . ' ' } .
+			{ 'Biological Assembly' . query biologicalAssembly . target biologicalAssembly . ' '  } .
+			{ 'Resolution' . query resolution asString . target resolution asString . ' '  } .
+			{ 'Method' . query method . target method . ' '  } .
+			{ 'Length' . query length . target length . ' ' } .
+			{ 'Name' . query type . target type . ' ' } .
+			{ 'Source' . query source . target source  . ' ' }
+		}  :: style: 'max-height:unset'! !
 
 !ClusterView class methodsFor: 'as yet unclassified' stamp: 'GC 5/28/2019 00:07:56'!
 forCluster: clusterToDisplay
@@ -680,6 +718,11 @@ allConformers
 		allConformers add: (conformerPair first).
 		allConformers add: (conformerPair second); yourself
 	]! !
+
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/31/2019 07:56:53'!
+conformerPairs
+
+	^ conformerPairs ! !
 
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
 hash
@@ -912,7 +955,7 @@ hash
 
 	^ first pdbId hash bitXor: second pdbId hash! !
 
-!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:29:34'!
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/31/2019 07:45:47'!
 initialize
 
 	super initialize.
@@ -929,9 +972,14 @@ initialize
 	lt _ 0. 
 	sr _ 0. 
 	rmsd _ 0.  
-	is _ 0.  
+	ls _ 0.  
 	p _ 0
 	! !
+
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/31/2019 07:57:53'!
+rmsd
+
+	^ rmsd asNumber! !
 
 !ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:22'!
 second
@@ -943,9 +991,31 @@ with: aConformer with: anotherConformer
 	first _ aConformer.
 	second _ anotherConformer! !
 
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/31/2019 07:45:47'!
+with: aConformer with: anotherConformer t: anAlignmentType r: anAlignmentRaking s: anStructuralSimilarity sq: aQueryCover st: aTargetCover l: anAmountOfSimilarPairs lq: aQueryCoverByLength lt: aTargetCoverByLength sr: anErrorDistance rmsd: anRmsd ls: percentageOfTargetIdentity p: aNumberOfPermutations
+
+	first _ aConformer.
+	second _ anotherConformer.
+	alignmentType _ anAlignmentType .
+	alignmentRanking _ anAlignmentRaking .
+	structuralSimilarity _ anStructuralSimilarity .
+	queryCoverage _ aQueryCover .
+	targetCoverage _ aTargetCover .
+	l _ anAmountOfSimilarPairs .
+	lq _ aQueryCoverByLength .
+	lt _ aTargetCoverByLength .
+	sr _ anErrorDistance .
+	rmsd _ anRmsd .
+	ls _ percentageOfTargetIdentity .
+	p _ aNumberOfPermutations! !
+
 !ConformerPair class methodsFor: 'instance creation' stamp: 'GC 5/10/2019 01:47:43'!
 with: aConformer with: anotherConformer
 	^ self new :: with: aConformer with: anotherConformer! !
+
+!ConformerPair class methodsFor: 'instance creation' stamp: 'GC 5/31/2019 07:39:40'!
+with: aConformer with: anotherConformer t: t r: r s: s sq: sq st: st l: l lq: lq lt: lt sr: sr rmsd: rmsd ls: ls p: p
+	^ self new :: with: aConformer with: anotherConformer t: t r: r s: s sq: sq st: st l: l lq: lq lt: lt sr: sr rmsd: rmsd ls: ls p: p! !
 
 !Repository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:32:38'!
 count
@@ -1001,6 +1071,12 @@ findOrCreate: aClusterId oligomericState: anOligomericState
 			
 			^ newCluster
 		]! !
+
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/31/2019 08:01:26'!
+maximumPairByRMSDOf: aCluster
+
+	
+	^ aCluster conformerPairs detectMax: [ :pair | pair rmsd ]! !
 
 !ConformerPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:35:57'!
 find: aConformerPdbId
