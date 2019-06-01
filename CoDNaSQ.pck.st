@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3779] on 31 May 2019 at 8:15:23 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3781] on 1 June 2019 at 1:13:28 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 54!
+!provides: 'CoDNaSQ' 1 55!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -514,7 +514,7 @@ conformers: cluster
 	^ ConformersTable renderWith: cluster allConformers 
 	! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/31/2019 08:14:38'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 01:08:43'!
 maximumRmsdPairDetailsOf: cluster
 	| maximumPairByRMSD query target |
 	
@@ -531,7 +531,20 @@ maximumRmsdPairDetailsOf: cluster
 			{ 'Method' . query method . target method . ' '  } .
 			{ 'Length' . query length . target length . ' ' } .
 			{ 'Name' . query type . target type . ' ' } .
-			{ 'Source' . query source . target source  . ' ' }
+			{ 'Source' . query source . target source  . ' ' } .
+			{ 'T' . ' ' . ' '. maximumPairByRMSD alignmentType } .
+			{ 'R' . ' ' . ' ' . maximumPairByRMSD alignmentRanking } .
+			{ 'S' . ' ' . ' '. maximumPairByRMSD s } .
+			{ 'Sq' . ' ' . ' '. maximumPairByRMSD sq } .
+			{ 'St' . ' ' . ' '. maximumPairByRMSD st } .
+			{ 'L' . ' ' . ' '. maximumPairByRMSD l } .
+			{ 'Lq' . ' ' . ' '. maximumPairByRMSD lq } .
+			{ 'Lt' . ' ' . ' '. maximumPairByRMSD lt } .
+			{ 'Sr' . ' ' . ' '. maximumPairByRMSD sr } .
+			{ 'RMSD' . ' ' . ' '. maximumPairByRMSD rmsd asString } .
+			{ 'Is' . ' ' . ' '. maximumPairByRMSD is } .
+			{ 'P' . ' ' . ' '. maximumPairByRMSD p }
+			
 		}  :: style: 'max-height:unset'! !
 
 !ClusterView class methodsFor: 'as yet unclassified' stamp: 'GC 5/28/2019 00:07:56'!
@@ -945,6 +958,16 @@ pdbId: aPdbID biologicalAssembly: aBiologicalAssembly resolution: aResolution me
 		and: [ self first = anObject first ] ::
 		and: [ self second = anObject second ]! !
 
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 01:04:01'!
+alignmentRanking
+
+	^ alignmentRanking! !
+
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 01:02:36'!
+alignmentType
+
+	^ alignmentType! !
+
 !ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:23:57'!
 first
 
@@ -976,15 +999,59 @@ initialize
 	p _ 0
 	! !
 
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 01:07:25'!
+is
+
+	^ ls! !
+
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 01:06:58'!
+l
+
+	^ l! !
+
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 01:07:04'!
+lq
+
+	^ lq! !
+
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 01:07:09'!
+lt
+
+	^ lt! !
+
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 01:07:32'!
+p
+
+	^ p! !
+
 !ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/31/2019 07:57:53'!
 rmsd
 
 	^ rmsd asNumber! !
 
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 01:06:34'!
+s
+
+	^ structuralSimilarity! !
+
 !ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:22'!
 second
 
 	^ second ! !
+
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 01:06:46'!
+sq
+
+	^ queryCoverage ! !
+
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 01:07:13'!
+sr
+
+	^ sr! !
+
+!ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 01:06:52'!
+st
+	^ targetCoverage ! !
 
 !ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:22'!
 with: aConformer with: anotherConformer
