@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3781] on 1 June 2019 at 1:13:28 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3781] on 1 June 2019 at 3:32:24 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 55!
+!provides: 'CoDNaSQ' 1 56!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -142,7 +142,7 @@ HomePage class
 
 !classDefinition: #MainView category: #'CoDNaSQ-Web-View'!
 View subclass: #MainView
-	instanceVariableNames: 'partial'
+	instanceVariableNames: 'partial scripts'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Web-View'!
@@ -422,12 +422,13 @@ new: request
 
 	^ self respondSuccessfully: request with: (NewProtein new)! !
 
-!ClusterController methodsFor: 'endpoints' stamp: 'GC 5/29/2019 00:59:38'!
+!ClusterController methodsFor: 'endpoints' stamp: 'GC 6/1/2019 02:07:29'!
 search: request
-	| query criteria |
+	| query criteria page |
 	
 	query _ request fields at: 'query'.
 	criteria _ request fields at: 'criteria'.
+	page _ request fields at: 'page' ifAbsent: [ 1 ].
 	
 	^ criteria caseOf: {
 		[ 'cluster-id' ]    
@@ -436,14 +437,16 @@ search: request
 				self respondSuccessfully: request  with: (ClusterView forCluster: cluster) 
 		].
 		[ 'type' ]	
-			-> [ |conformersByType|
+			-> [ |conformersByType paginatedConformers |
 				conformersByType _ ConformerRepository instance likeType: query.
-				self respondSuccessfully: request with: (ConformerSearchResultView containing: conformersByType) 
+				paginatedConformers _ Paginate : conformersByType :: atPage: page.
+				self respondSuccessfully: request with: (ConformerSearchResultView containing: paginatedConformers) 
 		].
 		[ 'source' ]
-			-> [ |conformersBySource|
+			-> [ |conformersBySource paginatedConformers|
 				conformersBySource _ ConformerRepository instance likeSource: query.
-				self respondSuccessfully: request with: (ConformerSearchResultView containing: conformersBySource)
+				paginatedConformers _ Paginate : conformersBySource :: atPage: page.
+				self respondSuccessfully: request with: (ConformerSearchResultView containing: paginatedConformers)
 		]
 	}! !
 
@@ -564,12 +567,37 @@ conformers: conformersToDisplay
 
 	conformers  _ conformersToDisplay! !
 
-!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 01:29:41'!
+!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 02:51:30'!
 results
-
-	^ ConformersTable renderWith: conformers
+	| links |
+	
+	links _ Div containing: { 
+		Hyperlink name: 'prevPageLink' to: '' with: '<' .
+		Hyperlink name: 'nextPageLink' to: '' with: '>' 
+	}.
+	
+	^ Div containing: { links . ConformersTable renderWith: conformers }
 	
 	! !
+
+!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 03:11:05'!
+scripts
+
+	^ '
+	document.addEventListener("DOMContentLoaded", function(event) { 
+  		var documentUrl = document.documentURI;
+		var currentPageUrl = documentUrl.slice(0, -1);
+		var currentPageNumber = parseInt(documentUrl.substr(-1));
+		var prevPageLink = currentPageUrl + (currentPageNumber - 1);
+		var nextPageLink = currentPageUrl + (currentPageNumber + 1);
+		
+		document.getElementsByName("prevPageLink")[0]
+			.setAttribute("href", prevPageLink);
+			
+		document.getElementsByName("nextPageLink")[0]
+			.setAttribute("href", nextPageLink);
+	});	
+	'! !
 
 !ConformerSearchResultView class methodsFor: 'as yet unclassified' stamp: 'GC 5/22/2019 02:05:53'!
 containing: conformers
@@ -657,7 +685,7 @@ heading
 		Div class: #('col-sm-12') containing: { Hyperlink to: '/cluster/new' with: (Smaller with: 'Upload more proteins' :: render) }
 	}! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:32:04'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 03:31:08'!
 searchBar
 	| formContent |
 	
@@ -669,6 +697,7 @@ searchBar
 				{ 'type' . 'Conformer type' } .
 				{ 'source' . 'Conformer source' }
 			}.
+			FormInput type: 'text' name: 'page' placeholder: '' value: '1' css: #(hidden).
 			FormInput type: 'submit' name: '' value: 'Search'
 		} .
 		Div class: #('col-sm') containing: {
