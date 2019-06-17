@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3781] on 1 June 2019 at 3:32:24 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 17 June 2019 at 8:59:15 pm'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 56!
+!provides: 'CoDNaSQ' 1 60!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -48,6 +48,16 @@ StaticPath subclass: #ConformerShow
 	category: 'CoDNaSQ-Web'!
 !classDefinition: 'ConformerShow class' category: #'CoDNaSQ-Web'!
 ConformerShow class
+	instanceVariableNames: ''!
+
+!classDefinition: #FaviconPath category: #'CoDNaSQ-Web'!
+StaticPath subclass: #FaviconPath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'FaviconPath class' category: #'CoDNaSQ-Web'!
+FaviconPath class
 	instanceVariableNames: ''!
 
 !classDefinition: #NewClusterPath category: #'CoDNaSQ-Web'!
@@ -312,6 +322,19 @@ canHandle: aRequest
 	
 	^ aRequest url beginsWith: '/conformer/show/'! !
 
+!FaviconPath methodsFor: 'as yet unclassified' stamp: 'GC 6/5/2019 23:10:07'!
+handle
+	
+	^ RootController new 
+		respondSuccessfully: request 
+		withImageIn: '/Users/gaston/Code/Smalltalk/codnasq/assets/favicon.ico'
+! !
+
+!FaviconPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/5/2019 01:42:15'!
+canHandle: aRequest
+
+	^ aRequest url = '/favicon.ico'! !
+
 !NewClusterPath methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:17:48'!
 handle
 
@@ -484,40 +507,49 @@ cluster: clusterToRender
 
 	aCluster _ clusterToRender! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/31/2019 07:28:27'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 19:56:20'!
 clusterDetails
 	| maxResolution minResolution |
 		
 	maxResolution _ self cluster maxResolution asString.
 	minResolution _ self cluster minResolution asString.
 	
-	^ Div class: #(row) containing: {
-		Div class: #('col-sm-12' card fluid) containing: {
-			Div class: #('col-sm-12') containing: { Heading with: 'Cluster information' level: 2 } .
-			Div class: #('col-sm-12') containing: {
-				Paragraph with: 'Cluster ID: ', self cluster id .
-				Paragraph with: 'Oligomeric State: ', self cluster oligomericStateName .
-				Paragraph with: 'Conformers: ', self cluster size asString .
-				Paragraph with: 'Resolution: [', minResolution, ' - ', maxResolution,']'
-			}
+	^ Div containing: {
+		Div css: #(panel) containing: {
+			Paragraph with: 'Cluster information' :: css: #('panel-heading' 'has-text-weight-bold').
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Cluster ID:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: self cluster id
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Oligomeric State:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: self cluster oligomericStateName
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Conformers:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: self cluster size asString
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Resolution:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: '[', minResolution, ' - ', maxResolution,']'
+			}.
 		} .
-		Div class: #('col-sm-12' card fluid) containing: {
-			Div class: #('col-sm-12') containing: { Heading with: 'Maximum RMSD Pair information' level: 2 } .
-			Div class: #('col-sm-12') containing: { self maximumRmsdPairDetailsOf: self cluster }
+		Div css: #(panel) containing: {
+			Paragraph with: 'Maximum RMSD Pair information' :: css: #('panel-heading' 'has-text-weight-bold').
+			Div css: #('panel-block') containing: { self maximumRmsdPairDetailsOf: self cluster }
 		} .
-		Div class: #('col-sm-12' card fluid) containing: {
-			Div class: #('col-sm-12') containing: { Heading with: 'Conformers' level: 2 } . 
-			Div class: #('col-sm-12') containing: { self conformers: self cluster }
+		Div css: #(panel) containing: {
+			Paragraph with: 'Conformers' :: css: #('panel-heading' 'has-text-weight-bold'). 
+			Div css: #('panel-block') containing: { self conformers: self cluster }
 		}
 	}! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 01:30:05'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 19:46:22'!
 conformers: cluster
 
-	^ ConformersTable renderWith: cluster allConformers 
-	! !
+	^ ConformersTable renderWith: cluster allConformers! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 01:08:43'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 19:41:03'!
 maximumRmsdPairDetailsOf: cluster
 	| maximumPairByRMSD query target |
 	
@@ -548,7 +580,7 @@ maximumRmsdPairDetailsOf: cluster
 			{ 'Is' . ' ' . ' '. maximumPairByRMSD is } .
 			{ 'P' . ' ' . ' '. maximumPairByRMSD p }
 			
-		}  :: style: 'max-height:unset'! !
+		}  :: css: #('table' 'is-bordered' 'is-striped' 'is-hoverable' 'is-fullwidth')! !
 
 !ClusterView class methodsFor: 'as yet unclassified' stamp: 'GC 5/28/2019 00:07:56'!
 forCluster: clusterToDisplay
@@ -580,10 +612,10 @@ results
 	
 	! !
 
-!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 03:11:05'!
+!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 6/5/2019 01:30:51'!
 scripts
 
-	^ '
+	^ '<script>
 	document.addEventListener("DOMContentLoaded", function(event) { 
   		var documentUrl = document.documentURI;
 		var currentPageUrl = documentUrl.slice(0, -1);
@@ -596,7 +628,7 @@ scripts
 			
 		document.getElementsByName("nextPageLink")[0]
 			.setAttribute("href", nextPageLink);
-	});	
+	})</script>
 	'! !
 
 !ConformerSearchResultView class methodsFor: 'as yet unclassified' stamp: 'GC 5/22/2019 02:05:53'!
@@ -609,45 +641,95 @@ body
 
 	^ MainView withPartial: self clusterDetails :: body! !
 
-!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:59:36'!
+!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 20:01:18'!
 clusterDetails
 	| maxResolution minResolution |
 		
 	maxResolution _ conformer cluster maxResolution asString.
 	minResolution _ conformer cluster minResolution asString.
 	
-	^ Div class: #(row) containing: {
-	Div class: #('col-sm-12' card fluid) containing: {
-			Div class: #('col-sm-12') containing: { Heading with: 'Conformer information' level: 2 } .
-			Div class: #('col-sm-12') containing: {
-				Paragraph with: 'PDB ID: ', conformer pdbId.
-				Paragraph with: 'Biological assembly: ', conformer biologicalAssembly.
-				Paragraph with: 'Resolution: ', conformer resolution asString.
-				Paragraph with: 'Method: ', conformer method.
-				Paragraph with: 'Length: ', conformer length.
-				Paragraph with: 'Name: ', conformer type.
-				Paragraph with: 'Source: ', conformer source.
+	^ Div containing: {
+		Div css: #(panel) containing: {
+			Paragraph with: 'Conformer information' :: css: #('panel-heading' 'has-text-weight-bold').
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'PDB ID:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: conformer pdbId
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Biological assembly:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: conformer biologicalAssembly
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Resolution:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: conformer resolution asString
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Method:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: conformer method
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Length:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: conformer length
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Name' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: conformer type
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Source:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: conformer source
 			}
 		} .
-		Div class: #('col-sm-12' card fluid) containing: {
-			Div class: #('col-sm-12') containing: { Heading with: 'Cluster information' level: 2 } .
-			Div class: #('col-sm-12') containing: {
-				Paragraph with: 'Cluster ID: ', conformer cluster id .
-				Paragraph with: 'Oligomeric State: ', conformer cluster oligomericStateName .
-				Paragraph with: 'Conformers: ', conformer cluster size asString .
-				Paragraph with: 'Resolution: [', minResolution, ' - ', maxResolution,']'
+		self conformer3dView .
+		Div css: #(panel) containing: {
+			Paragraph with: 'Cluster information' :: css: #('panel-heading' 'has-text-weight-bold').
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Cluster ID:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: conformer cluster id
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Oligomeric State:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: conformer cluster oligomericStateName
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Conformers:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: conformer cluster size asString
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Resolution:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: '[', minResolution, ' - ', maxResolution,']'
 			}
 		} .
-		Div class: #('col-sm-12' card fluid) containing: {
-			Div class: #('col-sm-12') containing: { Heading with: 'Siblings' level: 2 } . 
-			Div class: #('col-sm-12') containing: { self siblings}
+		Div css: #(panel) containing: {
+			Paragraph with: 'Siblings' :: css: #('panel-heading' 'has-text-weight-bold').
+			Div css: #('panel-block') containing: { self siblings}
 		}
 	}! !
+
+!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 20:13:00'!
+conformer3dView
+
+	^ Div css: #(panel) containing: {
+			Paragraph with: '3D View' :: css: #('panel-heading' 'has-text-weight-bold').
+			Div new id: 'viewport' :: css: #('panel-block' 'is-paddingless') :: style: 'height: 45vh;'
+		}! !
 
 !ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:46:33'!
 conformer: clusterToRender
 
 	conformer _ clusterToRender! !
+
+!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 20:18:56'!
+scripts
+
+	^ super scripts, 
+		'<script type="text/javascript" src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>',
+		'<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				var stage = new NGL.Stage("viewport");
+				stage.loadFile("rcsb://',conformer pdbId,'", {defaultRepresentation: true});
+			});
+	      </script>'! !
 
 !ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:47:32'!
 siblings
@@ -660,47 +742,39 @@ forConformer: conformerToDisplay
 
 	^ self new conformer: conformerToDisplay! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:59:27'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 17:49:27'!
 body
 		
-	^ MainView withPartial: (Div containing: {
-		Div class: #(row) containing: { self heading } .
-			Div class: #(row) containing: {  
-				Div class: #('col-sm-12') containing: { 
-					Div class: #(row) containing: {
-						Div class: #('col-sm-6' 'col-sm-offset-3') containing: { self searchBar }
-					}
-				}
-			}
+	^ MainView withPartial: (Div css: #(box 'has-text-centered') containing: {
+		Div containing: { self heading } .
+		Div containing: {  self searchBar }
 		}) :: body! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:31:40'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 17:45:33'!
 heading
-	| conformerPairAmount |
-
-	conformerPairAmount _ ConformerPairRepository instance count asString.
 		
-	^ Div class: #(row) containing: {
-		Heading with: (Smaller with: 'Currently there are ', conformerPairAmount, ' conformer pairs.' :: render) level: 3.
-		Div class: #('col-sm-12') containing: { Hyperlink to: '/cluster/new' with: (Smaller with: 'Upload more proteins' :: render) }
+	^ Div containing: {
+		Heading with: 'Welcome to Conformational Diversity of Native State - Quaternary' :: css: #('title' 'has-text-weight-bold').
+		Div containing: { Hyperlink to: '/cluster/new' with: (Smaller with: 'Upload more proteins' :: render) }
 	}! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 03:31:08'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 20:57:14'!
 searchBar
 	| formContent |
 	
-	formContent _ Div class: #('row' 'col-sm-12') containing: { 
-		Div class: #('row' 'col-sm-12') containing: {
-			FormInput type: 'text' name: 'query' placeholder: 'Search by...' css: #('col-sm').
-			Select name: 'criteria' withOptions: { 
-				{ 'cluster-id' . 'Cluster ID' } .
-				{ 'type' . 'Conformer type' } .
-				{ 'source' . 'Conformer source' }
+	formContent _ Div css: #() containing: { 
+		Div css: #('field' 'has-addons' 'is-grouped-centered' 'column' 'is-offset-3' 'is-three-fifths') containing: {
+			FormInput new :: type: 'text' :: name: 'query' :: placeHolder: 'Search by...' :: css: #(input).
+			Div css: #(select) containing: { 
+					Select name: 'criteria' withOptions: { 
+					{ 'cluster-id' . 'Cluster ID' } .
+					{ 'type' . 'Conformer type' } .
+					{ 'source' . 'Conformer source' }
+				}
 			}.
-			FormInput type: 'text' name: 'page' placeholder: '' value: '1' css: #(hidden).
-			FormInput type: 'submit' name: '' value: 'Search'
+			FormInput new :: type: 'submit' :: value: 'Search' :: css: #('button' 'is-info')
 		} .
-		Div class: #('col-sm') containing: {
+		Div css: #('has-margin-t-6') containing: {
 			Span with: (Smaller with: 'Example entries: ' ::render) .
 			Smaller with: (Hyperlink to: ('/cluster/show/CQ2vcq') with: 'CQ2vcq' :: render) .
 			Span with: (Smaller with: ' | ' :: render) .
@@ -712,14 +786,14 @@ searchBar
 	
 	^ HtmlForm action: '/cluster/search' method: 'get' enctype: 'url-encoded' containing: formContent! !
 
-!MainView methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 16:16:19'!
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 17:47:37'!
 body
 
 	^ Div containing: {
-		Header css: #(sticky) containing: {
-			Heading with: (Hyperlink to: '/' with: 'Conformational Diversity of Native State - Quaternary' :: render)
+		Nav css: #(navbar 'is-info has-shadow has-margin-b-5') containing: {
+			Div css: #('navbar-brand has-text-weight-bold') containing: { (Hyperlink to: '/' with: 'CoDNaS Q' :: css: #('navbar-item')) }
 		} .
-		Div class: #(container) containing: { partial } 
+		Div css: #('column' 'is-four-fifths' 'is-offset-1') containing: { partial } 
 	}:: render! !
 
 !MainView methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:09:01'!
@@ -732,16 +806,21 @@ withPartial: partialView
 
 	^ self new :: partial: partialView! !
 
-!NewProtein methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:32:11'!
+!NewProtein methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 20:57:14'!
 body
 	
-	^ MainView withPartial: (Div containing: {
-		Heading with: 'Here you will be able to upload new proteins' level: 3.
-		HtmlForm action: '/cluster/import' method: 'post' enctype: 'multipart/form-data' containing: (Div containing:{ 
-			FormInput type: 'file' name: 'proteinsCSV' .
-			FormInput type: 'submit' name: 'Submit' value: 'Submit'
-		})
-	}) :: body! !
+	^ MainView withPartial: (Div css: #(panel) containing: {
+		Paragraph with: 'Here you will be able to upload new proteins' :: css: #('panel-heading' 'has-text-weight-bold').
+		HtmlForm action: '/cluster/import' 
+					 method: 'post' 
+					 enctype: 'multipart/form-data' 
+					 containing: (
+						Div css: #('panel-block') 
+					 		containing: {
+								FileInput new :: name: 'proteinsCSV' :: css: #(field).
+								FormInput new type: 'submit' :: name: 'Submit' :: value: 'Submit' :: css: #('button' 'is-link' 'control') 
+						})
+	   }) :: body! !
 
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
 = anObject
@@ -1202,11 +1281,11 @@ conformers: someConformers
 
 	conformers _ someConformers ! !
 
-!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:58:25'!
+!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 20:14:18'!
 render
 
 	^ Table 
-		headers: #('Cluster' 'PDB id' 'Biological Assembly' 'Resolution' 'Method' 'Longitude' 'Name' 'Species') 
+		headers: #('Cluster' 'PDB' 'Biological Assembly' 'Resolution' 'Method' 'Longitude' 'Name' 'Species') 
 		rows: (conformers collect: [ :each | |typeLink typeLinkUrl sourceLinkUrl sourceLink|
 			typeLinkUrl _ '/cluster/search?query={1}&criteria=type' format: {each type copyReplaceAll: ' ' with: '+' } .
 			typeLink _ Hyperlink 
@@ -1227,7 +1306,7 @@ render
 				typeLink . 
 				sourceLink 
 			}
-		]) :: style: 'max-height:unset'
+		]) :: css: #('table' 'is-bordered' 'is-striped' 'is-hoverable' 'is-fullwidth')
 	
 	! !
 
