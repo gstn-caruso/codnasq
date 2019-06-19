@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 17 June 2019 at 8:59:15 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 18 June 2019 at 5:44:48 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 60!
+!provides: 'CoDNaSQ' 1 62!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -122,7 +122,7 @@ ClusterView class
 
 !classDefinition: #ConformerSearchResultView category: #'CoDNaSQ-Web-View'!
 View subclass: #ConformerSearchResultView
-	instanceVariableNames: 'conformers'
+	instanceVariableNames: 'conformers page totalPages'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Web-View'!
@@ -445,31 +445,41 @@ new: request
 
 	^ self respondSuccessfully: request with: (NewProtein new)! !
 
-!ClusterController methodsFor: 'endpoints' stamp: 'GC 6/1/2019 02:07:29'!
+!ClusterController methodsFor: 'endpoints' stamp: 'GC 6/18/2019 05:43:27'!
 search: request
 	| query criteria page |
 	
 	query _ request fields at: 'query'.
 	criteria _ request fields at: 'criteria'.
-	page _ request fields at: 'page' ifAbsent: [ 1 ].
+	page _ request fields at: 'page'
+		ifPresent: [ :crPage | crPage asNumber <= 0 ifTrue: [ 1 ] ifFalse: [ crPage asNumber ] ] 
+		ifAbsent: [ 1 ].
 	
 	^ criteria caseOf: {
 		[ 'cluster-id' ]    
 			-> [ |cluster|
-				cluster _ ClusterRepository instance find: query.
+				cluster _ ClusterRepository instance find: query ifNone: [ request send404Response ].
 				self respondSuccessfully: request  with: (ClusterView forCluster: cluster) 
 		].
 		[ 'type' ]	
 			-> [ |conformersByType paginatedConformers |
 				conformersByType _ ConformerRepository instance likeType: query.
 				paginatedConformers _ Paginate : conformersByType :: atPage: page.
-				self respondSuccessfully: request with: (ConformerSearchResultView containing: paginatedConformers) 
+				self respondSuccessfully: request 
+					with: (ConformerSearchResultView containing: paginatedConformers 
+															  atPage: page
+															  totalPages: (conformersByType size / 10) ceiling
+					) 
 		].
 		[ 'source' ]
 			-> [ |conformersBySource paginatedConformers|
 				conformersBySource _ ConformerRepository instance likeSource: query.
 				paginatedConformers _ Paginate : conformersBySource :: atPage: page.
-				self respondSuccessfully: request with: (ConformerSearchResultView containing: paginatedConformers)
+				self respondSuccessfully: request 
+					with: (ConformerSearchResultView containing: paginatedConformers 
+															  atPage: page
+															  totalPages: (conformersBySource size / 10) ceiling
+					)
 		]
 	}! !
 
@@ -599,42 +609,78 @@ conformers: conformersToDisplay
 
 	conformers  _ conformersToDisplay! !
 
-!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 6/1/2019 02:51:30'!
+!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 6/18/2019 05:41:17'!
+initialize
+
+	page _ 1.
+	totalPages _ 0! !
+
+!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 22:37:41'!
+page: aPage
+
+	page _ aPage! !
+
+!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 6/18/2019 05:44:11'!
 results
 	| links |
+
 	
-	links _ Div containing: { 
-		Hyperlink name: 'prevPageLink' to: '' with: '<' .
-		Hyperlink name: 'nextPageLink' to: '' with: '>' 
+	links _ Div css: #('is-pulled-right' 'has-padding-b-6') containing: { 
+		Hyperlink name: 'prevPageLink' to: '' with: 'Previous' :: css: #('pagination-previous').
+		Hyperlink name: 'nextPageLink' to: '' with: 'Next' :: css: #('pagination-next')
 	}.
 	
-	^ Div containing: { links . ConformersTable renderWith: conformers }
+	^ Div containing: {
+		Div containing: {
+			Div containing: {
+				Div css: #('is-pulled-left') containing: {
+					Div containing: { Span with: 'Page ' . Span with: page asString :: name: 'currentPage' } .
+					Div containing: { Span with: 'Total pages: ' . Span with: totalPages asString :: name: 'totalResults' }
+				} .
+				links
+			}
+		} .
+		ConformersTable renderWith: conformers 
+	}
 	
 	! !
 
-!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 6/5/2019 01:30:51'!
+!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 6/18/2019 05:30:18'!
 scripts
 
-	^ '<script>
-	document.addEventListener("DOMContentLoaded", function(event) { 
-  		var documentUrl = document.documentURI;
-		var currentPageUrl = documentUrl.slice(0, -1);
-		var currentPageNumber = parseInt(documentUrl.substr(-1));
-		var prevPageLink = currentPageUrl + (currentPageNumber - 1);
-		var nextPageLink = currentPageUrl + (currentPageNumber + 1);
-		
-		document.getElementsByName("prevPageLink")[0]
-			.setAttribute("href", prevPageLink);
+	^ super scripts, 
+		'<script>(function () {
+			document.addEventListener("DOMContentLoaded", function(event) {
+				var documentUrl = window.location.href;
+				var currentPage = parseInt(document.getElementsByName("currentPage")[0].textContent);
+				
+				var nextLink = (documentUrl.includes("page")) ?
+						documentUrl.replace(/page=\d.*/, ''', 'page=',''' + (currentPage + 1)) :
+						documentUrl + "&page=" + (currentPage + 1);
+						
+				var prevLink = (documentUrl.includes("page")) ?
+						documentUrl.replace(/page=\d.*/, ''', 'page=',''' + (currentPage - 1)) :
+						"#";
 			
-		document.getElementsByName("nextPageLink")[0]
-			.setAttribute("href", nextPageLink);
-	})</script>
-	'! !
+			  	document.getElementsByName("prevPageLink")[0].setAttribute("href", prevLink);
+				document.getElementsByName("nextPageLink")[0].setAttribute("href", nextLink);
+				})
+			})();</script>'! !
+
+!ConformerSearchResultView methodsFor: 'as yet unclassified' stamp: 'GC 6/18/2019 05:41:26'!
+totalPages: amountOfTotalPages
+
+	totalPages _ amountOfTotalPages! !
 
 !ConformerSearchResultView class methodsFor: 'as yet unclassified' stamp: 'GC 5/22/2019 02:05:53'!
 containing: conformers
 
 	^ self new :: conformers: conformers! !
+
+!ConformerSearchResultView class methodsFor: 'as yet unclassified' stamp: 'GC 6/18/2019 05:41:10'!
+containing: conformers atPage: aPage totalPages: amountOfTotalPages
+
+	^ self new :: conformers: conformers :: page: aPage :: totalPages: amountOfTotalPages! !
 
 !ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:45:34'!
 body
@@ -1234,6 +1280,11 @@ instance
 find: aClusterId 
 
 	^ elements detect: [ :cluster | cluster id = aClusterId ] ! !
+
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 21:34:32'!
+find: aClusterId ifNone: aBlock
+
+	^ elements detect: [ :cluster | cluster id = aClusterId ] ifNone: aBlock! !
 
 !ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:37:01'!
 findOrCreate: aClusterId oligomericState: anOligomericState 
