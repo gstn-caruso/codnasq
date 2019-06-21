@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 20 June 2019 at 9:17:23 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 21 June 2019 at 5:14:00 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 65!
+!provides: 'CoDNaSQ' 1 67!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -68,6 +68,16 @@ StaticPath subclass: #NewClusterPath
 	category: 'CoDNaSQ-Web'!
 !classDefinition: 'NewClusterPath class' category: #'CoDNaSQ-Web'!
 NewClusterPath class
+	instanceVariableNames: ''!
+
+!classDefinition: #PdbFilePath category: #'CoDNaSQ-Web'!
+StaticPath subclass: #PdbFilePath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'PdbFilePath class' category: #'CoDNaSQ-Web'!
+PdbFilePath class
 	instanceVariableNames: ''!
 
 !classDefinition: #RootPath category: #'CoDNaSQ-Web'!
@@ -307,7 +317,7 @@ testWhenThereIsAConformerPairPairWithARepeatedConformerIsThree
 
 	self assert: 3 equals: cluster size! !
 
-!ClusterShow methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:17:48'!
+!ClusterShow methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:08:59'!
 handle
 
 	^ ClusterController new show: request! !
@@ -349,6 +359,22 @@ handle
 canHandle: aRequest
 
 	^ aRequest url = '/cluster/new'! !
+
+!PdbFilePath methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:00:43'!
+handle
+	| pdbId pdbData |
+	
+	pdbId _  request url findTokens: '/' :: last.
+	
+	[ 
+		pdbData _ ('/Users/gaston/Code/tip_cosas_privadas/pdbs/',pdbId,'.pdb') asFileEntry binaryContents readStream.
+		request stream200Response: pdbData size: pdbData size type: 'text/plain'
+	 ] on: Error do: [ :anError |  request send404Response ].! !
+
+!PdbFilePath class methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:01:14'!
+canHandle: aRequest
+
+	^ aRequest url beginsWith: '/pdbfile'! !
 
 !RootPath methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:17:48'!
 handle
@@ -499,7 +525,7 @@ search: request
 		]
 	}! !
 
-!ClusterController methodsFor: 'endpoints' stamp: 'GC 5/29/2019 00:56:34'!
+!ClusterController methodsFor: 'endpoints' stamp: 'GC 6/21/2019 04:59:41'!
 show: request
 	| pdbId clusterView cluster |
 	
@@ -533,7 +559,7 @@ cluster: clusterToRender
 
 	aCluster _ clusterToRender! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/20/2019 19:19:15'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 00:15:31'!
 clusterDetails
 	| maxResolution minResolution |
 		
@@ -562,6 +588,7 @@ clusterDetails
 		} .
 		Div css: #(panel) containing: {
 			Paragraph with: 'Maximum RMSD Pair information' :: css: #('panel-heading' 'has-text-weight-bold').
+			self pair3DView .
 			Div css: #('panel-block') containing: { self maximumRmsdPairDetailsOf: self cluster }
 		} .
 		Div css: #(panel) containing: {
@@ -575,13 +602,16 @@ conformers: cluster
 
 	^ ConformersTable renderWith: cluster allConformers! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/20/2019 19:19:35'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 04:53:24'!
+maximumPairByRMSD
+	^ ClusterRepository instance maximumPairByRMSDOf: self cluster! !
+
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 04:54:01'!
 maximumRmsdPairDetailsOf: cluster
-	| maximumPairByRMSD query target |
+	| query target |
 	
-	maximumPairByRMSD _ ClusterRepository instance maximumPairByRMSDOf: cluster.
-	query _ maximumPairByRMSD first.
-	target _ maximumPairByRMSD second.
+	query _ self maximumPairByRMSD first.
+	target _ self maximumPairByRMSD second.
 	
 	^ Table 
 		headers: #( ' ' Query Target Comparison ) 
@@ -593,20 +623,63 @@ maximumRmsdPairDetailsOf: cluster
 			{ 'Length' . query length . target length . ' ' } .
 			{ 'Name' . query type . target type . ' ' } .
 			{ 'Source' . query source . target source  . ' ' } .
-			{ 'Type of alignment' . ' ' . ' ' . maximumPairByRMSD alignmentType } .
-			{ 'Rank of alignment' . ' ' . ' ' . maximumPairByRMSD alignmentRank } .
-			{ 'Structural similarity' . ' ' . ' ' . maximumPairByRMSD structuralSimilarity } .
-			{ 'Query cover' . ' ' . ' ' . maximumPairByRMSD queryCover } .
-			{ 'Target cover' . ' ' . ' ' . maximumPairByRMSD targetCover } .
-			{ 'Structurally equivalent residue pairs' . ' ' . ' ' . maximumPairByRMSD structurallyEquivalentResiduePairs } .
-			{ 'Query cover based on alignment length' . ' ' . ' ' . maximumPairByRMSD queryCoverBasedOnAlignmentLength } .
-			{ 'Target cover based on alignment length' . ' ' . ' ' . maximumPairByRMSD targetCoverBasedOnAlignmentLength } .
-			{ 'Typical distance error' . ' ' . ' ' . maximumPairByRMSD typicalDistanceError } .
-			{ 'RMSD' . ' ' . ' ' . maximumPairByRMSD rmsd asString } .
-			{ 'Sequence identity' . ' ' . ' ' . maximumPairByRMSD sequenceIdentity } .
-			{ 'Permutations' . ' ' . ' ' . maximumPairByRMSD permutations }
+			{ 'Type of alignment' . ' ' . ' ' . self maximumPairByRMSD alignmentType } .
+			{ 'Rank of alignment' . ' ' . ' ' . self maximumPairByRMSD alignmentRank } .
+			{ 'Structural similarity' . ' ' . ' ' . self maximumPairByRMSD structuralSimilarity } .
+			{ 'Query cover' . ' ' . ' ' . self maximumPairByRMSD queryCover } .
+			{ 'Target cover' . ' ' . ' ' . self maximumPairByRMSD targetCover } .
+			{ 'Structurally equivalent residue pairs' . ' ' . ' ' . self maximumPairByRMSD structurallyEquivalentResiduePairs } .
+			{ 'Query cover based on alignment length' . ' ' . ' ' . self maximumPairByRMSD queryCoverBasedOnAlignmentLength } .
+			{ 'Target cover based on alignment length' . ' ' . ' ' . self maximumPairByRMSD targetCoverBasedOnAlignmentLength } .
+			{ 'Typical distance error' . ' ' . ' ' . self maximumPairByRMSD typicalDistanceError } .
+			{ 'RMSD' . ' ' . ' ' . self maximumPairByRMSD rmsd asString } .
+			{ 'Sequence identity' . ' ' . ' ' . self maximumPairByRMSD sequenceIdentity } .
+			{ 'Permutations' . ' ' . ' ' . self maximumPairByRMSD permutations }
 			
 		}  :: css: #('table' 'is-bordered' 'is-striped' 'is-hoverable' 'is-fullwidth')! !
+
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 04:54:48'!
+pair3DView
+
+	^ Div css: #(panel) containing: {
+		Div new id: 'viewport' :: css: #('panel-block' 'is-paddingless') :: style: 'height: 45vh;'
+	}! !
+
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:13:34'!
+scripts
+	| query target |
+	query _ self maximumPairByRMSD first pdbId.
+	target _ self maximumPairByRMSD second pdbId.
+	
+	^ super scripts, 
+		'<script type="text/javascript" src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>',
+		'<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				var HttpClient = function() {
+				    this.get = function(aUrl, aCallback) {
+				        var anHttpRequest = new XMLHttpRequest();
+				        anHttpRequest.onreadystatechange = function() { 
+				            if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+				                aCallback(anHttpRequest.responseText);
+				        }
+
+				        anHttpRequest.open( "GET", aUrl, true );            
+				        anHttpRequest.send( null );
+				    }
+				}
+				
+				var stage = new NGL.Stage("viewport");
+				window.addEventListener( "resize", function( event ){ stage.handleResize(); }, false );
+				
+				new HttpClient().get(`http://${window.location.host}/pdbfile/',query,'`, function(response){
+					stage.loadFile( new Blob([response], {type: `text/plain`}), { ext:`pdb`, defaultRepresentation: true } );
+				});
+				
+				new HttpClient().get(`http://${window.location.host}/pdbfile/',target,'`, function(response){
+					stage.loadFile( new Blob([response], {type: `text/plain`}), { ext:`pdb`, defaultRepresentation: true } );
+				});		
+			});
+	      </script>'! !
 
 !ClusterView class methodsFor: 'as yet unclassified' stamp: 'GC 5/28/2019 00:07:56'!
 forCluster: clusterToDisplay
@@ -814,7 +887,7 @@ printGeneNames: geneNames
 			] 
 		) flatten allButLast! !
 
-!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 20:18:56'!
+!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 00:36:41'!
 scripts
 
 	^ super scripts, 
@@ -822,6 +895,8 @@ scripts
 		'<script>
 			document.addEventListener("DOMContentLoaded", function () {
 				var stage = new NGL.Stage("viewport");
+				window.addEventListener( "resize", function( event ){ stage.handleResize(); }, false );
+				
 				stage.loadFile("rcsb://',conformer pdbId,'", {defaultRepresentation: true});
 			});
 	      </script>'! !
