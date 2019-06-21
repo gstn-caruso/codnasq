@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 21 June 2019 at 5:14:00 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 21 June 2019 at 5:42:58 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 67!
+!provides: 'CoDNaSQ' 1 70!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -638,14 +638,14 @@ maximumRmsdPairDetailsOf: cluster
 			
 		}  :: css: #('table' 'is-bordered' 'is-striped' 'is-hoverable' 'is-fullwidth')! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 04:54:48'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:30:13'!
 pair3DView
 
 	^ Div css: #(panel) containing: {
-		Div new id: 'viewport' :: css: #('panel-block' 'is-paddingless') :: style: 'height: 45vh;'
+		Div new id: 'viewport' :: css: #('panel-block' 'is-paddingless') :: style: 'height: 45vh; touch-action: none'
 	}! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:13:34'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:39:58'!
 scripts
 	| query target |
 	query _ self maximumPairByRMSD first pdbId.
@@ -653,23 +653,24 @@ scripts
 	
 	^ super scripts, 
 		'<script type="text/javascript" src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>',
-		'<script>
-			document.addEventListener("DOMContentLoaded", function () {
+		'<script>		
+			document.addEventListener("DOMContentLoaded", function () {			
 				var HttpClient = function() {
-				    this.get = function(aUrl, aCallback) {
-				        var anHttpRequest = new XMLHttpRequest();
-				        anHttpRequest.onreadystatechange = function() { 
-				            if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
-				                aCallback(anHttpRequest.responseText);
+				    this.get = function(aUrl, callback) {
+				        var request = new XMLHttpRequest();
+				        request.onreadystatechange = function() { 
+				            if (request.readyState == 4 && request.status == 200) callback(request.responseText);
 				        }
-
-				        anHttpRequest.open( "GET", aUrl, true );            
-				        anHttpRequest.send( null );
+				        request.open( "GET", aUrl, true );
+				        request.send( null );
 				    }
 				}
 				
 				var stage = new NGL.Stage("viewport");
-				window.addEventListener( "resize", function( event ){ stage.handleResize(); }, false );
+				
+				document.getElementById("viewport").onwheel = function(event){ event.preventDefault(); };
+				document.getElementById("viewport").onmousewheel = function(event){ event.preventDefault(); };
+				window.addEventListener("resize", function(event){ stage.handleResize(); }, false );
 				
 				new HttpClient().get(`http://${window.location.host}/pdbfile/',query,'`, function(response){
 					stage.loadFile( new Blob([response], {type: `text/plain`}), { ext:`pdb`, defaultRepresentation: true } );
@@ -850,12 +851,12 @@ clusterDetails
 		}
 	}! !
 
-!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 20:13:00'!
+!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:42:44'!
 conformer3dView
 
 	^ Div css: #(panel) containing: {
 			Paragraph with: '3D View' :: css: #('panel-heading' 'has-text-weight-bold').
-			Div new id: 'viewport' :: css: #('panel-block' 'is-paddingless') :: style: 'height: 45vh;'
+			Div new id: 'viewport' :: css: #('panel-block' 'is-paddingless') :: style: 'height: 45vh; touch-action: none;'
 		}! !
 
 !ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:46:33'!
@@ -887,7 +888,7 @@ printGeneNames: geneNames
 			] 
 		) flatten allButLast! !
 
-!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 00:36:41'!
+!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:41:06'!
 scripts
 
 	^ super scripts, 
@@ -896,6 +897,8 @@ scripts
 			document.addEventListener("DOMContentLoaded", function () {
 				var stage = new NGL.Stage("viewport");
 				window.addEventListener( "resize", function( event ){ stage.handleResize(); }, false );
+				document.getElementById("viewport").onwheel = function(event){ event.preventDefault(); };
+				document.getElementById("viewport").onmousewheel = function(event){ event.preventDefault(); };
 				
 				stage.loadFile("rcsb://',conformer pdbId,'", {defaultRepresentation: true});
 			});
