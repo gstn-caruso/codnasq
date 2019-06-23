@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 21 June 2019 at 5:42:58 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 23 June 2019 at 5:07:26 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 70!
+!provides: 'CoDNaSQ' 1 72!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -28,6 +28,16 @@ TestCase subclass: #ClusterTest
 	category: 'CoDNaSQ-Model-Test'!
 !classDefinition: 'ClusterTest class' category: #'CoDNaSQ-Model-Test'!
 ClusterTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #AdvancedSearchPath category: #'CoDNaSQ-Web'!
+StaticPath subclass: #AdvancedSearchPath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'AdvancedSearchPath class' category: #'CoDNaSQ-Web'!
+AdvancedSearchPath class
 	instanceVariableNames: ''!
 
 !classDefinition: #ClusterShow category: #'CoDNaSQ-Web'!
@@ -58,6 +68,16 @@ StaticPath subclass: #FaviconPath
 	category: 'CoDNaSQ-Web'!
 !classDefinition: 'FaviconPath class' category: #'CoDNaSQ-Web'!
 FaviconPath class
+	instanceVariableNames: ''!
+
+!classDefinition: #LogoPath category: #'CoDNaSQ-Web'!
+StaticPath subclass: #LogoPath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'LogoPath class' category: #'CoDNaSQ-Web'!
+LogoPath class
 	instanceVariableNames: ''!
 
 !classDefinition: #NewClusterPath category: #'CoDNaSQ-Web'!
@@ -118,6 +138,26 @@ RootController subclass: #ConformerController
 	category: 'CoDNaSQ-Web'!
 !classDefinition: 'ConformerController class' category: #'CoDNaSQ-Web'!
 ConformerController class
+	instanceVariableNames: ''!
+
+!classDefinition: #SearchController category: #'CoDNaSQ-Web'!
+RootController subclass: #SearchController
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'SearchController class' category: #'CoDNaSQ-Web'!
+SearchController class
+	instanceVariableNames: ''!
+
+!classDefinition: #AdvancedSearchView category: #'CoDNaSQ-Web-View'!
+View subclass: #AdvancedSearchView
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-View'!
+!classDefinition: 'AdvancedSearchView class' category: #'CoDNaSQ-Web-View'!
+AdvancedSearchView class
 	instanceVariableNames: ''!
 
 !classDefinition: #ClusterView category: #'CoDNaSQ-Web-View'!
@@ -317,6 +357,18 @@ testWhenThereIsAConformerPairPairWithARepeatedConformerIsThree
 
 	self assert: 3 equals: cluster size! !
 
+!AdvancedSearchPath methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 02:36:33'!
+handle
+
+	^ request isGetRequest 
+		ifTrue: [ SearchController new :: advancedSearch: request ]
+		ifFalse: [ SearchController new :: resultsFor: request ]! !
+
+!AdvancedSearchPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 01:05:28'!
+canHandle: aRequest
+	
+	^ aRequest url = '/advanced_search'! !
+
 !ClusterShow methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:08:59'!
 handle
 
@@ -349,6 +401,19 @@ handle
 canHandle: aRequest
 
 	^ aRequest url = '/favicon.ico'! !
+
+!LogoPath methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 07:50:51'!
+handle
+	
+	^ RootController new 
+		respondSuccessfully: request 
+		withImageIn: '/Users/gaston/Code/Smalltalk/codnasq/assets/logo.png'
+! !
+
+!LogoPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 07:51:19'!
+canHandle: aRequest
+
+	^ aRequest url = '/logo.png'! !
 
 !NewClusterPath methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:17:48'!
 handle
@@ -543,6 +608,107 @@ show: request
 	conformer _ ConformerRepository instance find: pdbId.
 
 	^ self respondSuccessfully: request with: (ConformerView forConformer: conformer)! !
+
+!SearchController methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 01:13:34'!
+advancedSearch: aRequest
+	
+ 	^ self respondSuccessfully: aRequest with: AdvancedSearchView new! !
+
+!SearchController methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 04:41:44'!
+parseSelectedOption: selectedOptionString
+
+	selectedOptionString caseOf: {
+		[ 'Cluster ID' ] -> [ ^ 'pdbId' ].
+		[ 'Conformer source' ] -> [ ^ 'source' ].
+		[ 'Conformer type' ] -> [ ^ 'name' ]
+	}! !
+
+!SearchController methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 04:45:48'!
+resultsFor: aRequest
+	| searchingCriteria parsedQuery results |
+	searchingCriteria _ Json readFrom: (aRequest  getContent readStream).
+	parsedQuery _ searchingCriteria collect: [ :json | ((self parseSelectedOption: (json keys first)) -> json values first) ].
+	
+	results _ ConformerRepository instance where: parsedQuery.
+	
+	self respondSuccessfully: aRequest with: (ConformerSearchResultView containing: results)! !
+
+!AdvancedSearchView methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 02:54:40'!
+advancedSearchForm
+
+	^ Div containing: {
+		Div css: #(panel) containing: {
+			Paragraph with: 'Advanced Search' :: css: #('panel-heading' 'has-text-weight-bold').
+			self searchingForm
+		}
+	}! !
+
+!AdvancedSearchView methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 02:51:25'!
+body
+
+	^ MainView withPartial: self advancedSearchForm :: body! !
+
+!AdvancedSearchView methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 05:04:52'!
+scripts
+
+	^ super scripts, '
+		<script>
+			var addField = function() {
+				var searchRow = document.getElementsByName("searchRow")[0];
+				var newRow = searchRow.cloneNode(true);
+				document.getElementById("searchFields").appendChild(newRow);			
+			}			
+		</script>
+		<script>
+			window.addEventListener("DOMContentLoaded", (event) => {
+				var form = document.getElementsByTagName("form")[0];
+				form.onsubmit = function (e) {
+					  e.preventDefault();
+					  var formFields = Array.from(form.getElementsByClassName("input"));
+					
+					 
+
+					  data = formFields.map((field) => {
+						var selector = field.nextElementSibling.getElementsByTagName("select")[0];
+						var selectedOption = selector.options[selector.selectedIndex].text;
+						return { [selectedOption]: field.value }
+					  })
+				
+					  var xhr = new XMLHttpRequest();
+					  xhr.open(form.method, form.action, true);
+					  xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+					  xhr.send(JSON.stringify(data));
+					  xhr.onreadystatechange = function() { 
+				            if (xhr.readyState == 4 && xhr.status == 200) {
+							document.open();
+							document.write(xhr.responseText);
+							document.close();
+						};
+				        }
+				};
+			})	
+		</script>
+	'! !
+
+!AdvancedSearchView methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 03:39:23'!
+searchingForm
+
+	^ HtmlForm action: '/advanced_search' method: 'post' containing:(
+				Div css: #('panel-block' 'columns' 'is-multiline' 'is-marginless') containing: {
+					Div css: #('column' 'is-two-thirds' 'is-offset-2' 'is-vcentered' 'columns') containing: {
+						FormInput new :: type: 'text' :: placeHolder: 'Search by...' :: css: #('input' 'has-margin-r-7').
+						Div css: #('select' 'has-margin-r-7') containing: { 
+							Select name: 'criteria' withOptions: { 
+								{ 'cluster-id' . 'Cluster ID' } .
+								{ 'type' . 'Conformer type' } .
+								{ 'source' . 'Conformer source' }
+							}
+						}.
+						Hyperlink with: (Icon css: #('fas' 'fa-plus' 'has-margin-r-7') :: render) onClick: 'addField()'
+					} :: name: 'searchRow'.
+					FormInput new :: type: 'submit' :: value: 'Search' :: css: #('button' 'is-info')
+				} :: id: 'searchFields'			
+			)! !
 
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:26:26'!
 body
@@ -915,7 +1081,7 @@ forConformer: conformerToDisplay
 
 	^ self new conformer: conformerToDisplay! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 17:49:27'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 02:48:43'!
 body
 		
 	^ MainView withPartial: (Div css: #(box 'has-text-centered') containing: {
@@ -923,19 +1089,20 @@ body
 		Div containing: {  self searchBar }
 		}) :: body! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 17:45:33'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 08:05:03'!
 heading
 		
 	^ Div containing: {
-		Heading with: 'Welcome to Conformational Diversity of Native State - Quaternary' :: css: #('title' 'has-text-weight-bold').
+		Img src: 'http://localhost:8080/logo.png' alt: 'codnas q logo' :: css: #('column' 'is-offset-2' 'is-two-thirds').
+		Heading with: 'Conformational Diversity of Native State - Quaternary' :: css: #('title' 'has-margin-t-7').
 		Div containing: { Hyperlink to: '/cluster/new' with: (Smaller with: 'Upload more proteins' :: render) }
 	}! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 20:57:14'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 01:32:26'!
 searchBar
 	| formContent |
 	
-	formContent _ Div css: #() containing: { 
+	formContent _ Div containing: { 
 		Div css: #('field' 'has-addons' 'is-grouped-centered' 'column' 'is-offset-3' 'is-three-fifths') containing: {
 			FormInput new :: type: 'text' :: name: 'query' :: placeHolder: 'Search by...' :: css: #(input).
 			Div css: #(select) containing: { 
@@ -959,15 +1126,27 @@ searchBar
 	
 	^ HtmlForm action: '/cluster/search' method: 'get' enctype: 'url-encoded' containing: formContent! !
 
-!MainView methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 17:47:37'!
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 02:50:03'!
 body
 
 	^ Div containing: {
 		Nav css: #(navbar 'is-info has-shadow has-margin-b-5') containing: {
-			Div css: #('navbar-brand has-text-weight-bold') containing: { (Hyperlink to: '/' with: 'CoDNaS Q' :: css: #('navbar-item')) }
+			Div css: #('navbar-brand has-text-weight-bold') containing: {
+				Hyperlink to: '/' with: (Img src: 'http://localhost:8080/logo.png' alt: 'codnas q logo' :: render) :: css: #('navbar-item')
+			}.
+			Div css: #('navbar-menu') containing: {
+				Div css: #('navbar-start') containing: {
+					Div css: #('navbar-item') containing: {
+						Hyperlink to: '/advanced_search' with: 
+							(Icon css: #('fas' 'fa-search' 'has-margin-r-7') :: render), 
+							'Advanced Search' 
+						:: css: #('navbar-item' 'has-text-light')
+					}
+				}
+			}
 		} .
 		Div css: #('column' 'is-four-fifths' 'is-offset-1') containing: { partial } 
-	}:: render! !
+	} :: render! !
 
 !MainView methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:09:01'!
 partial: partialView
@@ -1542,6 +1721,13 @@ likeSource: conformerSource
 likeType: conformerType 
 
 	^ elements select: [ :conformer | conformer name :: includesSubstring: conformerType caseSensitive: false ]! !
+
+!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 05:02:22'!
+where: aQuery
+
+	^ elements select: [ :element | 
+		aQuery allSatisfy: [:criteria | (element instVarNamed: criteria key) includesSubstring: (criteria value) caseSensitive: false  ] 
+	]! !
 
 !ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 01:28:28'!
 conformers: someConformers
