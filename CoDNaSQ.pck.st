@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 25 June 2019 at 1:50:06 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 25 June 2019 at 1:59:05 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 75!
+!provides: 'CoDNaSQ' 1 76!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -1081,13 +1081,13 @@ heading
 		Div containing: { Hyperlink to: '/cluster/new' with: (Smaller with: 'Upload more proteins' :: render) }
 	}! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/25/2019 01:26:28'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/25/2019 01:58:25'!
 searchBar
 	| formContent |
 	
 	formContent _ Div containing: { 
 		Div css: #('field' 'has-addons' 'is-grouped-centered' 'column' 'is-offset-3' 'is-three-fifths') containing: {
-			FormInput new :: type: 'text' :: name: 'query' :: placeHolder: 'Search by...' :: css: #(input 'has-margin-r-7').
+			FormInput new :: type: 'text' :: name: 'query' :: placeHolder: 'Search by...' :: css: #(input 'has-margin-r-7') :: isRequired .
 			Div css: #(select 'has-margin-r-7') containing: { 
 					Select name: 'criteria' withOptions: { 
 					{ 'all' . 'All fields' } .
