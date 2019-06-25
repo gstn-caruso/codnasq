@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 25 June 2019 at 1:08:56 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 25 June 2019 at 1:22:49 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 73!
+!provides: 'CoDNaSQ' 1 74!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -529,7 +529,7 @@ new: request
 
 	^ self respondSuccessfully: request with: (NewProtein new)! !
 
-!ClusterController methodsFor: 'endpoints' stamp: 'GC 6/18/2019 05:43:27'!
+!ClusterController methodsFor: 'endpoints' stamp: 'GC 6/25/2019 01:19:43'!
 search: request
 	| query criteria page |
 	
@@ -540,9 +540,9 @@ search: request
 		ifAbsent: [ 1 ].
 	
 	^ criteria caseOf: {
-		[ 'cluster-id' ]    
+		[ 'pdb' ]    
 			-> [ |cluster|
-				cluster _ ClusterRepository instance find: query ifNone: [ request send404Response ].
+				cluster _ ConformerRepository instance find: query ifNone: [ request send404Response ] :: cluster.
 				self respondSuccessfully: request  with: (ClusterView forCluster: cluster) 
 		].
 		[ 'type' ]	
@@ -567,12 +567,12 @@ search: request
 		]
 	}! !
 
-!ClusterController methodsFor: 'endpoints' stamp: 'GC 6/21/2019 04:59:41'!
+!ClusterController methodsFor: 'endpoints' stamp: 'GC 6/25/2019 01:17:56'!
 show: request
 	| pdbId clusterView cluster |
 	
 	pdbId _ request url findTokens: '/' :: last.
-	cluster _ ClusterRepository instance find: pdbId.
+	cluster _ ConformerRepository instance find: pdbId :: cluster.
 	clusterView _ ClusterView forCluster: cluster.
 
 	^ self respondSuccessfully: request with: clusterView ! !
@@ -1072,29 +1072,29 @@ heading
 		Div containing: { Hyperlink to: '/cluster/new' with: (Smaller with: 'Upload more proteins' :: render) }
 	}! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 01:32:26'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/25/2019 01:18:25'!
 searchBar
 	| formContent |
 	
 	formContent _ Div containing: { 
 		Div css: #('field' 'has-addons' 'is-grouped-centered' 'column' 'is-offset-3' 'is-three-fifths') containing: {
-			FormInput new :: type: 'text' :: name: 'query' :: placeHolder: 'Search by...' :: css: #(input).
-			Div css: #(select) containing: { 
+			FormInput new :: type: 'text' :: name: 'query' :: placeHolder: 'Search by...' :: css: #(input 'has-margin-r-7').
+			Div css: #(select 'has-margin-r-7') containing: { 
 					Select name: 'criteria' withOptions: { 
-					{ 'cluster-id' . 'Cluster ID' } .
-					{ 'type' . 'Conformer type' } .
-					{ 'source' . 'Conformer source' }
+					{ 'pdb' . 'PDB' } .
+					{ 'type' . 'Name' } .
+					{ 'source' . 'Species' }
 				}
 			}.
 			FormInput new :: type: 'submit' :: value: 'Search' :: css: #('button' 'is-info')
 		} .
 		Div css: #('has-margin-t-6') containing: {
 			Span with: (Smaller with: 'Example entries: ' ::render) .
-			Smaller with: (Hyperlink to: ('/cluster/show/CQ2vcq') with: 'CQ2vcq' :: render) .
+			Smaller with: (Hyperlink to: ('/cluster/show/2vcq') with: '2vcq' :: render) .
 			Span with: (Smaller with: ' | ' :: render) .
-			Smaller with: (Hyperlink to: ('/cluster/show/CQ4ha3') with: 'CQ4ha3' :: render) .
+			Smaller with: (Hyperlink to: ('/cluster/search?query=Hydrolase&criteria=type') with: 'Hydrolase' :: render) .
 			Span with: (Smaller with: ' | ' :: render) .
-			Smaller with: (Hyperlink to: ('/cluster/show/CQ3tjt') with: 'CQ3tjt' :: render)
+			Smaller with: (Hyperlink to: ('/cluster/search?query=Mus+musculus&criteria=source') with: 'Mus musculus' :: render)
 		}
 	}.
 	
@@ -1650,10 +1650,10 @@ find: aClusterId
 
 	^ elements detect: [ :cluster | cluster id = aClusterId ] ! !
 
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 21:34:32'!
-find: aClusterId ifNone: aBlock
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/25/2019 01:21:32'!
+find: id ifNone: aBlock
 
-	^ elements detect: [ :cluster | cluster id = aClusterId ] ifNone: aBlock! !
+	^ elements detect: [ :cluster | cluster id = id ] ifNone: aBlock! !
 
 !ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:37:01'!
 findOrCreate: aClusterId oligomericState: anOligomericState 
@@ -1685,6 +1685,11 @@ find: aConformerPdbId
 find: pdbId 
 
 	^ elements detect: [ :conformer | conformer pdbId = pdbId ] ! !
+
+!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/25/2019 01:21:51'!
+find: pdbId ifNone: aBlock
+
+	^ elements detect: [ :cluster | cluster pdbId = pdbId ] ifNone: aBlock! !
 
 !ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:35:13'!
 likeSource: conformerSource
