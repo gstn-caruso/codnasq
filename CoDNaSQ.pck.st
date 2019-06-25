@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 25 June 2019 at 1:22:49 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 25 June 2019 at 1:50:06 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 74!
+!provides: 'CoDNaSQ' 1 75!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -529,7 +529,7 @@ new: request
 
 	^ self respondSuccessfully: request with: (NewProtein new)! !
 
-!ClusterController methodsFor: 'endpoints' stamp: 'GC 6/25/2019 01:19:43'!
+!ClusterController methodsFor: 'endpoints' stamp: 'GC 6/25/2019 01:48:31'!
 search: request
 	| query criteria page |
 	
@@ -540,6 +540,15 @@ search: request
 		ifAbsent: [ 1 ].
 	
 	^ criteria caseOf: {
+		[ 'all' ] 
+			-> [|conformers paginatedConformers|
+				conformers _ ConformerRepository instance anyField: query.
+				paginatedConformers _ Paginate : conformers :: atPage: page.
+				self respondSuccessfully: request 
+					with: (ConformerSearchResultView containing: paginatedConformers 
+															  atPage: page
+															  totalPages: (conformers size / 10) ceiling)
+				  ] .
 		[ 'pdb' ]    
 			-> [ |cluster|
 				cluster _ ConformerRepository instance find: query ifNone: [ request send404Response ] :: cluster.
@@ -1072,7 +1081,7 @@ heading
 		Div containing: { Hyperlink to: '/cluster/new' with: (Smaller with: 'Upload more proteins' :: render) }
 	}! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/25/2019 01:18:25'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/25/2019 01:26:28'!
 searchBar
 	| formContent |
 	
@@ -1081,6 +1090,7 @@ searchBar
 			FormInput new :: type: 'text' :: name: 'query' :: placeHolder: 'Search by...' :: css: #(input 'has-margin-r-7').
 			Div css: #(select 'has-margin-r-7') containing: { 
 					Select name: 'criteria' withOptions: { 
+					{ 'all' . 'All fields' } .
 					{ 'pdb' . 'PDB' } .
 					{ 'type' . 'Name' } .
 					{ 'source' . 'Species' }
@@ -1679,6 +1689,14 @@ find: aConformerPdbId
 	^ elements select: [ :pair | 
 		pair first id = aConformerPdbId 
 		or: [ pair second id = aConformerPdbId ]
+	]! !
+
+!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/25/2019 01:35:16'!
+anyField: aName
+
+	^ elements select: [ :element | 
+		element class allInstVarNames 
+			anySatisfy: [ :instVar | (element instVarNamed: instVar :: asString) includesSubString: aName ]
 	]! !
 
 !ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:36:17'!
