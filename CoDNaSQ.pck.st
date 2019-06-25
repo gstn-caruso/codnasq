@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 23 June 2019 at 5:07:26 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 25 June 2019 at 1:08:56 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 72!
+!provides: 'CoDNaSQ' 1 73!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -68,16 +68,6 @@ StaticPath subclass: #FaviconPath
 	category: 'CoDNaSQ-Web'!
 !classDefinition: 'FaviconPath class' category: #'CoDNaSQ-Web'!
 FaviconPath class
-	instanceVariableNames: ''!
-
-!classDefinition: #LogoPath category: #'CoDNaSQ-Web'!
-StaticPath subclass: #LogoPath
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'CoDNaSQ-Web'!
-!classDefinition: 'LogoPath class' category: #'CoDNaSQ-Web'!
-LogoPath class
 	instanceVariableNames: ''!
 
 !classDefinition: #NewClusterPath category: #'CoDNaSQ-Web'!
@@ -401,19 +391,6 @@ handle
 canHandle: aRequest
 
 	^ aRequest url = '/favicon.ico'! !
-
-!LogoPath methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 07:50:51'!
-handle
-	
-	^ RootController new 
-		respondSuccessfully: request 
-		withImageIn: '/Users/gaston/Code/Smalltalk/codnasq/assets/logo.png'
-! !
-
-!LogoPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 07:51:19'!
-canHandle: aRequest
-
-	^ aRequest url = '/logo.png'! !
 
 !NewClusterPath methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:17:48'!
 handle
@@ -811,7 +788,7 @@ pair3DView
 		Div new id: 'viewport' :: css: #('panel-block' 'is-paddingless') :: style: 'height: 45vh; touch-action: none'
 	}! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:39:58'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/24/2019 13:52:50'!
 scripts
 	| query target |
 	query _ self maximumPairByRMSD first pdbId.
@@ -838,11 +815,8 @@ scripts
 				document.getElementById("viewport").onmousewheel = function(event){ event.preventDefault(); };
 				window.addEventListener("resize", function(event){ stage.handleResize(); }, false );
 				
-				new HttpClient().get(`http://${window.location.host}/pdbfile/',query,'`, function(response){
-					stage.loadFile( new Blob([response], {type: `text/plain`}), { ext:`pdb`, defaultRepresentation: true } );
-				});
 				
-				new HttpClient().get(`http://${window.location.host}/pdbfile/',target,'`, function(response){
+				new HttpClient().get(`http://ufq.unq.edu.ar/codnasq/topmatch/quaternary/2v28/2v28-1_2v27-1/2v27-1.pdb`, function(response){
 					stage.loadFile( new Blob([response], {type: `text/plain`}), { ext:`pdb`, defaultRepresentation: true } );
 				});		
 			});
@@ -1089,11 +1063,11 @@ body
 		Div containing: {  self searchBar }
 		}) :: body! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 08:05:03'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/25/2019 01:08:27'!
 heading
 		
 	^ Div containing: {
-		Img src: 'http://localhost:8080/logo.png' alt: 'codnas q logo' :: css: #('column' 'is-offset-2' 'is-two-thirds').
+		Img src: 'https://github.com/gstn-caruso/codnasq/blob/master/assets/logo.png?raw=true' alt: 'codnas q logo' :: css: #('column' 'is-offset-2' 'is-two-thirds').
 		Heading with: 'Conformational Diversity of Native State - Quaternary' :: css: #('title' 'has-margin-t-7').
 		Div containing: { Hyperlink to: '/cluster/new' with: (Smaller with: 'Upload more proteins' :: render) }
 	}! !
@@ -1126,13 +1100,13 @@ searchBar
 	
 	^ HtmlForm action: '/cluster/search' method: 'get' enctype: 'url-encoded' containing: formContent! !
 
-!MainView methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 02:50:03'!
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 6/25/2019 01:08:03'!
 body
 
 	^ Div containing: {
 		Nav css: #(navbar 'is-info has-shadow has-margin-b-5') containing: {
 			Div css: #('navbar-brand has-text-weight-bold') containing: {
-				Hyperlink to: '/' with: (Img src: 'http://localhost:8080/logo.png' alt: 'codnas q logo' :: render) :: css: #('navbar-item')
+				Hyperlink to: '/' with: (Img src: 'https://github.com/gstn-caruso/codnasq/blob/master/assets/logo.png?raw=true' alt: 'codnas q logo' :: render) :: css: #('navbar-item')
 			}.
 			Div css: #('navbar-menu') containing: {
 				Div css: #('navbar-start') containing: {
