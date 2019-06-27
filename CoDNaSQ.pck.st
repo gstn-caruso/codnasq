@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 25 June 2019 at 1:59:05 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 26 June 2019 at 10:39:35 pm'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 76!
+!provides: 'CoDNaSQ' 1 77!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -379,12 +379,10 @@ canHandle: aRequest
 	
 	^ aRequest url beginsWith: '/conformer/show/'! !
 
-!FaviconPath methodsFor: 'as yet unclassified' stamp: 'GC 6/5/2019 23:10:07'!
+!FaviconPath methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 22:37:18'!
 handle
 	
-	^ RootController new 
-		respondSuccessfully: request 
-		withImageIn: '/Users/gaston/Code/Smalltalk/codnasq/assets/favicon.ico'
+	^ request send301Response: 'https://raw.githubusercontent.com/gstn-caruso/codnasq/master/assets/favicon.ico'
 ! !
 
 !FaviconPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/5/2019 01:42:15'!
