@@ -1,24 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 26 June 2019 at 10:39:35 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 27 June 2019 at 5:22:32 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 77!
+!provides: 'CoDNaSQ' 1 78!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
 SystemOrganization addCategory: #'CoDNaSQ-Web'!
-SystemOrganization addCategory: #'CoDNaSQ-Web-Tests'!
 SystemOrganization addCategory: #'CoDNaSQ-Model-Test'!
 SystemOrganization addCategory: #'CoDNaSQ-Web-View'!
 
-
-!classDefinition: #ClusterControllerTest category: #'CoDNaSQ-Web-Tests'!
-TestCase subclass: #ClusterControllerTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'CoDNaSQ-Web-Tests'!
-!classDefinition: 'ClusterControllerTest class' category: #'CoDNaSQ-Web-Tests'!
-ClusterControllerTest class
-	instanceVariableNames: ''!
 
 !classDefinition: #ClusterTest category: #'CoDNaSQ-Model-Test'!
 TestCase subclass: #ClusterTest
@@ -68,16 +57,6 @@ StaticPath subclass: #FaviconPath
 	category: 'CoDNaSQ-Web'!
 !classDefinition: 'FaviconPath class' category: #'CoDNaSQ-Web'!
 FaviconPath class
-	instanceVariableNames: ''!
-
-!classDefinition: #NewClusterPath category: #'CoDNaSQ-Web'!
-StaticPath subclass: #NewClusterPath
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'CoDNaSQ-Web'!
-!classDefinition: 'NewClusterPath class' category: #'CoDNaSQ-Web'!
-NewClusterPath class
 	instanceVariableNames: ''!
 
 !classDefinition: #PdbFilePath category: #'CoDNaSQ-Web'!
@@ -222,12 +201,22 @@ Cluster class
 
 !classDefinition: #Conformer category: #'CoDNaSQ-Model'!
 Object subclass: #Conformer
-	instanceVariableNames: 'pdbId biologicalAssembly resolution method source cluster name length ligands uniProtId geneName pfam description'
+	instanceVariableNames: 'pdbId biologicalAssembly resolution method source cluster name length ligands uniProtId geneName pfam description ph temperature'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Model'!
 !classDefinition: 'Conformer class' category: #'CoDNaSQ-Model'!
 Conformer class
+	instanceVariableNames: ''!
+
+!classDefinition: #ConformerChain category: #'CoDNaSQ-Model'!
+Object subclass: #ConformerChain
+	instanceVariableNames: 'pdb conformer'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Model'!
+!classDefinition: 'ConformerChain class' category: #'CoDNaSQ-Model'!
+ConformerChain class
 	instanceVariableNames: ''!
 
 !classDefinition: #ConformerPair category: #'CoDNaSQ-Model'!
@@ -238,6 +227,16 @@ Object subclass: #ConformerPair
 	category: 'CoDNaSQ-Model'!
 !classDefinition: 'ConformerPair class' category: #'CoDNaSQ-Model'!
 ConformerPair class
+	instanceVariableNames: ''!
+
+!classDefinition: #ConformerPairChain category: #'CoDNaSQ-Model'!
+Object subclass: #ConformerPairChain
+	instanceVariableNames: 'queryChain targetChain alignmentType alignmentRank structuralSimilarity queryCover targetCover structurallyEquivalentResiduePairs queryCoverBasedOnAlignmentLength targetCoverBasedOnAlignmentLength typicalDistanceError rmsd sequenceIdentity permutations'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Model'!
+!classDefinition: 'ConformerPairChain class' category: #'CoDNaSQ-Model'!
+ConformerPairChain class
 	instanceVariableNames: ''!
 
 !classDefinition: #Repository category: #'CoDNaSQ-Persistence'!
@@ -258,6 +257,26 @@ Repository subclass: #ClusterRepository
 	category: 'CoDNaSQ-Persistence'!
 !classDefinition: 'ClusterRepository class' category: #'CoDNaSQ-Persistence'!
 ClusterRepository class
+	instanceVariableNames: ''!
+
+!classDefinition: #ConformerChainRepository category: #'CoDNaSQ-Persistence'!
+Repository subclass: #ConformerChainRepository
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Persistence'!
+!classDefinition: 'ConformerChainRepository class' category: #'CoDNaSQ-Persistence'!
+ConformerChainRepository class
+	instanceVariableNames: ''!
+
+!classDefinition: #ConformerPairChainRepository category: #'CoDNaSQ-Persistence'!
+Repository subclass: #ConformerPairChainRepository
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Persistence'!
+!classDefinition: 'ConformerPairChainRepository class' category: #'CoDNaSQ-Persistence'!
+ConformerPairChainRepository class
 	instanceVariableNames: ''!
 
 !classDefinition: #ConformerPairRepository category: #'CoDNaSQ-Persistence'!
@@ -300,18 +319,6 @@ name
 printOn: aStream
 
 	aStream nextPutAll: 'Conformer: ', pdbId ! !
-
-!ClusterControllerTest methodsFor: 'deserializeConformers' stamp: 'GC 5/30/2019 01:17:48'!
-test_when_well_formated_csv_is_received_it_creates_two_conformers_and_a_conformer_pair_for_each
-	| csvFile |
-	
-	csvFile _ '"cluster_ID";"Oligomeric_State";"code1";"BA1";"code2";"BA2";"T";"R";"S";"Sq";"St";"L";"Lq";"Lt";"Sr";"RMSD";"Is";"P";"resolution1";"resolution2";"method1";"method2";"long1";"long2";"protein_type1";"protein_type2";"source1";"source2"
-1l3b;4;1l3b;2;1kxz;1;b;1;732;98;98;744;100;100;0.90;0.92;100;0;2.65;2.7;diffraction;diffraction;768;768;Precorrin-6y methyltransferase/putative decarboxylase;Precorrin-6y methyltransferase/putative decarboxylase;METHANOTHERMOBACTER THERMAUTOTROPHICUS;METHANOTHERMOBACTER THERMAUTOTROPHICUS'.
- 
-	self assert: [ ClusterController new deserializeConformers: csvFile ] 
-	  	 changes: [ ConformerPairRepository instance count ]  
-		 by: 1
-	! !
 
 !ClusterTest methodsFor: 'as yet unclassified' stamp: 'GC 5/17/2019 04:01:02'!
 testWhenThereAreNoConformersIsZero
@@ -390,16 +397,6 @@ canHandle: aRequest
 
 	^ aRequest url = '/favicon.ico'! !
 
-!NewClusterPath methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:17:48'!
-handle
-
-	^ ClusterController new :: new: request! !
-
-!NewClusterPath class methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:32:08'!
-canHandle: aRequest
-
-	^ aRequest url = '/cluster/new'! !
-
 !PdbFilePath methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:00:43'!
 handle
 	| pdbId pdbData |
@@ -435,86 +432,6 @@ handle
 canHandle: aRequest
 
 	^ aRequest url = '/cluster/search'! !
-
-!ClusterController methodsFor: 'as yet unclassified' stamp: 'GC 6/20/2019 18:01:13'!
-deserializeConformers: csvFile
-	| csvLines |
-	
-	csvLines _ csvFile lines collect: [:line | line substrings: ';' ] :: reject: [ :element | element isEmptyOrNil ].
-			
-	^ csvLines allButFirst collect: [ :csvLine | | aConformer anotherConformer conformerPair cluster |
-		cluster _ ClusterRepository instance findOrCreate: ('CQ', (csvLine at: 1)) oligomericState: (csvLine at: 2).
-			
-		aConformer _ Conformer 
-			pdbId: (csvLine at: 3)
-			biologicalAssembly: (csvLine at: 4) 
-			resolution: (csvLine at: 19) 
-			method: (csvLine at: 21)
-			length: (csvLine at: 23)
-			type: (csvLine at: 25)
-			source: (csvLine at: 27)
-			ligands: (csvLine at: 29)
-			description: (csvLine at: 31)
-			uniProtId: (csvLine at: 36)
-			geneName: (csvLine at: 37)
-			pfam: (csvLine at: 38)
-			cluster: cluster. 
-		
-		anotherConformer _ Conformer 
-			pdbId: (csvLine at: 5)
-			biologicalAssembly: (csvLine at: 6) 
-			resolution: (csvLine at: 20) 
-			method: (csvLine at: 22)
-			length: (csvLine at: 24)
-			type: (csvLine at: 26)
-			source: (csvLine at: 28)
-			ligands: (csvLine at: 30)
-			description: (csvLine at: 32)
-			uniProtId: (csvLine at: 33)
-			geneName: (csvLine at: 34)
-			pfam: (csvLine at: 35)
-			cluster: cluster. 
-
-		conformerPair _ ConformerPair 
-			with: aConformer 
-			with: anotherConformer
-			alignmentType: (csvLine at: 7)
-			alignmentRank: (csvLine at: 8)
-			structuralSimilarity: (csvLine at: 9)
-			queryCover: (csvLine at: 10)
-			targetCover: (csvLine at: 11)
-			structurallyEquivalentResiduePairs: (csvLine at: 12)
-			queryCoverBasedOnAlignmentLength: (csvLine at: 13)
-			targetCoverBasedOnAlignmentLength: (csvLine at: 14)
-			typicalDistanceError: (csvLine at: 15)
-			rmsd: (csvLine at: 16)
-			sequenceIdentity: (csvLine at: 17)
-			permutations: (csvLine at: 18).
-		
-		cluster addConformerPair: conformerPair.
-				
-		ConformerRepository instance saveAll: { aConformer . anotherConformer }.
-		ConformerPairRepository instance save: conformerPair
-		
-	]! !
-
-!ClusterController methodsFor: 'as yet unclassified' stamp: 'GC 5/12/2019 18:59:05'!
-import: request
-	| content response proteinCodes |
-	
-	content _ request multipartFields at: 'proteinsCSV'.
-	self deserializeConformers: content.
-
-	proteinCodes _ ReadWriteStream on: ''.
-	
-	response _ '<div>
-		<h1>There are ', (ConformerRepository instance count) asString, ' conformers</h1>',
-		'<ul>', proteinCodes contents, '</ul>
-	</div>'.
-
-	request 
-		send200Response: response
-		contentType: 'text/html;'! !
 
 !ClusterController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 13:55:21'!
 index: request
@@ -709,7 +626,7 @@ cluster: clusterToRender
 
 	aCluster _ clusterToRender! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 00:15:31'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 04:02:10'!
 clusterDetails
 	| maxResolution minResolution |
 		
@@ -742,7 +659,7 @@ clusterDetails
 			Div css: #('panel-block') containing: { self maximumRmsdPairDetailsOf: self cluster }
 		} .
 		Div css: #(panel) containing: {
-			Paragraph with: 'Conformers' :: css: #('panel-heading' 'has-text-weight-bold'). 
+			Paragraph with: 'Conformers in cluster' :: css: #('panel-heading' 'has-text-weight-bold'). 
 			Div css: #('panel-block') containing: { self conformers: self cluster }
 		}
 	}! !
@@ -756,7 +673,11 @@ conformers: cluster
 maximumPairByRMSD
 	^ ClusterRepository instance maximumPairByRMSDOf: self cluster! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 04:54:01'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 04:12:57'!
+maximumPairByRMSDTertiary
+	^ ClusterRepository instance maximumChainPairByRMSDOf: self cluster! !
+
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 04:09:23'!
 maximumRmsdPairDetailsOf: cluster
 	| query target |
 	
@@ -773,18 +694,16 @@ maximumRmsdPairDetailsOf: cluster
 			{ 'Length' . query length . target length . ' ' } .
 			{ 'Name' . query type . target type . ' ' } .
 			{ 'Source' . query source . target source  . ' ' } .
-			{ 'Type of alignment' . ' ' . ' ' . self maximumPairByRMSD alignmentType } .
-			{ 'Rank of alignment' . ' ' . ' ' . self maximumPairByRMSD alignmentRank } .
-			{ 'Structural similarity' . ' ' . ' ' . self maximumPairByRMSD structuralSimilarity } .
+			{ 'Sequence identity' . ' ' . ' ' . self maximumPairByRMSD sequenceIdentity, '%' } .
+			{ 'Structural similarity' . ' ' . ' ' . self printStructuralSimilarity: self maximumPairByRMSD } .
+			{ 'Structurally equivalent residue pairs' . ' ' . ' ' . self maximumPairByRMSD structurallyEquivalentResiduePairs } .
 			{ 'Query cover' . ' ' . ' ' . self maximumPairByRMSD queryCover } .
 			{ 'Target cover' . ' ' . ' ' . self maximumPairByRMSD targetCover } .
-			{ 'Structurally equivalent residue pairs' . ' ' . ' ' . self maximumPairByRMSD structurallyEquivalentResiduePairs } .
 			{ 'Query cover based on alignment length' . ' ' . ' ' . self maximumPairByRMSD queryCoverBasedOnAlignmentLength } .
 			{ 'Target cover based on alignment length' . ' ' . ' ' . self maximumPairByRMSD targetCoverBasedOnAlignmentLength } .
 			{ 'Typical distance error' . ' ' . ' ' . self maximumPairByRMSD typicalDistanceError } .
-			{ 'RMSD' . ' ' . ' ' . self maximumPairByRMSD rmsd asString } .
-			{ 'Sequence identity' . ' ' . ' ' . self maximumPairByRMSD sequenceIdentity } .
-			{ 'Permutations' . ' ' . ' ' . self maximumPairByRMSD permutations }
+			{ 'RMSD Quaternary' . ' ' . ' ' . self maximumPairByRMSD rmsd asString, ' &#8491;' } .
+			{ 'RMSD Tertiary' . ' ' . ' ' . self maximumPairByRMSDTertiary rmsd asString, ' &#8491' } .
 			
 		}  :: css: #('table' 'is-bordered' 'is-striped' 'is-hoverable' 'is-fullwidth')! !
 
@@ -794,6 +713,15 @@ pair3DView
 	^ Div css: #(panel) containing: {
 		Div new id: 'viewport' :: css: #('panel-block' 'is-paddingless') :: style: 'height: 45vh; touch-action: none'
 	}! !
+
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 03:58:29'!
+printStructuralSimilarity: conformerPair
+	| structuralSimilarityPercent truncatedStructuralSimilarity |
+	
+	structuralSimilarityPercent _ ((conformerPair structuralSimilarity asNumber * 100) / conformerPair structurallyEquivalentResiduePairs asNumber).
+	truncatedStructuralSimilarity _ structuralSimilarityPercent truncateTo: 0.01.
+	
+	^  truncatedStructuralSimilarity asString, '%'! !
 
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/24/2019 13:52:50'!
 scripts
@@ -924,7 +852,7 @@ body
 
 	^ MainView withPartial: self clusterDetails :: body! !
 
-!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 6/20/2019 21:16:59'!
+!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:21:35'!
 clusterDetails
 	| maxResolution minResolution |
 		
@@ -956,6 +884,10 @@ clusterDetails
 				Paragraph with: conformer biologicalAssembly
 			}.
 			Div css: #('panel-block') containing: {
+				Paragraph with: 'Ligands' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				self printLigandNames: conformer ligands
+			}.
+			Div css: #('panel-block') containing: {
 				Paragraph with: 'Resolution:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
 				Paragraph with: conformer resolution asString
 			}.
@@ -970,7 +902,15 @@ clusterDetails
 			Div css: #('panel-block') containing: {
 				Paragraph with: 'Organism:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
 				Paragraph with: conformer source
-			}
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'pH' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: conformer ph
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Temperature:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: (conformer temperature, ' K')
+			}.
 		} .
 		self conformer3dView .
 		Div css: #(panel) containing: {
@@ -1035,6 +975,18 @@ printGeneNames: geneNames
 			] 
 		) flatten allButLast! !
 
+!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 22:47:52'!
+printLigandNames: conformerLigands
+
+	^ Div containing: 
+		(conformerLigands collect: [ :geneName | 
+				{ 
+					Span with: geneName.
+					Span with: ', '
+				}
+			] 
+		) flatten allButLast! !
+
 !ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:41:06'!
 scripts
 
@@ -1062,21 +1014,21 @@ forConformer: conformerToDisplay
 
 	^ self new conformer: conformerToDisplay! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 02:48:43'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:14:35'!
 body
 		
 	^ MainView withPartial: (Div css: #(box 'has-text-centered') containing: {
 		Div containing: { self heading } .
 		Div containing: {  self searchBar }
-		}) :: body! !
+	}) :: body! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/25/2019 01:08:27'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:14:24'!
 heading
 		
 	^ Div containing: {
-		Img src: 'https://github.com/gstn-caruso/codnasq/blob/master/assets/logo.png?raw=true' alt: 'codnas q logo' :: css: #('column' 'is-offset-2' 'is-two-thirds').
-		Heading with: 'Conformational Diversity of Native State - Quaternary' :: css: #('title' 'has-margin-t-7').
-		Div containing: { Hyperlink to: '/cluster/new' with: (Smaller with: 'Upload more proteins' :: render) }
+		Img src: 'https://github.com/gstn-caruso/codnasq/blob/master/assets/logo.png?raw=true' 
+			alt: 'codnas q logo' :: css: #('column' 'is-offset-2' 'is-two-thirds').
+		Heading with: 'Conformational Diversity of Native State - Quaternary' :: css: #('title' 'has-margin-t-7')
 	}! !
 
 !HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/25/2019 01:58:25'!
@@ -1312,7 +1264,7 @@ hash
 
 	^ self pdbId hash! !
 
-!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:03:24'!
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:09:14'!
 initialize
 
 	super initialize.
@@ -1323,7 +1275,10 @@ initialize
 	method _ ''.
 	length _ ''.
 	name _ ''.
-	source _ ''! !
+	source _ ''.
+	ligands _ OrderedCollection new.
+	ph _ ''.
+	temperature _ ''! !
 
 !Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:03:44'!
 length
@@ -1334,6 +1289,11 @@ length
 length: anAminoacidLongitude
 
 	length _ anAminoacidLongitude ! !
+
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 22:46:46'!
+ligands
+
+	^ ligands! !
 
 !Conformer methodsFor: 'as yet unclassified' stamp: 'GC 6/20/2019 16:00:08'!
 ligands: someLigands
@@ -1377,6 +1337,15 @@ pfam: aPfamId
 
 	pfam _ aPfamId ! !
 
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:06:50'!
+ph
+	^ ph! !
+
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:06:45'!
+ph: aPh
+
+	ph _ aPh ! !
+
 !Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:23:45'!
 resolution
 
@@ -1396,6 +1365,15 @@ source
 source: aProteinSource
 
 	source _ aProteinSource! !
+
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:09:04'!
+temperature
+
+	^ temperature ! !
+
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:08:56'!
+temperature: aTemperature
+	temperature _ aTemperature ! !
 
 !Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:00:26'!
 type
@@ -1441,6 +1419,19 @@ pdbId: aPDBID biologicalAssembly: ba resolution: aResolution method: aMethod
 		length: aLength; type: aType; source: aSource; ligands: someLigands;
 			description: aDescription; uniProtId: aUniProtId; geneName: aGeneName;
 				pfam: aPfamId; cluster: aCluster! !
+
+!ConformerChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:12:46'!
+biologicalAssembly: aBiologicalAssembly
+	biologicalAssembly _ aBiologicalAssembly! !
+
+!ConformerChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:41:03'!
+conformer: aConformer
+
+	conformer _ aConformer ! !
+
+!ConformerChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:27:58'!
+pdb: aPdbId 
+	pdb _ aPdbId! !
 
 !ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:17'!
 = anObject
@@ -1615,6 +1606,76 @@ with: aConformer
 with: aConformer with: anotherConformer t: t r: r s: s sq: sq st: st l: l lq: lq lt: lt sr: sr rmsd: rmsd ls: ls p: p
 	^ self new :: with: aConformer with: anotherConformer t: t r: r s: s sq: sq st: st l: l lq: lq lt: lt sr: sr rmsd: rmsd ls: ls p: p! !
 
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:58:04'!
+alignmentRank: anAlignmentRank
+
+	alignmentRank _ anAlignmentRank! !
+
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:55:07'!
+alignmentType: anAlignmentType
+
+	alignmentType _ anAlignmentType! !
+
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:03:03'!
+permutations: somePermutations
+
+	permutations _ somePermutations ! !
+
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:48:07'!
+queryChain: aChain
+
+	queryChain _ aChain ! !
+
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:58:42'!
+queryCover: aQueryCover
+
+	queryCover _ aQueryCover ! !
+
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:00:39'!
+queryCoverBasedOnAlignmentLength: aQueryCoverBasedOnAlignmentLength
+
+	queryCoverBasedOnAlignmentLength _ aQueryCoverBasedOnAlignmentLength ! !
+
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:02:38'!
+rmsd: anRmsd
+
+	rmsd _ anRmsd ! !
+
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:02:50'!
+sequenceIdentity: aSequenceIdentity
+
+	sequenceIdentity _ aSequenceIdentity ! !
+
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:58:23'!
+structuralSimilarity: anStructuralSimilarity
+
+	structuralSimilarity _ anStructuralSimilarity ! !
+
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:00:13'!
+structurallyEquivalentResiduePairs: someStructurallyEquivalentResiduePairs
+
+	structurallyEquivalentResiduePairs _ someStructurallyEquivalentResiduePairs ! !
+
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:48:16'!
+targetChain: aChain
+
+	targetChain _ aChain ! !
+
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:59:01'!
+targetCover: aTargetCover
+
+	targetCover _ aTargetCover ! !
+
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:01:00'!
+targetCoverBasedOnAlignmentLength: aTargetCoverBasedOnAlignmentLength
+
+	targetCoverBasedOnAlignmentLength _ aTargetCoverBasedOnAlignmentLength ! !
+
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:02:16'!
+typicalDistanceError: aTypicalDistanceError
+
+	typicalDistanceError _ aTypicalDistanceError ! !
+
 !Repository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:32:38'!
 count
 
@@ -1653,6 +1714,72 @@ instance
 	
 	^ instance! !
 
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:20:11'!
+deserialize: csvFile
+	| csvLines |
+	
+	csvLines _ csvFile lines collect: [:line | line substrings: ';' ] :: reject: [ :element | element isEmptyOrNil ].
+			
+	csvLines allButFirst do: [ :csvLine | | aConformer anotherConformer conformerPair cluster |
+		cluster _ self findOrCreate: ('CQ', (csvLine at: 1)) oligomericState: (csvLine at: 2).
+			
+		aConformer _ Conformer 
+			pdbId: (csvLine at: 3)
+			biologicalAssembly: (csvLine at: 4) 
+			resolution: (csvLine at: 19) 
+			method: (csvLine at: 21)
+			length: (csvLine at: 23)
+			type: (csvLine at: 25)
+			source: (csvLine at: 27)
+			ligands: (csvLine at: 29 :: findTokens: '|' :: collect: [ :ligand| ligand withBlanksTrimmed ])
+			description: (csvLine at: 31)
+			uniProtId: (csvLine at: 36)
+			geneName: (csvLine at: 37)
+			pfam: (csvLine at: 38)
+			cluster: cluster.
+		aConformer ph: (csvLine at: 40).
+		aConformer temperature: (csvLine at: 41).
+		
+		anotherConformer _ Conformer 
+			pdbId: (csvLine at: 5)
+			biologicalAssembly: (csvLine at: 6) 
+			resolution: (csvLine at: 20) 
+			method: (csvLine at: 22)
+			length: (csvLine at: 24)
+			type: (csvLine at: 26)
+			source: (csvLine at: 28)
+			ligands: (csvLine at: 30 :: findTokens: '|' :: collect: [ :ligand| ligand withBlanksTrimmed ])
+			description: (csvLine at: 32)
+			uniProtId: (csvLine at: 33)
+			geneName: (csvLine at: 34)
+			pfam: (csvLine at: 35)
+			cluster: cluster. 
+		anotherConformer ph: (csvLine at: 42).
+		anotherConformer temperature: (csvLine at: 43).
+		
+		conformerPair _ ConformerPair 
+			with: aConformer 
+			with: anotherConformer
+			alignmentType: (csvLine at: 7)
+			alignmentRank: (csvLine at: 8)
+			structuralSimilarity: (csvLine at: 9)
+			queryCover: (csvLine at: 10)
+			targetCover: (csvLine at: 11)
+			structurallyEquivalentResiduePairs: (csvLine at: 12)
+			queryCoverBasedOnAlignmentLength: (csvLine at: 13)
+			targetCoverBasedOnAlignmentLength: (csvLine at: 14)
+			typicalDistanceError: (csvLine at: 15)
+			rmsd: (csvLine at: 16)
+			sequenceIdentity: (csvLine at: 17)
+			permutations: (csvLine at: 18).
+		
+		cluster addConformerPair: conformerPair.
+				
+		ConformerRepository instance saveAll: { aConformer . anotherConformer }.
+		ConformerPairRepository instance save: conformerPair
+		
+	]! !
+
 !ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:37:14'!
 find: aClusterId 
 
@@ -1675,11 +1802,83 @@ findOrCreate: aClusterId oligomericState: anOligomericState
 			^ newCluster
 		]! !
 
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:11:19'!
+import: filePath
+
+		
+	[ |csvFile|
+		csvFile _ filePath asFileEntry readStream upToEnd. 
+		self deserialize: csvFile 
+	] forkAt: Processor userBackgroundPriority! !
+
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 04:18:47'!
+maximumChainPairByRMSDOf: aCluster
+
+	
+	^ aCluster conformerPairs detectMax: [ :pair | pair rmsd ]! !
+
 !ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/31/2019 08:01:26'!
 maximumPairByRMSDOf: aCluster
 
 	
 	^ aCluster conformerPairs detectMax: [ :pair | pair rmsd ]! !
+
+!ConformerChainRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 04:37:34'!
+createConformerFrom: csvLine! !
+
+!ConformerChainRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 03:38:14'!
+deserialize: csvFile
+	|leftLinesAmount|
+	
+	Transcript log: 'starting to split csv lines'.
+	csvLinesTmp ifNil: [ csvLinesTmp _ csvFile lines collect: [:line | line findTokens: ';' ] :: reject: [ :element | element isEmptyOrNil ] ].
+	leftLinesAmount _ csvLinesTmp size.
+	
+	Transcript log: 'starting to parse csv lines'.
+	csvLinesTmp allButFirst do: [ :csvLine | | query target queryChain targetChain conformerChainPair |
+		query _ ConformerRepository instance find: (csvLine at: 3) ifNone: [ self createConformerFrom: csvLine ].
+		target _ ConformerRepository instance find: (csvLine at: 5) ifNone: [ self createConformerFrom: csvLine ].
+		
+		queryChain _ ConformerChain new.
+		queryChain pdb: (csvLine at: 3).
+		queryChain biologicalAssembly: (csvLine at: 4).
+		queryChain conformer: query.
+		
+		targetChain _ ConformerChain new.
+		targetChain pdb: (csvLine at: 5).
+		targetChain biologicalAssembly: (csvLine at: 6).
+		targetChain conformer: target.
+		
+		conformerChainPair _ ConformerPairChain new.
+		conformerChainPair queryChain: queryChain.
+		conformerChainPair targetChain: targetChain.
+		conformerChainPair alignmentType: (csvLine at: 7).
+		conformerChainPair alignmentRank: (csvLine at: 8).
+		conformerChainPair structuralSimilarity: (csvLine at: 9).
+		conformerChainPair queryCover: (csvLine at: 10).
+		conformerChainPair targetCover: (csvLine at: 11).
+		conformerChainPair structurallyEquivalentResiduePairs: (csvLine at: 12).
+		conformerChainPair queryCoverBasedOnAlignmentLength: (csvLine at: 13).
+		conformerChainPair targetCoverBasedOnAlignmentLength: (csvLine at: 14).
+		conformerChainPair typicalDistanceError: (csvLine at: 15).
+		conformerChainPair rmsd: (csvLine at: 16).
+		conformerChainPair sequenceIdentity: (csvLine at: 17).
+		conformerChainPair permutations: (csvLine at: 18).
+		
+		leftLinesAmount _ leftLinesAmount - 1.
+		Transcript log: ('{1} lines are left' format: {leftLinesAmount}).
+		
+		ConformerChainRepository instance saveAll: { queryChain . targetChain }.
+		ConformerPairChainRepository instance save: conformerChainPair
+	]! !
+
+!ConformerChainRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 03:40:37'!
+import: filePath	
+	
+	[ |csvFile|
+		csvFile _ filePath asFileEntry readStream upToEnd. 
+		self deserialize: csvFile 
+	] forkAt: Processor userBackgroundPriority! !
 
 !ConformerPairRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:35:57'!
 find: aConformerPdbId
