@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3805] on 27 June 2019 at 5:22:32 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 27 June 2019 at 11:00:03 pm'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 78!
+!provides: 'CoDNaSQ' 1 83!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -201,7 +201,7 @@ Cluster class
 
 !classDefinition: #Conformer category: #'CoDNaSQ-Model'!
 Object subclass: #Conformer
-	instanceVariableNames: 'pdbId biologicalAssembly resolution method source cluster name length ligands uniProtId geneName pfam description ph temperature'
+	instanceVariableNames: 'pdbId biologicalAssembly resolution method source cluster name length ligands uniProtId geneName pfam description ph temperature chainPairs'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Model'!
@@ -211,7 +211,7 @@ Conformer class
 
 !classDefinition: #ConformerChain category: #'CoDNaSQ-Model'!
 Object subclass: #ConformerChain
-	instanceVariableNames: 'pdb conformer'
+	instanceVariableNames: 'conformer'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Model'!
@@ -261,7 +261,7 @@ ClusterRepository class
 
 !classDefinition: #ConformerChainRepository category: #'CoDNaSQ-Persistence'!
 Repository subclass: #ConformerChainRepository
-	instanceVariableNames: ''
+	instanceVariableNames: 'csvLinesTmp'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Persistence'!
@@ -491,12 +491,16 @@ search: request
 		]
 	}! !
 
-!ClusterController methodsFor: 'endpoints' stamp: 'GC 6/25/2019 01:17:56'!
+!ClusterController methodsFor: 'endpoints' stamp: 'GC 6/27/2019 22:49:38'!
 show: request
 	| pdbId clusterView cluster |
 	
 	pdbId _ request url findTokens: '/' :: last.
-	cluster _ ConformerRepository instance find: pdbId :: cluster.
+
+	(pdbId first: 2) = 'CQ' :: 
+		ifTrue: [cluster _ ClusterRepository instance find: pdbId ] 
+		ifFalse: [cluster _ ConformerRepository instance find: pdbId :: cluster].
+		
 	clusterView _ ClusterView forCluster: cluster.
 
 	^ self respondSuccessfully: request with: clusterView ! !
@@ -673,11 +677,14 @@ conformers: cluster
 maximumPairByRMSD
 	^ ClusterRepository instance maximumPairByRMSDOf: self cluster! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 04:12:57'!
-maximumPairByRMSDTertiary
-	^ ClusterRepository instance maximumChainPairByRMSDOf: self cluster! !
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:50:17'!
+maximumRMSDTertiary
+	| maximumPairByRMSDTertiary |
+	maximumPairByRMSDTertiary _ ClusterRepository instance maximumChainPairByRMSDOf: self cluster.
+	
+	^ maximumPairByRMSDTertiary ifNil: [ 'no data' ] ifNotNil: [ maximumPairByRMSDTertiary rmsd asString, ' &#8491' ]! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 04:09:23'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:50:11'!
 maximumRmsdPairDetailsOf: cluster
 	| query target |
 	
@@ -703,7 +710,7 @@ maximumRmsdPairDetailsOf: cluster
 			{ 'Target cover based on alignment length' . ' ' . ' ' . self maximumPairByRMSD targetCoverBasedOnAlignmentLength } .
 			{ 'Typical distance error' . ' ' . ' ' . self maximumPairByRMSD typicalDistanceError } .
 			{ 'RMSD Quaternary' . ' ' . ' ' . self maximumPairByRMSD rmsd asString, ' &#8491;' } .
-			{ 'RMSD Tertiary' . ' ' . ' ' . self maximumPairByRMSDTertiary rmsd asString, ' &#8491' } .
+			{ 'RMSD Tertiary' . ' ' . ' ' . self maximumRMSDTertiary } .
 			
 		}  :: css: #('table' 'is-bordered' 'is-striped' 'is-hoverable' 'is-fullwidth')! !
 
@@ -714,7 +721,7 @@ pair3DView
 		Div new id: 'viewport' :: css: #('panel-block' 'is-paddingless') :: style: 'height: 45vh; touch-action: none'
 	}! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 03:58:29'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:46:20'!
 printStructuralSimilarity: conformerPair
 	| structuralSimilarityPercent truncatedStructuralSimilarity |
 	
@@ -1225,6 +1232,11 @@ id: aPdbId oligomericState: anOligomericState
 
 	^ (anObject isKindOf: self class) and: [ self pdbId = anObject pdbId ]! !
 
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:11:39'!
+addChainPair: aChainPair
+
+	chainPairs add: aChainPair ! !
+
 !Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/14/2019 02:51:30'!
 biologicalAssembly
 
@@ -1234,6 +1246,11 @@ biologicalAssembly
 biologicalAssembly: aBiologicalAssembly
 
 	biologicalAssembly _ aBiologicalAssembly! !
+
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:11:55'!
+chainPairs
+
+	^ chainPairs! !
 
 !Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/19/2019 02:33:24'!
 cluster
@@ -1264,7 +1281,7 @@ hash
 
 	^ self pdbId hash! !
 
-!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:09:14'!
+!Conformer methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:11:32'!
 initialize
 
 	super initialize.
@@ -1278,7 +1295,8 @@ initialize
 	source _ ''.
 	ligands _ OrderedCollection new.
 	ph _ ''.
-	temperature _ ''! !
+	temperature _ ''.
+	chainPairs _ OrderedCollection new! !
 
 !Conformer methodsFor: 'as yet unclassified' stamp: 'GC 5/29/2019 01:03:44'!
 length
@@ -1420,18 +1438,20 @@ pdbId: aPDBID biologicalAssembly: ba resolution: aResolution method: aMethod
 			description: aDescription; uniProtId: aUniProtId; geneName: aGeneName;
 				pfam: aPfamId; cluster: aCluster! !
 
-!ConformerChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:12:46'!
-biologicalAssembly: aBiologicalAssembly
-	biologicalAssembly _ aBiologicalAssembly! !
+!ConformerChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:01:04'!
+= anObject
+
+	^ (anObject isMemberOf: self class) and: [ self conformer = anObject conformer ]! !
+
+!ConformerChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 21:22:02'!
+conformer
+
+	^ conformer! !
 
 !ConformerChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:41:03'!
 conformer: aConformer
 
 	conformer _ aConformer ! !
-
-!ConformerChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:27:58'!
-pdb: aPdbId 
-	pdb _ aPdbId! !
 
 !ConformerPair methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:24:17'!
 = anObject
@@ -1621,6 +1641,11 @@ permutations: somePermutations
 
 	permutations _ somePermutations ! !
 
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 21:59:35'!
+queryChain
+
+	^ queryChain! !
+
 !ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:48:07'!
 queryChain: aChain
 
@@ -1635,6 +1660,11 @@ queryCover: aQueryCover
 queryCoverBasedOnAlignmentLength: aQueryCoverBasedOnAlignmentLength
 
 	queryCoverBasedOnAlignmentLength _ aQueryCoverBasedOnAlignmentLength ! !
+
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:37:42'!
+rmsd
+	
+	^ rmsd! !
 
 !ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:02:38'!
 rmsd: anRmsd
@@ -1655,6 +1685,11 @@ structuralSimilarity: anStructuralSimilarity
 structurallyEquivalentResiduePairs: someStructurallyEquivalentResiduePairs
 
 	structurallyEquivalentResiduePairs _ someStructurallyEquivalentResiduePairs ! !
+
+!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 21:59:44'!
+targetChain
+	
+	^ targetChain! !
 
 !ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:48:16'!
 targetChain: aChain
@@ -1811,22 +1846,19 @@ import: filePath
 		self deserialize: csvFile 
 	] forkAt: Processor userBackgroundPriority! !
 
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 04:18:47'!
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:23:37'!
 maximumChainPairByRMSDOf: aCluster
-
+	| chains |
+	chains _ aCluster allConformers collect: [:conformer | conformer chainPairs ] :: asOrderedCollection flatten.
 	
-	^ aCluster conformerPairs detectMax: [ :pair | pair rmsd ]! !
+	^ chains detectMax: [ :pair | pair rmsd ]! !
 
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/31/2019 08:01:26'!
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:25:12'!
 maximumPairByRMSDOf: aCluster
 
-	
 	^ aCluster conformerPairs detectMax: [ :pair | pair rmsd ]! !
 
-!ConformerChainRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 04:37:34'!
-createConformerFrom: csvLine! !
-
-!ConformerChainRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 03:38:14'!
+!ConformerChainRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:12:01'!
 deserialize: csvFile
 	|leftLinesAmount|
 	
@@ -1836,34 +1868,22 @@ deserialize: csvFile
 	
 	Transcript log: 'starting to parse csv lines'.
 	csvLinesTmp allButFirst do: [ :csvLine | | query target queryChain targetChain conformerChainPair |
-		query _ ConformerRepository instance find: (csvLine at: 3) ifNone: [ self createConformerFrom: csvLine ].
-		target _ ConformerRepository instance find: (csvLine at: 5) ifNone: [ self createConformerFrom: csvLine ].
+		query _ ConformerRepository instance find: (csvLine at: 3).
+		target _ ConformerRepository instance find: (csvLine at: 5).
 		
 		queryChain _ ConformerChain new.
-		queryChain pdb: (csvLine at: 3).
-		queryChain biologicalAssembly: (csvLine at: 4).
 		queryChain conformer: query.
 		
 		targetChain _ ConformerChain new.
-		targetChain pdb: (csvLine at: 5).
-		targetChain biologicalAssembly: (csvLine at: 6).
 		targetChain conformer: target.
 		
 		conformerChainPair _ ConformerPairChain new.
 		conformerChainPair queryChain: queryChain.
 		conformerChainPair targetChain: targetChain.
-		conformerChainPair alignmentType: (csvLine at: 7).
-		conformerChainPair alignmentRank: (csvLine at: 8).
-		conformerChainPair structuralSimilarity: (csvLine at: 9).
-		conformerChainPair queryCover: (csvLine at: 10).
-		conformerChainPair targetCover: (csvLine at: 11).
-		conformerChainPair structurallyEquivalentResiduePairs: (csvLine at: 12).
-		conformerChainPair queryCoverBasedOnAlignmentLength: (csvLine at: 13).
-		conformerChainPair targetCoverBasedOnAlignmentLength: (csvLine at: 14).
-		conformerChainPair typicalDistanceError: (csvLine at: 15).
 		conformerChainPair rmsd: (csvLine at: 16).
-		conformerChainPair sequenceIdentity: (csvLine at: 17).
-		conformerChainPair permutations: (csvLine at: 18).
+		
+		query addChainPair: conformerChainPair.
+		target addChainPair: conformerChainPair.
 		
 		leftLinesAmount _ leftLinesAmount - 1.
 		Transcript log: ('{1} lines are left' format: {leftLinesAmount}).
