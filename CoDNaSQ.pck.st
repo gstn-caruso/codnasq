@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 27 June 2019 at 11:00:03 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 27 June 2019 at 11:17:45 pm'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 83!
+!provides: 'CoDNaSQ' 1 84!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -319,6 +319,11 @@ name
 printOn: aStream
 
 	aStream nextPutAll: 'Conformer: ', pdbId ! !
+
+!ConformerChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 23:16:39'!
+name
+
+	^ '{1}_{2}' format: { conformer pdbId asString . conformer biologicalAssembly }! !
 
 !ClusterTest methodsFor: 'as yet unclassified' stamp: 'GC 5/17/2019 04:01:02'!
 testWhenThereAreNoConformersIsZero
@@ -677,14 +682,23 @@ conformers: cluster
 maximumPairByRMSD
 	^ ClusterRepository instance maximumPairByRMSDOf: self cluster! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:50:17'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 23:15:45'!
 maximumRMSDTertiary
 	| maximumPairByRMSDTertiary |
 	maximumPairByRMSDTertiary _ ClusterRepository instance maximumChainPairByRMSDOf: self cluster.
 	
-	^ maximumPairByRMSDTertiary ifNil: [ 'no data' ] ifNotNil: [ maximumPairByRMSDTertiary rmsd asString, ' &#8491' ]! !
+	^ maximumPairByRMSDTertiary 
+		ifNil: [{ 'RMSD Tertiary' . ' ' . ' ' . 'no data' } ] 
+		ifNotNil: [ 
+			{ 
+				'RMSD Tertiary' . 
+				maximumPairByRMSDTertiary queryChain name . 
+				maximumPairByRMSDTertiary targetChain name . 
+				maximumPairByRMSDTertiary rmsd asString, ' &#8491' 
+			} 
+		]! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:50:11'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 23:12:18'!
 maximumRmsdPairDetailsOf: cluster
 	| query target |
 	
@@ -710,7 +724,7 @@ maximumRmsdPairDetailsOf: cluster
 			{ 'Target cover based on alignment length' . ' ' . ' ' . self maximumPairByRMSD targetCoverBasedOnAlignmentLength } .
 			{ 'Typical distance error' . ' ' . ' ' . self maximumPairByRMSD typicalDistanceError } .
 			{ 'RMSD Quaternary' . ' ' . ' ' . self maximumPairByRMSD rmsd asString, ' &#8491;' } .
-			{ 'RMSD Tertiary' . ' ' . ' ' . self maximumRMSDTertiary } .
+			self maximumRMSDTertiary .
 			
 		}  :: css: #('table' 'is-bordered' 'is-striped' 'is-hoverable' 'is-fullwidth')! !
 
