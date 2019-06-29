@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 27 June 2019 at 11:17:45 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 29 June 2019 at 10:25:17 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 84!
+!provides: 'CoDNaSQ' 1 86!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -261,7 +261,7 @@ ClusterRepository class
 
 !classDefinition: #ConformerChainRepository category: #'CoDNaSQ-Persistence'!
 Repository subclass: #ConformerChainRepository
-	instanceVariableNames: 'csvLinesTmp'
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Persistence'!
@@ -320,11 +320,6 @@ printOn: aStream
 
 	aStream nextPutAll: 'Conformer: ', pdbId ! !
 
-!ConformerChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 23:16:39'!
-name
-
-	^ '{1}_{2}' format: { conformer pdbId asString . conformer biologicalAssembly }! !
-
 !ClusterTest methodsFor: 'as yet unclassified' stamp: 'GC 5/17/2019 04:01:02'!
 testWhenThereAreNoConformersIsZero
 
@@ -366,10 +361,10 @@ handle
 		ifTrue: [ SearchController new :: advancedSearch: request ]
 		ifFalse: [ SearchController new :: resultsFor: request ]! !
 
-!AdvancedSearchPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 01:05:28'!
+!AdvancedSearchPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/29/2019 10:25:15'!
 canHandle: aRequest
 	
-	^ aRequest url = '/advanced_search'! !
+	^ aRequest url includesSubString: '/advanced_search'! !
 
 !ClusterShow methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:08:59'!
 handle
@@ -386,10 +381,10 @@ handle
 
 	^ ConformerController new show: request! !
 
-!ConformerShow class methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:33:25'!
+!ConformerShow class methodsFor: 'as yet unclassified' stamp: 'GC 6/29/2019 10:25:05'!
 canHandle: aRequest
 	
-	^ aRequest url beginsWith: '/conformer/show/'! !
+	^ aRequest url includesSubString: '/conformer/show/'! !
 
 !FaviconPath methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 22:37:18'!
 handle
@@ -397,10 +392,10 @@ handle
 	^ request send301Response: 'https://raw.githubusercontent.com/gstn-caruso/codnasq/master/assets/favicon.ico'
 ! !
 
-!FaviconPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/5/2019 01:42:15'!
+!FaviconPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/29/2019 10:24:59'!
 canHandle: aRequest
 
-	^ aRequest url = '/favicon.ico'! !
+	^ aRequest url includesSubString: '/favicon.ico'! !
 
 !PdbFilePath methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:00:43'!
 handle
@@ -413,30 +408,30 @@ handle
 		request stream200Response: pdbData size: pdbData size type: 'text/plain'
 	 ] on: Error do: [ :anError |  request send404Response ].! !
 
-!PdbFilePath class methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:01:14'!
+!PdbFilePath class methodsFor: 'as yet unclassified' stamp: 'GC 6/29/2019 10:24:49'!
 canHandle: aRequest
 
-	^ aRequest url beginsWith: '/pdbfile'! !
+	^ aRequest url includesSubString: '/pdbfile'! !
 
 !RootPath methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:17:48'!
 handle
 
 	^ ClusterController new :: index: request! !
 
-!RootPath class methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:32:53'!
+!RootPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/29/2019 10:24:38'!
 canHandle: aRequest
 
-	^ aRequest url = '/' or: [ aRequest url = '/cluster' ]! !
+	^ aRequest url = '/codnasq' or: [ aRequest url = '/codnasq/cluster' or: [ aRequest url = '/' ] ]! !
 
 !SearchClusterPath methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:17:48'!
 handle
 
 	^ ClusterController new :: search: request! !
 
-!SearchClusterPath class methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:32:57'!
+!SearchClusterPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/29/2019 10:24:08'!
 canHandle: aRequest
 
-	^ aRequest url = '/cluster/search'! !
+	^ aRequest url includesSubString: '/cluster/search'! !
 
 !ClusterController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 13:55:21'!
 index: request
@@ -682,23 +677,14 @@ conformers: cluster
 maximumPairByRMSD
 	^ ClusterRepository instance maximumPairByRMSDOf: self cluster! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 23:15:45'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:50:17'!
 maximumRMSDTertiary
 	| maximumPairByRMSDTertiary |
 	maximumPairByRMSDTertiary _ ClusterRepository instance maximumChainPairByRMSDOf: self cluster.
 	
-	^ maximumPairByRMSDTertiary 
-		ifNil: [{ 'RMSD Tertiary' . ' ' . ' ' . 'no data' } ] 
-		ifNotNil: [ 
-			{ 
-				'RMSD Tertiary' . 
-				maximumPairByRMSDTertiary queryChain name . 
-				maximumPairByRMSDTertiary targetChain name . 
-				maximumPairByRMSDTertiary rmsd asString, ' &#8491' 
-			} 
-		]! !
+	^ maximumPairByRMSDTertiary ifNil: [ 'no data' ] ifNotNil: [ maximumPairByRMSDTertiary rmsd asString, ' &#8491' ]! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 23:12:18'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:50:11'!
 maximumRmsdPairDetailsOf: cluster
 	| query target |
 	
@@ -724,7 +710,7 @@ maximumRmsdPairDetailsOf: cluster
 			{ 'Target cover based on alignment length' . ' ' . ' ' . self maximumPairByRMSD targetCoverBasedOnAlignmentLength } .
 			{ 'Typical distance error' . ' ' . ' ' . self maximumPairByRMSD typicalDistanceError } .
 			{ 'RMSD Quaternary' . ' ' . ' ' . self maximumPairByRMSD rmsd asString, ' &#8491;' } .
-			self maximumRMSDTertiary .
+			{ 'RMSD Tertiary' . ' ' . ' ' . self maximumRMSDTertiary } .
 			
 		}  :: css: #('table' 'is-bordered' 'is-striped' 'is-hoverable' 'is-fullwidth')! !
 
@@ -1763,7 +1749,7 @@ instance
 	
 	^ instance! !
 
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:20:11'!
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/29/2019 10:01:50'!
 deserialize: csvFile
 	| csvLines |
 	
@@ -1827,7 +1813,9 @@ deserialize: csvFile
 		ConformerRepository instance saveAll: { aConformer . anotherConformer }.
 		ConformerPairRepository instance save: conformerPair
 		
-	]! !
+	].
+
+	self inform: 'Cluster CSV successfully imported'! !
 
 !ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:37:14'!
 find: aClusterId 
@@ -1860,7 +1848,7 @@ import: filePath
 		self deserialize: csvFile 
 	] forkAt: Processor userBackgroundPriority! !
 
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:23:37'!
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/28/2019 18:18:05'!
 maximumChainPairByRMSDOf: aCluster
 	| chains |
 	chains _ aCluster allConformers collect: [:conformer | conformer chainPairs ] :: asOrderedCollection flatten.
@@ -1872,18 +1860,63 @@ maximumPairByRMSDOf: aCluster
 
 	^ aCluster conformerPairs detectMax: [ :pair | pair rmsd ]! !
 
-!ConformerChainRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:12:01'!
+!ConformerChainRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/29/2019 10:10:33'!
 deserialize: csvFile
-	|leftLinesAmount|
+	|leftLinesAmount csvLines |
 	
 	Transcript log: 'starting to split csv lines'.
-	csvLinesTmp ifNil: [ csvLinesTmp _ csvFile lines collect: [:line | line findTokens: ';' ] :: reject: [ :element | element isEmptyOrNil ] ].
-	leftLinesAmount _ csvLinesTmp size.
+	csvLines _ csvFile lines collect: [:line | line findTokens: ';' ] :: reject: [ :element | element isEmptyOrNil ].
+	leftLinesAmount _ csvLines size.
 	
 	Transcript log: 'starting to parse csv lines'.
-	csvLinesTmp allButFirst do: [ :csvLine | | query target queryChain targetChain conformerChainPair |
-		query _ ConformerRepository instance find: (csvLine at: 3).
-		target _ ConformerRepository instance find: (csvLine at: 5).
+	csvLines allButFirst do: [ :csvLine | | query target queryChain targetChain conformerChainPair |
+		query _ ConformerRepository instance 
+			find: (csvLine at: 3) 
+			ifNone: [ |aConformer| 
+				aConformer _ Conformer 
+					pdbId: (csvLine at: 3)
+					biologicalAssembly: (csvLine at: 4) 
+					resolution: (csvLine at: 19) 
+					method: (csvLine at: 21)
+					length: (csvLine at: 23)
+					type: (csvLine at: 25)
+					source: (csvLine at: 27)
+					ligands: (csvLine at: 29 :: findTokens: '|' :: collect: [ :ligand| ligand withBlanksTrimmed ])
+					description: (csvLine at: 31)
+					uniProtId: (csvLine at: 36)
+					geneName: (csvLine at: 37)
+					pfam: (csvLine at: 38)
+					cluster: nil.
+				aConformer ph: (csvLine at: 40).
+				aConformer temperature: (csvLine at: 41).
+				
+				ConformerRepository instance save: aConformer.
+				^ aConformer 
+			].
+			
+		target _ ConformerRepository instance 
+			find: (csvLine at: 5) 
+			ifNone: [|anotherConformer|
+				anotherConformer _ Conformer 
+					pdbId: (csvLine at: 5)
+					biologicalAssembly: (csvLine at: 6) 
+					resolution: (csvLine at: 20) 
+					method: (csvLine at: 22)
+					length: (csvLine at: 24)
+					type: (csvLine at: 26)
+					source: (csvLine at: 28)
+					ligands: (csvLine at: 30 :: findTokens: '|' :: collect: [ :ligand| ligand withBlanksTrimmed ])
+					description: (csvLine at: 32)
+					uniProtId: (csvLine at: 33)
+					geneName: (csvLine at: 34)
+					pfam: (csvLine at: 35)
+					cluster: nil. 
+				anotherConformer ph: (csvLine at: 42).
+				anotherConformer temperature: (csvLine at: 43).
+				
+				ConformerRepository instance save: anotherConformer.
+				^ anotherConformer 
+			].
 		
 		queryChain _ ConformerChain new.
 		queryChain conformer: query.
@@ -1904,7 +1937,9 @@ deserialize: csvFile
 		
 		ConformerChainRepository instance saveAll: { queryChain . targetChain }.
 		ConformerPairChainRepository instance save: conformerChainPair
-	]! !
+	].
+
+	self inform: 'Conformer chain CSV successfully imported'! !
 
 !ConformerChainRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 03:40:37'!
 import: filePath	
