@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3795] on 30 June 2019 at 4:38:45 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3795] on 30 June 2019 at 8:01:58 pm'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 87!
+!provides: 'CoDNaSQ' 1 88!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -47,6 +47,16 @@ StaticPath subclass: #ConformerShow
 	category: 'CoDNaSQ-Web'!
 !classDefinition: 'ConformerShow class' category: #'CoDNaSQ-Web'!
 ConformerShow class
+	instanceVariableNames: ''!
+
+!classDefinition: #ContactPagePath category: #'CoDNaSQ-Web'!
+StaticPath subclass: #ContactPagePath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'ContactPagePath class' category: #'CoDNaSQ-Web'!
+ContactPagePath class
 	instanceVariableNames: ''!
 
 !classDefinition: #FaviconPath category: #'CoDNaSQ-Web'!
@@ -109,6 +119,16 @@ RootController subclass: #ConformerController
 ConformerController class
 	instanceVariableNames: ''!
 
+!classDefinition: #ContactController category: #'CoDNaSQ-Web'!
+RootController subclass: #ContactController
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'ContactController class' category: #'CoDNaSQ-Web'!
+ContactController class
+	instanceVariableNames: ''!
+
 !classDefinition: #SearchController category: #'CoDNaSQ-Web'!
 RootController subclass: #SearchController
 	instanceVariableNames: ''
@@ -157,6 +177,16 @@ View subclass: #ConformerView
 	category: 'CoDNaSQ-Web-View'!
 !classDefinition: 'ConformerView class' category: #'CoDNaSQ-Web-View'!
 ConformerView class
+	instanceVariableNames: ''!
+
+!classDefinition: #ContactPageView category: #'CoDNaSQ-Web-View'!
+View subclass: #ContactPageView
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-View'!
+!classDefinition: 'ContactPageView class' category: #'CoDNaSQ-Web-View'!
+ContactPageView class
 	instanceVariableNames: ''!
 
 !classDefinition: #HomePage category: #'CoDNaSQ-Web-View'!
@@ -386,6 +416,16 @@ canHandle: aRequest
 	
 	^ aRequest url includesSubString: '/conformer/show/'! !
 
+!ContactPagePath methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:40:30'!
+handle
+
+	^ ContactController new :: index: request! !
+
+!ContactPagePath class methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:39:46'!
+canHandle: aRequest
+
+	^ aRequest url includesSubString: '/contact'! !
+
 !FaviconPath methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 22:37:18'!
 handle
 	
@@ -513,6 +553,11 @@ show: request
 	conformer _ ConformerRepository instance find: pdbId.
 
 	^ self respondSuccessfully: request with: (ConformerView forConformer: conformer)! !
+
+!ContactController methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:42:50'!
+index: request
+
+	^ self respondSuccessfully: request with: (ContactPageView new)! !
 
 !SearchController methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 01:13:34'!
 advancedSearch: aRequest
@@ -1021,6 +1066,103 @@ forConformer: conformerToDisplay
 
 	^ self new conformer: conformerToDisplay! !
 
+!ContactPageView methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:43:29'!
+body
+
+	^ MainView withPartial: self contactDetails :: body! !
+
+!ContactPageView methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 19:58:18'!
+contactDetails
+
+	^ Div containing: {
+		Div css: #(card) containing: {
+			Heading with: 'Contact us' :: css: #('card-header' 'card-header-title' 'title').
+			Div css: #('card-content') containing: {
+				Img src: 'http://ufq.unq.edu.ar/sbg/images/top.jpg' alt: 'Structural Bioinformatics Group logo'.
+				
+				self introductionText.
+				
+				Heading with: 'SBG Tools & Databases' :: css: #(title).
+				Ul containing: {
+					Li containing: { Hyperlink to: 'http://ufq.unq.edu.ar/sbg/software' with: 'List of SBG Software'. }.
+					Li containing: { Hyperlink to: 'http://ufq.unq.edu.ar/codnas' with: 'CoDNaS'. }.
+					Li containing: { Hyperlink to: 'http://ufq.unq.edu.ar/protmiscuity/#/home' with: 'ProtMiscuity'. }.
+					Li containing: { Hyperlink to: 'http://revenant.inf.pucp.edu.pe' with: 'Revenant'. }.
+				} :: css: #('has-padding-bl-6').
+				
+				Heading with: 'Lead Scientists' :: css: #(title).
+				Ul containing: {
+					Li containing: {
+						Paragraph with: 'Nahuel Escobedo' :: css: #('has-text-weight-bold' 'is-inline-block' 'has-padding-r-7').
+						self emailIconTo: 'nahuelescobedo@gmail.com'.
+						
+						Paragraph with: 'Undergraduate student in Biology'.
+					} :: css: #('has-padding-bl-4').
+
+					Li containing: {
+						Paragraph with: 'Gast&oacute;n Caruso' :: css: #('has-text-weight-bold' 'is-inline-block' 'has-padding-r-7').
+						self emailIconTo: 'gstn.caruso@gmail.com' :: css: #('has-padding-r-7').
+						self gitHubLinkTo: 'https://github.com/gstn-caruso/'.
+						
+						Paragraph with: 'Software Developer'.
+					} :: css: #('has-padding-bl-4').
+
+					Li containing: {
+						Paragraph with: 'Nicol&aacute;s Palopoli' :: css: #('has-text-weight-bold' 'is-inline-block' 'has-padding-r-7').
+						self emailIconTo: 'nicopalo@gmail.com'.
+						
+						Paragraph with: 'PhD, Adjunct Researcher (CONICET) & Assistant Professor (UNQ)'.
+						Hyperlink to: 'https://orcid.org/0000-0001-7925-6436' with: 'ORCID'.
+					} :: css: #('has-padding-bl-4').
+
+					Li containing: {
+						Paragraph with: 'Alexander Monzon' :: css: #('has-text-weight-bold' 'is-inline-block' 'has-padding-r-7').
+						self emailIconTo: 'monzon.alexander@gmail.com'.
+						
+						Paragraph with: 'PhD, Postdoctoral Researcher (University of Padova)'.
+						Hyperlink to: 'https://orcid.org/0000-0003-0362-8218' with: 'ORCID'.
+					} :: css: #('has-padding-bl-4').
+
+					Li containing: {
+						Paragraph with: 'Gustavo Parisi' :: css: #('has-text-weight-bold' 'is-inline-block' 'has-padding-r-7').
+						self emailIconTo: 'gusparisi@gmail.com'.
+						
+						Paragraph with: 'Director SBG'.
+						Paragraph with: 'PhD, Principal Researcher (CONICET) & Professor (UNQ, UNLP)'.
+						Hyperlink to: 'https://orcid.org/0000-0001-7444-1624' with: 'ORCID'.
+					} :: css: #('has-padding-bl-4')
+				}
+			}
+		}
+	}! !
+
+!ContactPageView methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 19:50:42'!
+emailIconTo: emailAddress
+
+	^ Hyperlink to: ('mailto:',emailAddress) with: (Span with: (Icon css: #('fas' 'fa-envelope') :: render) :: render).! !
+
+!ContactPageView methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 19:55:08'!
+gitHubLinkTo: githubProfileUrl
+
+	^ Hyperlink to: githubProfileUrl with: (Span with: (Icon css: #('fab' 'fa-github') :: render) :: render).! !
+
+!ContactPageView methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 20:01:54'!
+introductionText
+
+	^ Div containing: {
+			Paragraph with: 
+				('CoDNaS-Q is developed and maintained by the {1} at {2} in Bernal, Buenos Aires, Argentina.' 
+					format: {
+						Hyperlink to: 'http://ufq.unq.edu.ar/sbg/' with: 'Structural Bioinformatics Group' :: render.
+						Hyperlink to: 'http://www.unq.edu.ar/' with: 'National University of Quilmes' :: render
+					}
+				) :: css: #('has-margin-b-7').
+				
+			Paragraph with: 'The Structural Bioinformatics Group is a research group based in Bernal, Buenos Aires, Argentina. It is part of the Department of Science and Technology at National University of Quilmes.' :: css: #('has-margin-b-7').
+			Paragraph with:'Our research projects seek to understand relevant biological processes involving different aspects of protein structure, function and evolution. To that end, we mostly mostly develop and apply computational methods. Our current areas of interest involve, but are not limited to: conformational diversity of proteins and RNAs, intrinsic disorder, models of protein evolution, ancestral sequence reconstruction, protein promiscuity and interactions mediated by short linear motifs.' :: css: #('has-margin-b-7').
+			Paragraph with: 'Please contact us if you think we should work together. We are always looking forward to establish new and exciting collaborations!!' :: css: #('has-margin-b-7').
+	} :: css: #('has-margin-b-1')! !
+
 !HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:14:35'!
 body
 		
@@ -1067,7 +1209,7 @@ searchBar
 	
 	^ HtmlForm action: '/cluster/search' method: 'get' enctype: 'url-encoded' containing: formContent! !
 
-!MainView methodsFor: 'as yet unclassified' stamp: 'GC 6/25/2019 01:08:03'!
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:48:33'!
 body
 
 	^ Div containing: {
@@ -1081,6 +1223,12 @@ body
 						Hyperlink to: '/advanced_search' with: 
 							(Icon css: #('fas' 'fa-search' 'has-margin-r-7') :: render), 
 							'Advanced Search' 
+						:: css: #('navbar-item' 'has-text-light')
+					}.
+					Div css: #('navbar-item') containing: {
+						Hyperlink to: '/contact' with: 
+							(Icon css: #('fas' 'fa-address-card' 'has-margin-r-7') :: render), 
+							'Contact us' 
 						:: css: #('navbar-item' 'has-text-light')
 					}
 				}
