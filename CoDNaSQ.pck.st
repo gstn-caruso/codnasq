@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 29 June 2019 at 10:25:17 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3795] on 30 June 2019 at 4:38:45 pm'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 86!
+!provides: 'CoDNaSQ' 1 87!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -519,13 +519,13 @@ advancedSearch: aRequest
 	
  	^ self respondSuccessfully: aRequest with: AdvancedSearchView new! !
 
-!SearchController methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 04:41:44'!
+!SearchController methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 16:37:24'!
 parseSelectedOption: selectedOptionString
 
 	selectedOptionString caseOf: {
-		[ 'Cluster ID' ] -> [ ^ 'pdbId' ].
-		[ 'Conformer source' ] -> [ ^ 'source' ].
-		[ 'Conformer type' ] -> [ ^ 'name' ]
+		[ 'PDB' ] -> [ ^ 'pdbId' ].
+		[ 'Species' ] -> [ ^ 'source' ].
+		[ 'Name' ] -> [ ^ 'name' ]
 	}! !
 
 !SearchController methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 04:45:48'!
@@ -595,7 +595,7 @@ scripts
 		</script>
 	'! !
 
-!AdvancedSearchView methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 03:39:23'!
+!AdvancedSearchView methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 16:35:43'!
 searchingForm
 
 	^ HtmlForm action: '/advanced_search' method: 'post' containing:(
@@ -604,9 +604,9 @@ searchingForm
 						FormInput new :: type: 'text' :: placeHolder: 'Search by...' :: css: #('input' 'has-margin-r-7').
 						Div css: #('select' 'has-margin-r-7') containing: { 
 							Select name: 'criteria' withOptions: { 
-								{ 'cluster-id' . 'Cluster ID' } .
-								{ 'type' . 'Conformer type' } .
-								{ 'source' . 'Conformer source' }
+								{ 'cluster-id' . 'PDB' } .
+								{ 'type' . 'Name' } .
+								{ 'source' . 'Species' }
 							}
 						}.
 						Hyperlink with: (Icon css: #('fas' 'fa-plus' 'has-margin-r-7') :: render) onClick: 'addField()'
