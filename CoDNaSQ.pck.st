@@ -1,12 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3795] on 1 July 2019 at 2:22:06 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3795] on 1 July 2019 at 3:53:08 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 89!
+!provides: 'CoDNaSQ' 1 90!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
 SystemOrganization addCategory: #'CoDNaSQ-Web'!
 SystemOrganization addCategory: #'CoDNaSQ-Model-Test'!
 SystemOrganization addCategory: #'CoDNaSQ-Web-View'!
+SystemOrganization addCategory: #'CoDNaSQ-Web-Path'!
 
 
 !classDefinition: #ClusterTest category: #'CoDNaSQ-Model-Test'!
@@ -17,16 +18,6 @@ TestCase subclass: #ClusterTest
 	category: 'CoDNaSQ-Model-Test'!
 !classDefinition: 'ClusterTest class' category: #'CoDNaSQ-Model-Test'!
 ClusterTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #AdvancedSearchPath category: #'CoDNaSQ-Web'!
-StaticPath subclass: #AdvancedSearchPath
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'CoDNaSQ-Web'!
-!classDefinition: 'AdvancedSearchPath class' category: #'CoDNaSQ-Web'!
-AdvancedSearchPath class
 	instanceVariableNames: ''!
 
 !classDefinition: #ClusterShow category: #'CoDNaSQ-Web'!
@@ -49,63 +40,73 @@ StaticPath subclass: #ConformerShow
 ConformerShow class
 	instanceVariableNames: ''!
 
-!classDefinition: #ContactPagePath category: #'CoDNaSQ-Web'!
+!classDefinition: #AdvancedSearchPath category: #'CoDNaSQ-Web-Path'!
+StaticPath subclass: #AdvancedSearchPath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-Path'!
+!classDefinition: 'AdvancedSearchPath class' category: #'CoDNaSQ-Web-Path'!
+AdvancedSearchPath class
+	instanceVariableNames: ''!
+
+!classDefinition: #ContactPagePath category: #'CoDNaSQ-Web-Path'!
 StaticPath subclass: #ContactPagePath
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'CoDNaSQ-Web'!
-!classDefinition: 'ContactPagePath class' category: #'CoDNaSQ-Web'!
+	category: 'CoDNaSQ-Web-Path'!
+!classDefinition: 'ContactPagePath class' category: #'CoDNaSQ-Web-Path'!
 ContactPagePath class
 	instanceVariableNames: ''!
 
-!classDefinition: #FaviconPath category: #'CoDNaSQ-Web'!
+!classDefinition: #FaviconPath category: #'CoDNaSQ-Web-Path'!
 StaticPath subclass: #FaviconPath
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'CoDNaSQ-Web'!
-!classDefinition: 'FaviconPath class' category: #'CoDNaSQ-Web'!
+	category: 'CoDNaSQ-Web-Path'!
+!classDefinition: 'FaviconPath class' category: #'CoDNaSQ-Web-Path'!
 FaviconPath class
 	instanceVariableNames: ''!
 
-!classDefinition: #LogoPath category: #'CoDNaSQ-Web'!
+!classDefinition: #LogoPath category: #'CoDNaSQ-Web-Path'!
 StaticPath subclass: #LogoPath
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'CoDNaSQ-Web'!
-!classDefinition: 'LogoPath class' category: #'CoDNaSQ-Web'!
+	category: 'CoDNaSQ-Web-Path'!
+!classDefinition: 'LogoPath class' category: #'CoDNaSQ-Web-Path'!
 LogoPath class
 	instanceVariableNames: ''!
 
-!classDefinition: #PdbFilePath category: #'CoDNaSQ-Web'!
+!classDefinition: #PdbFilePath category: #'CoDNaSQ-Web-Path'!
 StaticPath subclass: #PdbFilePath
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'CoDNaSQ-Web'!
-!classDefinition: 'PdbFilePath class' category: #'CoDNaSQ-Web'!
+	category: 'CoDNaSQ-Web-Path'!
+!classDefinition: 'PdbFilePath class' category: #'CoDNaSQ-Web-Path'!
 PdbFilePath class
 	instanceVariableNames: ''!
 
-!classDefinition: #RootPath category: #'CoDNaSQ-Web'!
+!classDefinition: #RootPath category: #'CoDNaSQ-Web-Path'!
 StaticPath subclass: #RootPath
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'CoDNaSQ-Web'!
-!classDefinition: 'RootPath class' category: #'CoDNaSQ-Web'!
+	category: 'CoDNaSQ-Web-Path'!
+!classDefinition: 'RootPath class' category: #'CoDNaSQ-Web-Path'!
 RootPath class
 	instanceVariableNames: ''!
 
-!classDefinition: #SearchClusterPath category: #'CoDNaSQ-Web'!
+!classDefinition: #SearchClusterPath category: #'CoDNaSQ-Web-Path'!
 StaticPath subclass: #SearchClusterPath
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'CoDNaSQ-Web'!
-!classDefinition: 'SearchClusterPath class' category: #'CoDNaSQ-Web'!
+	category: 'CoDNaSQ-Web-Path'!
+!classDefinition: 'SearchClusterPath class' category: #'CoDNaSQ-Web-Path'!
 SearchClusterPath class
 	instanceVariableNames: ''!
 
@@ -271,7 +272,7 @@ ConformerPair class
 
 !classDefinition: #ConformerPairChain category: #'CoDNaSQ-Model'!
 Object subclass: #ConformerPairChain
-	instanceVariableNames: 'queryChain targetChain alignmentType alignmentRank structuralSimilarity queryCover targetCover structurallyEquivalentResiduePairs queryCoverBasedOnAlignmentLength targetCoverBasedOnAlignmentLength typicalDistanceError rmsd sequenceIdentity permutations'
+	instanceVariableNames: 'queryChain targetChain rmsd'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Model'!
@@ -350,6 +351,11 @@ ConformersTable class
 	instanceVariableNames: ''!
 
 
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 03:43:50'!
+printOn: aStrem
+
+	aStrem nextPutAll: ('Cluster {1}' format: {self id} )! !
+
 !Conformer methodsFor: 'as yet unclassified' stamp: 'GC 6/20/2019 18:53:40'!
 name
 
@@ -394,18 +400,6 @@ testWhenThereIsAConformerPairPairWithARepeatedConformerIsThree
 
 	self assert: 3 equals: cluster size! !
 
-!AdvancedSearchPath methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 02:36:33'!
-handle
-
-	^ request isGetRequest 
-		ifTrue: [ SearchController new :: advancedSearch: request ]
-		ifFalse: [ SearchController new :: resultsFor: request ]! !
-
-!AdvancedSearchPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/29/2019 10:25:15'!
-canHandle: aRequest
-	
-	^ aRequest url includesSubString: '/advanced_search'! !
-
 !ClusterShow methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:08:59'!
 handle
 
@@ -425,6 +419,18 @@ handle
 canHandle: aRequest
 	
 	^ aRequest url includesSubString: '/conformer/show/'! !
+
+!AdvancedSearchPath methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 02:36:33'!
+handle
+
+	^ request isGetRequest 
+		ifTrue: [ SearchController new :: advancedSearch: request ]
+		ifFalse: [ SearchController new :: resultsFor: request ]! !
+
+!AdvancedSearchPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/29/2019 10:25:15'!
+canHandle: aRequest
+	
+	^ aRequest url includesSubString: '/advanced_search'! !
 
 !ContactPagePath methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:40:30'!
 handle
@@ -681,6 +687,15 @@ searchingForm
 				} :: id: 'searchFields'			
 			)! !
 
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 03:39:00'!
+avgRMSDTertiary
+	| allChainPairs |
+	allChainPairs _ ClusterRepository instance allChainPairsOf: self cluster.
+	
+	^ allChainPairs 
+		ifEmpty: [ 'no data' ] 
+		ifNotEmpty: [ (allChainPairs average: [ :chainPair | chainPair rmsd asNumber ]) asString, ' &#8491' ]! !
+
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:26:26'!
 body
 
@@ -696,7 +711,7 @@ cluster: clusterToRender
 
 	aCluster _ clusterToRender! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 04:02:10'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 03:01:10'!
 clusterDetails
 	| maxResolution minResolution |
 		
@@ -717,6 +732,19 @@ clusterDetails
 			Div css: #('panel-block') containing: {
 				Paragraph with: 'Conformers:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
 				Paragraph with: self cluster size asString
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Max RMSD Quaternary:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: self maximumPairByRMSD rmsd asString, '&#8491;'
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Max RMSD Tertiary:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: self maximumRMSDTertiary
+			}.
+			
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Average RMSD Tertiary:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: self avgRMSDTertiary
 			}.
 			Div css: #('panel-block') containing: {
 				Paragraph with: 'Resolution:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
@@ -742,6 +770,11 @@ conformers: cluster
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 04:53:24'!
 maximumPairByRMSD
 	^ ClusterRepository instance maximumPairByRMSDOf: self cluster! !
+
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 03:02:36'!
+maximumRMSDCuaternary
+
+	^ self maximumPairByRMSD :: ifNil: [ 'no data' ] ifNotNil: [ self maximumPairByRMSD rmsd asString, ' &#8491' ]! !
 
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:50:17'!
 maximumRMSDTertiary
@@ -1799,21 +1832,6 @@ with: aConformer
 with: aConformer with: anotherConformer t: t r: r s: s sq: sq st: st l: l lq: lq lt: lt sr: sr rmsd: rmsd ls: ls p: p
 	^ self new :: with: aConformer with: anotherConformer t: t r: r s: s sq: sq st: st l: l lq: lq lt: lt sr: sr rmsd: rmsd ls: ls p: p! !
 
-!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:58:04'!
-alignmentRank: anAlignmentRank
-
-	alignmentRank _ anAlignmentRank! !
-
-!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:55:07'!
-alignmentType: anAlignmentType
-
-	alignmentType _ anAlignmentType! !
-
-!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:03:03'!
-permutations: somePermutations
-
-	permutations _ somePermutations ! !
-
 !ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 21:59:35'!
 queryChain
 
@@ -1823,16 +1841,6 @@ queryChain
 queryChain: aChain
 
 	queryChain _ aChain ! !
-
-!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:58:42'!
-queryCover: aQueryCover
-
-	queryCover _ aQueryCover ! !
-
-!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:00:39'!
-queryCoverBasedOnAlignmentLength: aQueryCoverBasedOnAlignmentLength
-
-	queryCoverBasedOnAlignmentLength _ aQueryCoverBasedOnAlignmentLength ! !
 
 !ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:37:42'!
 rmsd
@@ -1844,21 +1852,6 @@ rmsd: anRmsd
 
 	rmsd _ anRmsd ! !
 
-!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:02:50'!
-sequenceIdentity: aSequenceIdentity
-
-	sequenceIdentity _ aSequenceIdentity ! !
-
-!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:58:23'!
-structuralSimilarity: anStructuralSimilarity
-
-	structuralSimilarity _ anStructuralSimilarity ! !
-
-!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:00:13'!
-structurallyEquivalentResiduePairs: someStructurallyEquivalentResiduePairs
-
-	structurallyEquivalentResiduePairs _ someStructurallyEquivalentResiduePairs ! !
-
 !ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 21:59:44'!
 targetChain
 	
@@ -1869,20 +1862,10 @@ targetChain: aChain
 
 	targetChain _ aChain ! !
 
-!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 23:59:01'!
-targetCover: aTargetCover
+!Repository methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 03:39:42'!
+all
 
-	targetCover _ aTargetCover ! !
-
-!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:01:00'!
-targetCoverBasedOnAlignmentLength: aTargetCoverBasedOnAlignmentLength
-
-	targetCoverBasedOnAlignmentLength _ aTargetCoverBasedOnAlignmentLength ! !
-
-!ConformerPairChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 00:02:16'!
-typicalDistanceError: aTypicalDistanceError
-
-	typicalDistanceError _ aTypicalDistanceError ! !
+	^ elements! !
 
 !Repository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:32:38'!
 count
@@ -1921,6 +1904,11 @@ instance
 	instance ifNil: [ instance _ self new ].
 	
 	^ instance! !
+
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 03:52:24'!
+allChainPairsOf: aCluster
+
+	^ aCluster allConformers collect: [:conformer | conformer chainPairs ] :: asOrderedCollection flatten! !
 
 !ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/29/2019 10:01:50'!
 deserialize: csvFile
@@ -2033,7 +2021,7 @@ maximumPairByRMSDOf: aCluster
 
 	^ aCluster conformerPairs detectMax: [ :pair | pair rmsd ]! !
 
-!ConformerChainRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/29/2019 10:10:33'!
+!ConformerChainRepository methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 03:30:31'!
 deserialize: csvFile
 	|leftLinesAmount csvLines |
 	
@@ -2102,14 +2090,16 @@ deserialize: csvFile
 		conformerChainPair targetChain: targetChain.
 		conformerChainPair rmsd: (csvLine at: 16).
 		
+		ConformerChainRepository instance saveAll: { queryChain . targetChain }.
+		ConformerPairChainRepository instance save: conformerChainPair.
+		
 		query addChainPair: conformerChainPair.
 		target addChainPair: conformerChainPair.
 		
+		ConformerRepository instance saveAll: {query. target}.
+		
 		leftLinesAmount _ leftLinesAmount - 1.
 		Transcript log: ('{1} lines are left' format: {leftLinesAmount}).
-		
-		ConformerChainRepository instance saveAll: { queryChain . targetChain }.
-		ConformerPairChainRepository instance save: conformerChainPair
 	].
 
 	self inform: 'Conformer chain CSV successfully imported'! !
