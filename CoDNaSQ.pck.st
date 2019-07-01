@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3795] on 30 June 2019 at 8:01:58 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3795] on 1 July 2019 at 2:22:06 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 88!
+!provides: 'CoDNaSQ' 1 89!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -67,6 +67,16 @@ StaticPath subclass: #FaviconPath
 	category: 'CoDNaSQ-Web'!
 !classDefinition: 'FaviconPath class' category: #'CoDNaSQ-Web'!
 FaviconPath class
+	instanceVariableNames: ''!
+
+!classDefinition: #LogoPath category: #'CoDNaSQ-Web'!
+StaticPath subclass: #LogoPath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'LogoPath class' category: #'CoDNaSQ-Web'!
+LogoPath class
 	instanceVariableNames: ''!
 
 !classDefinition: #PdbFilePath category: #'CoDNaSQ-Web'!
@@ -426,10 +436,10 @@ canHandle: aRequest
 
 	^ aRequest url includesSubString: '/contact'! !
 
-!FaviconPath methodsFor: 'as yet unclassified' stamp: 'GC 6/26/2019 22:37:18'!
+!FaviconPath methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:19:49'!
 handle
-	
-	^ request send301Response: 'https://raw.githubusercontent.com/gstn-caruso/codnasq/master/assets/favicon.ico'
+
+	^ RootController new :: respondSuccessfully: request withImageIn: '/home/pi/Code/codnasq/assets/favicon.ico'
 ! !
 
 !FaviconPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/29/2019 10:24:59'!
@@ -437,14 +447,25 @@ canHandle: aRequest
 
 	^ aRequest url includesSubString: '/favicon.ico'! !
 
-!PdbFilePath methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:00:43'!
+!LogoPath methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:20:52'!
+handle
+
+	^ RootController new :: respondSuccessfully: request withImageIn: '/home/pi/Code/codnasq/assets/logo.png'
+! !
+
+!LogoPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:21:07'!
+canHandle: aRequest
+
+	^ aRequest url includesSubString: '/logo.png'! !
+
+!PdbFilePath methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 16:51:10'!
 handle
 	| pdbId pdbData |
 	
 	pdbId _  request url findTokens: '/' :: last.
 	
-	[ 
-		pdbData _ ('/Users/gaston/Code/tip_cosas_privadas/pdbs/',pdbId,'.pdb') asFileEntry binaryContents readStream.
+	[
+		pdbData _ ('/home/pi/pdbs/',pdbId,'.pdb') asFileEntry binaryContents readStream.
 		request stream200Response: pdbData size: pdbData size type: 'text/plain'
 	 ] on: Error do: [ :anError |  request send404Response ].! !
 
@@ -775,7 +796,7 @@ printStructuralSimilarity: conformerPair
 	
 	^  truncatedStructuralSimilarity asString, '%'! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/24/2019 13:52:50'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 17:05:58'!
 scripts
 	| query target |
 	query _ self maximumPairByRMSD first pdbId.
@@ -802,10 +823,14 @@ scripts
 				document.getElementById("viewport").onmousewheel = function(event){ event.preventDefault(); };
 				window.addEventListener("resize", function(event){ stage.handleResize(); }, false );
 				
+				var hostname = "http://" + window.location.hostname + "/pdbfile/";				
 				
-				new HttpClient().get(`http://ufq.unq.edu.ar/codnasq/topmatch/quaternary/2v28/2v28-1_2v27-1/2v27-1.pdb`, function(response){
+				new HttpClient().get(hostname + `', query, '`, function(response){
 					stage.loadFile( new Blob([response], {type: `text/plain`}), { ext:`pdb`, defaultRepresentation: true } );
-				});		
+				});
+				new HttpClient().get(hostname + `', target, '`, function(response){
+					stage.loadFile( new Blob([response], {type: `text/plain`}), { ext:`pdb`, defaultRepresentation: true } );
+				});	
 			});
 	      </script>'! !
 
@@ -1171,11 +1196,11 @@ body
 		Div containing: {  self searchBar }
 	}) :: body! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:14:24'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:21:41'!
 heading
 		
 	^ Div containing: {
-		Img src: 'https://github.com/gstn-caruso/codnasq/blob/master/assets/logo.png?raw=true' 
+		Img src: '/logo.png' 
 			alt: 'codnas q logo' :: css: #('column' 'is-offset-2' 'is-two-thirds').
 		Heading with: 'Conformational Diversity of Native State - Quaternary' :: css: #('title' 'has-margin-t-7')
 	}! !
@@ -1209,27 +1234,27 @@ searchBar
 	
 	^ HtmlForm action: '/cluster/search' method: 'get' enctype: 'url-encoded' containing: formContent! !
 
-!MainView methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:48:33'!
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 20:10:10'!
 body
 
 	^ Div containing: {
 		Nav css: #(navbar 'is-info has-shadow has-margin-b-5') containing: {
 			Div css: #('navbar-brand has-text-weight-bold') containing: {
-				Hyperlink to: '/' with: (Img src: 'https://github.com/gstn-caruso/codnasq/blob/master/assets/logo.png?raw=true' alt: 'codnas q logo' :: render) :: css: #('navbar-item')
+				Hyperlink to: '/' with: (Img src: '/logo.png' alt: 'codnas q logo' :: render) :: css: #('navbar-item')
 			}.
 			Div css: #('navbar-menu') containing: {
-				Div css: #('navbar-start') containing: {
+				Div css: #('navbar-end') containing: {
 					Div css: #('navbar-item') containing: {
 						Hyperlink to: '/advanced_search' with: 
 							(Icon css: #('fas' 'fa-search' 'has-margin-r-7') :: render), 
 							'Advanced Search' 
-						:: css: #('navbar-item' 'has-text-light')
-					}.
+						:: css: #('navbar-item' 'has-text-light').
 					Div css: #('navbar-item') containing: {
 						Hyperlink to: '/contact' with: 
 							(Icon css: #('fas' 'fa-address-card' 'has-margin-r-7') :: render), 
 							'Contact us' 
 						:: css: #('navbar-item' 'has-text-light')
+						}
 					}
 				}
 			}
