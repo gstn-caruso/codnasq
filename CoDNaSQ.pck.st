@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3795] on 1 July 2019 at 3:53:08 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 1 July 2019 at 11:39:29 pm'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 90!
+!provides: 'CoDNaSQ' 1 91!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -40,6 +40,16 @@ StaticPath subclass: #ConformerShow
 ConformerShow class
 	instanceVariableNames: ''!
 
+!classDefinition: #AboutPagePath category: #'CoDNaSQ-Web-Path'!
+StaticPath subclass: #AboutPagePath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-Path'!
+!classDefinition: 'AboutPagePath class' category: #'CoDNaSQ-Web-Path'!
+AboutPagePath class
+	instanceVariableNames: ''!
+
 !classDefinition: #AdvancedSearchPath category: #'CoDNaSQ-Web-Path'!
 StaticPath subclass: #AdvancedSearchPath
 	instanceVariableNames: ''
@@ -48,6 +58,16 @@ StaticPath subclass: #AdvancedSearchPath
 	category: 'CoDNaSQ-Web-Path'!
 !classDefinition: 'AdvancedSearchPath class' category: #'CoDNaSQ-Web-Path'!
 AdvancedSearchPath class
+	instanceVariableNames: ''!
+
+!classDefinition: #AssetsPath category: #'CoDNaSQ-Web-Path'!
+StaticPath subclass: #AssetsPath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-Path'!
+!classDefinition: 'AssetsPath class' category: #'CoDNaSQ-Web-Path'!
+AssetsPath class
 	instanceVariableNames: ''!
 
 !classDefinition: #ContactPagePath category: #'CoDNaSQ-Web-Path'!
@@ -68,16 +88,6 @@ StaticPath subclass: #FaviconPath
 	category: 'CoDNaSQ-Web-Path'!
 !classDefinition: 'FaviconPath class' category: #'CoDNaSQ-Web-Path'!
 FaviconPath class
-	instanceVariableNames: ''!
-
-!classDefinition: #LogoPath category: #'CoDNaSQ-Web-Path'!
-StaticPath subclass: #LogoPath
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'CoDNaSQ-Web-Path'!
-!classDefinition: 'LogoPath class' category: #'CoDNaSQ-Web-Path'!
-LogoPath class
 	instanceVariableNames: ''!
 
 !classDefinition: #PdbFilePath category: #'CoDNaSQ-Web-Path'!
@@ -108,6 +118,16 @@ StaticPath subclass: #SearchClusterPath
 	category: 'CoDNaSQ-Web-Path'!
 !classDefinition: 'SearchClusterPath class' category: #'CoDNaSQ-Web-Path'!
 SearchClusterPath class
+	instanceVariableNames: ''!
+
+!classDefinition: #AboutPageController category: #'CoDNaSQ-Web'!
+RootController subclass: #AboutPageController
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'AboutPageController class' category: #'CoDNaSQ-Web'!
+AboutPageController class
 	instanceVariableNames: ''!
 
 !classDefinition: #ClusterController category: #'CoDNaSQ-Web'!
@@ -148,6 +168,16 @@ RootController subclass: #SearchController
 	category: 'CoDNaSQ-Web'!
 !classDefinition: 'SearchController class' category: #'CoDNaSQ-Web'!
 SearchController class
+	instanceVariableNames: ''!
+
+!classDefinition: #AboutPageView category: #'CoDNaSQ-Web-View'!
+View subclass: #AboutPageView
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-View'!
+!classDefinition: 'AboutPageView class' category: #'CoDNaSQ-Web-View'!
+AboutPageView class
 	instanceVariableNames: ''!
 
 !classDefinition: #AdvancedSearchView category: #'CoDNaSQ-Web-View'!
@@ -420,6 +450,16 @@ canHandle: aRequest
 	
 	^ aRequest url includesSubString: '/conformer/show/'! !
 
+!AboutPagePath methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 22:01:23'!
+handle
+
+	^ AboutPageController new :: index: request! !
+
+!AboutPagePath class methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 22:01:41'!
+canHandle: aRequest
+
+	^ aRequest url includesSubString: '/about'! !
+
 !AdvancedSearchPath methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 02:36:33'!
 handle
 
@@ -431,6 +471,20 @@ handle
 canHandle: aRequest
 	
 	^ aRequest url includesSubString: '/advanced_search'! !
+
+!AssetsPath methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:32:17'!
+handle
+	| imgUrl |
+	
+	imgUrl _ request url findTokens: '/' :: last.
+	
+	^ RootController new :: respondSuccessfully: request withImageIn: ('/home/pi/Code/codnasq/assets/', imgUrl)
+! !
+
+!AssetsPath class methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:19:03'!
+canHandle: aRequest
+
+	^ aRequest url includesSubString: '/assets/'! !
 
 !ContactPagePath methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:40:30'!
 handle
@@ -448,21 +502,10 @@ handle
 	^ RootController new :: respondSuccessfully: request withImageIn: '/home/pi/Code/codnasq/assets/favicon.ico'
 ! !
 
-!FaviconPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/29/2019 10:24:59'!
+!FaviconPath class methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:27:19'!
 canHandle: aRequest
 
 	^ aRequest url includesSubString: '/favicon.ico'! !
-
-!LogoPath methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:20:52'!
-handle
-
-	^ RootController new :: respondSuccessfully: request withImageIn: '/home/pi/Code/codnasq/assets/logo.png'
-! !
-
-!LogoPath class methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:21:07'!
-canHandle: aRequest
-
-	^ aRequest url includesSubString: '/logo.png'! !
 
 !PdbFilePath methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 16:51:10'!
 handle
@@ -499,6 +542,11 @@ handle
 canHandle: aRequest
 
 	^ aRequest url includesSubString: '/cluster/search'! !
+
+!AboutPageController methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 22:02:06'!
+index: request
+
+	^ self respondSuccessfully: request with: (AboutPageView new)! !
 
 !ClusterController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 13:55:21'!
 index: request
@@ -609,6 +657,94 @@ resultsFor: aRequest
 	results _ ConformerRepository instance where: parsedQuery.
 	
 	self respondSuccessfully: aRequest with: (ConformerSearchResultView containing: results)! !
+
+!AboutPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:33:50'!
+aboutPageDetails
+
+	^ Div containing: {
+		Div css: #(card) containing: {
+			Heading with: 'About CoDNaS-Q' :: css: #('card-header' 'card-header-title' 'title').
+			Div css: #('card-content') containing: {
+				self whatItIs.
+				self whatItIsUsedFor.
+				self implementation.
+				self example.
+				self bibliography.
+			}
+		}
+	}! !
+
+!AboutPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:38:37'!
+bibliography
+
+	^ Div containing: {
+		Heading with: 'Bibliography' :: css: #(title).
+		Ul containing: {
+			Li containing: {
+				Paragraph with: 'Dey, S., Ritchie, D.W. and Levy, E.D. 2018. PDB-wide identification of biological assemblies from conserved quaternary structure geometry. Nature Methods 15(1), pp. 67&#8211;72.' 
+			} :: css: #('has-padding-b-4').
+			Li containing: {
+				Paragraph with: 'Duarte, J.M., Srebniak, A., Sch&auml;rer, M.A. and Capitani, G. 2012. Protein interface classification by evolutionary analysis. BMC Bioinformatics 13, p. 334.'
+			} :: css: #('has-padding-b-4').
+			Li containing: {
+				Paragraph with: 'Krissinel, E. and Henrick, K. 2007. Inference of macromolecular assemblies from crystalline state. Journal of Molecular Biology 372(3), pp. 774&#8211;797.' 
+			} :: css: #('has-padding-b-4').
+		}
+	}! !
+
+!AboutPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 22:02:53'!
+body
+
+	^ MainView withPartial: self aboutPageDetails :: body! !
+
+!AboutPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:35:25'!
+example
+
+	^ Div containing: {
+		Heading with: 'Example' :: css: #(title).
+		Paragraph with: 'The fructose-1,6-bisphosphatase (FBPase) is a key regulatory enzyme of gluconeogenic pathway. It catalyzes the hydrolysis of fructose-1,6-bisphosphate to fructose-6-phosphate and phosphate.
+This tetrameric enzyme presents two conformational states: R state, in which the enzyme is active and bounded with the substrate or product; and the T form, where the enzyme is bound to AMP in presence or absence of metallic ions.' :: css: #('has-margin-b-7').
+
+		Img src: '/assets/about.png' alt: 'R and T state of FBPase. 1RDX conformer in gold colour and 1RDY showed in cian' :: css: #('has-margin-b-7').
+		
+		Paragraph with: 'R and T state of FBPase. 1RDX conformer in gold colour and 1RDY showed in cian.' :: css: #('has-margin-b-7').
+		
+		Paragraph with: ('In CoDNaS-Q we are able to find the R and T forms within the {1} cluster, and 66 others conformers of this protein, some of them with the ligand bound. The maximum quaternary RMSD measured for this cluster is 3.38 &#8491.' 
+			format: { Hyperlink to: '/cluster/show/CQ1fpf' with: 'CQ1fpf' :: render}
+		)
+	} :: css: #('has-margin-b-7')! !
+
+!AboutPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:03:54'!
+implementation
+
+	^ Div containing: {
+		Heading with: 'Database implementation' :: css: #(title).
+		Paragraph with: 'CoDNaS Quaternary uses homoligomeric proteins annotated by the algorithm QSbio (Dey et al. 2018), that combines PISA (Krissinel and Henrick 2007), EPPIC (Duarte et al. 2012) and QSalign (Dey et al. 2018), to predict different parameters of protein complexes. Using the BlastClust, all the different structures (in the same oligomeric state) deposited for a given protein were obtained. These structures are considered as putative conformers and provide snapshots of proteins dynamics. Structural alignments among each pair of conformeros for a given protein were performed by TopMatch. The maximum RMSD between pair of conformers is  a measure of the protein conformational diversity.' 
+		:: css: #('has-margin-b-7')
+	}! !
+
+!AboutPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:02:36'!
+whatItIs
+
+	^ Div containing: {
+		Heading with: 'What is CoDNaS-Q?' :: css: #(title).
+			Paragraph with: 'CoDNaS-Q <em>&mdash;Conformational Diversity of Native State-Quaternary&mdash;</em> is a high confidence database of conformational diversity in proteins that present a biologically relevant quaternary structure.' :: css: #('has-margin-b-7').
+			Paragraph with: ('CoDNaS Quaternary possess a collection of redundant complexes experimentally determined by X-Ray crystallography technique, including their experimental conditions (ligands, pH, temperature, etc), general information (PDB ID, length, etc), cross linked data with other databases ({1} and {2}) and structural information of the protein (RMSD, oligomeric state, conformers, etc).' 
+				format: {
+					Hyperlink to: 'https://www.uniprot.org/' with: 'UniProt' :: render . 
+					Hyperlink to: 'https://pfam.xfam.org/' with: 'Pfam' :: render
+				}
+			) :: css: #('has-margin-b-7')
+	}! !
+
+!AboutPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:01:45'!
+whatItIsUsedFor
+
+	^ Div containing: {
+		Heading with: 'What is it used for?' :: css: #(title).
+		Heading with: 'Experimental conditions associated to conformational diversity. Applications, implementation' :: css: #(subtitle).
+		Paragraph with: 'The database allows the user find through different criteria and filters proteins in several conformations, taking into account their biological quaternary structure.The different redundant structures (conformers) have been structurally aligned all vs all in order to assess the conformational variability for a given protein. Additionally, the experimental conditions associated to each structure have been considered to allow users associate protein conformational changes with the biological function.' :: css: #('has-margin-b-7')
+	}! !
 
 !AdvancedSearchView methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 02:54:40'!
 advancedSearchForm
@@ -1229,11 +1365,11 @@ body
 		Div containing: {  self searchBar }
 	}) :: body! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:21:41'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:27:37'!
 heading
 		
 	^ Div containing: {
-		Img src: '/logo.png' 
+		Img src: '/assets/logo.png' 
 			alt: 'codnas q logo' :: css: #('column' 'is-offset-2' 'is-two-thirds').
 		Heading with: 'Conformational Diversity of Native State - Quaternary' :: css: #('title' 'has-margin-t-7')
 	}! !
@@ -1267,33 +1403,34 @@ searchBar
 	
 	^ HtmlForm action: '/cluster/search' method: 'get' enctype: 'url-encoded' containing: formContent! !
 
-!MainView methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 20:10:10'!
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:25:36'!
 body
 
 	^ Div containing: {
 		Nav css: #(navbar 'is-info has-shadow has-margin-b-5') containing: {
 			Div css: #('navbar-brand has-text-weight-bold') containing: {
-				Hyperlink to: '/' with: (Img src: '/logo.png' alt: 'codnas q logo' :: render) :: css: #('navbar-item')
+				Hyperlink to: '/' with: (Img src: '/assets/logo.png' alt: 'codnas q logo' :: render) :: css: #('navbar-item')
 			}.
 			Div css: #('navbar-menu') containing: {
-				Div css: #('navbar-end') containing: {
-					Div css: #('navbar-item') containing: {
-						Hyperlink to: '/advanced_search' with: 
-							(Icon css: #('fas' 'fa-search' 'has-margin-r-7') :: render), 
-							'Advanced Search' 
-						:: css: #('navbar-item' 'has-text-light').
-					Div css: #('navbar-item') containing: {
-						Hyperlink to: '/contact' with: 
-							(Icon css: #('fas' 'fa-address-card' 'has-margin-r-7') :: render), 
-							'Contact us' 
-						:: css: #('navbar-item' 'has-text-light')
-						}
-					}
+				Div css: #('navbar-end') containing: {					
+					self navItemTo: '/advanced_search' with: 'Advanced Search' icon: 'fa-search'.	
+					self navItemTo: '/about' with: 'About' icon: 'fa-info'.
+					self navItemTo: '/contact' with: 'Contact us' icon: 'fa-address-card'.
 				}
 			}
 		} .
 		Div css: #('column' 'is-four-fifths' 'is-offset-1') containing: { partial } 
 	} :: render! !
+
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 22:48:58'!
+navItemTo: path with: label icon: cssClassIcon
+	| icon |
+	
+	icon _ Icon css: { 'fas' . cssClassIcon .  'has-margin-r-7' } :: render.
+
+	^ Div css: #('navbar-item') containing: {
+		Hyperlink to: path with: (icon, label) :: css: #('navbar-item' 'has-text-light')
+	}! !
 
 !MainView methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:09:01'!
 partial: partialView
