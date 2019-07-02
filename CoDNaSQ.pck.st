@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 2 July 2019 at 12:40:25 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 2 July 2019 at 12:44:30 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 93!
+!provides: 'CoDNaSQ' 1 94!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -1626,7 +1626,7 @@ body
 
 	^ MainView withPartial: self statisticDetails :: body! !
 
-!StatisticsPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:37:50'!
+!StatisticsPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:44:23'!
 statisticDetails
 
 	^ Div containing: {
@@ -1656,12 +1656,24 @@ statisticDetails
 				Paragraph with: 'Annotated genes: 3283' .
 				
 				Heading with: 'Organisms' :: css: #('title' 'has-text-weight-bold' 'has-margin-bt-7').
+				Img 
+					src: 'https://github.com/gstn-caruso/codnasq/blob/master/assets/stats_species_coverage.png?raw=true' 
+					alt: 'species coverage'.
 				
 				Heading with: 'Maximum quaternary RMSD per cluster [&#8491]' :: css: #('title' 'has-text-weight-bold' 'has-margin-bt-7').
+				Img
+					src: 'https://github.com/gstn-caruso/codnasq/blob/master/assets/stats_rmsd_max_q_distr.png?raw=true'
+					alt: 'Maximum quaternary RMSD per cluster'.
 				
 				Heading with: 'Number of conformers per cluster' :: css: #('title' 'has-text-weight-bold' 'has-margin-bt-7').
-				
+				Img
+					src: 'https://github.com/gstn-caruso/codnasq/blob/master/assets/stats_frequency_conformers_by_cluster.png?raw=true'
+					alt: 'Number of conformers per cluster'.
+					
 				Heading with: 'Conformers resolution [&#8491]' :: css: #('title' 'has-text-weight-bold' 'has-margin-bt-7').
+				Img
+					src: 'https://github.com/gstn-caruso/codnasq/blob/master/assets/stats_resolutions.png?raw=true'
+					alt: 'Conformers resolution'.
 
 			}
 		}
