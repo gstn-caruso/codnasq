@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 2 July 2019 at 12:19:36 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 2 July 2019 at 12:40:25 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 92!
+!provides: 'CoDNaSQ' 1 93!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -130,6 +130,16 @@ StaticPath subclass: #SearchClusterPath
 SearchClusterPath class
 	instanceVariableNames: ''!
 
+!classDefinition: #StatisticsPagePath category: #'CoDNaSQ-Web-Path'!
+StaticPath subclass: #StatisticsPagePath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-Path'!
+!classDefinition: 'StatisticsPagePath class' category: #'CoDNaSQ-Web-Path'!
+StatisticsPagePath class
+	instanceVariableNames: ''!
+
 !classDefinition: #AboutPageController category: #'CoDNaSQ-Web'!
 RootController subclass: #AboutPageController
 	instanceVariableNames: ''
@@ -188,6 +198,16 @@ RootController subclass: #SearchController
 	category: 'CoDNaSQ-Web'!
 !classDefinition: 'SearchController class' category: #'CoDNaSQ-Web'!
 SearchController class
+	instanceVariableNames: ''!
+
+!classDefinition: #StatisticsPageController category: #'CoDNaSQ-Web'!
+RootController subclass: #StatisticsPageController
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'StatisticsPageController class' category: #'CoDNaSQ-Web'!
+StatisticsPageController class
 	instanceVariableNames: ''!
 
 !classDefinition: #AboutPageView category: #'CoDNaSQ-Web-View'!
@@ -288,6 +308,16 @@ View subclass: #NewProtein
 	category: 'CoDNaSQ-Web-View'!
 !classDefinition: 'NewProtein class' category: #'CoDNaSQ-Web-View'!
 NewProtein class
+	instanceVariableNames: ''!
+
+!classDefinition: #StatisticsPageView category: #'CoDNaSQ-Web-View'!
+View subclass: #StatisticsPageView
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-View'!
+!classDefinition: 'StatisticsPageView class' category: #'CoDNaSQ-Web-View'!
+StatisticsPageView class
 	instanceVariableNames: ''!
 
 !classDefinition: #Cluster category: #'CoDNaSQ-Model'!
@@ -583,6 +613,16 @@ canHandle: aRequest
 
 	^ aRequest url includesSubString: '/cluster/search'! !
 
+!StatisticsPagePath methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:24:51'!
+handle
+
+	^ StatisticsPageController new :: index: request! !
+
+!StatisticsPagePath class methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:25:04'!
+canHandle: aRequest
+
+	^ aRequest url includesSubString: '/stats'! !
+
 !AboutPageController methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 22:02:06'!
 index: request
 
@@ -702,6 +742,11 @@ resultsFor: aRequest
 	results _ ConformerRepository instance where: parsedQuery.
 	
 	self respondSuccessfully: aRequest with: (ConformerSearchResultView containing: results)! !
+
+!StatisticsPageController methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:25:34'!
+index: request
+
+	^ self respondSuccessfully: request with: (StatisticsPageView new)! !
 
 !AboutPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:33:50'!
 aboutPageDetails
@@ -1575,6 +1620,52 @@ body
 								FormInput new type: 'submit' :: name: 'Submit' :: value: 'Submit' :: css: #('button' 'is-link' 'control') 
 						})
 	   }) :: body! !
+
+!StatisticsPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:25:58'!
+body
+
+	^ MainView withPartial: self statisticDetails :: body! !
+
+!StatisticsPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:37:50'!
+statisticDetails
+
+	^ Div containing: {
+		Div css: #(card) containing: {
+			Heading with: 'Download' :: css: #('card-header' 'card-header-title' 'title').
+			Div css: #('card-content') containing: {
+				Heading with: 'Summary' :: css: #('title' 'has-text-weight-bold' 'has-margin-b-7').
+			
+				Paragraph with: 'Number of clusters (~different proteins): 3649' .
+				Paragraph with: 'Number of protein conformers 18790' .
+				Paragraph with: 'Number of protein chains 51467' .
+				Paragraph with: 'Average number of conformers per protein 15.09' :: css: #('has-margin-b-7').
+				
+				Paragraph with: 'Number of clusters per group' .
+				Paragraph with: 'A. Tertiary deformations 421' :: css: #('has-margin-l-4').
+				Paragraph with: 'B. Mixed motions 2806' :: css: #('has-margin-l-4').
+				Paragraph with: 'C. Rigid-body movements 394'  :: css: #('has-margin-b-7' 'has-margin-l-4').
+				Paragraph with: 'Families: 1759'  :: css: #('has-margin-b-7').
+				Paragraph with: 'Highest maximum quaternary RMSD [&#8491] 8.11' .
+				Paragraph with: 'Average maximum quaternary RMSD [&#8491] 0.99' .
+				Paragraph with: 'Lowest maximum quaternary RMSD [&#8491] 0.04' :: css: #('has-margin-b-7').
+				
+				Paragraph with: 'Highest maximum tertiary RMSD [&#8491] 2.54' .
+				Paragraph with: 'Average maximum tertiary RMSD [&#8491] 0.95'.
+				Paragraph with: 'Lowest maximum tertiary RMSD [&#8491] 0' :: css: #('has-margin-b-7') .
+				
+				Paragraph with: 'Annotated genes: 3283' .
+				
+				Heading with: 'Organisms' :: css: #('title' 'has-text-weight-bold' 'has-margin-bt-7').
+				
+				Heading with: 'Maximum quaternary RMSD per cluster [&#8491]' :: css: #('title' 'has-text-weight-bold' 'has-margin-bt-7').
+				
+				Heading with: 'Number of conformers per cluster' :: css: #('title' 'has-text-weight-bold' 'has-margin-bt-7').
+				
+				Heading with: 'Conformers resolution [&#8491]' :: css: #('title' 'has-text-weight-bold' 'has-margin-bt-7').
+
+			}
+		}
+	}! !
 
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
 = anObject
