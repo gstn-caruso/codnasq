@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 1 July 2019 at 11:39:29 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 2 July 2019 at 12:19:36 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 91!
+!provides: 'CoDNaSQ' 1 92!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -78,6 +78,16 @@ StaticPath subclass: #ContactPagePath
 	category: 'CoDNaSQ-Web-Path'!
 !classDefinition: 'ContactPagePath class' category: #'CoDNaSQ-Web-Path'!
 ContactPagePath class
+	instanceVariableNames: ''!
+
+!classDefinition: #DownloadPagePath category: #'CoDNaSQ-Web-Path'!
+StaticPath subclass: #DownloadPagePath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-Path'!
+!classDefinition: 'DownloadPagePath class' category: #'CoDNaSQ-Web-Path'!
+DownloadPagePath class
 	instanceVariableNames: ''!
 
 !classDefinition: #FaviconPath category: #'CoDNaSQ-Web-Path'!
@@ -160,6 +170,16 @@ RootController subclass: #ContactController
 ContactController class
 	instanceVariableNames: ''!
 
+!classDefinition: #DownloadPageController category: #'CoDNaSQ-Web'!
+RootController subclass: #DownloadPageController
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'DownloadPageController class' category: #'CoDNaSQ-Web'!
+DownloadPageController class
+	instanceVariableNames: ''!
+
 !classDefinition: #SearchController category: #'CoDNaSQ-Web'!
 RootController subclass: #SearchController
 	instanceVariableNames: ''
@@ -228,6 +248,16 @@ View subclass: #ContactPageView
 	category: 'CoDNaSQ-Web-View'!
 !classDefinition: 'ContactPageView class' category: #'CoDNaSQ-Web-View'!
 ContactPageView class
+	instanceVariableNames: ''!
+
+!classDefinition: #DownloadPageView category: #'CoDNaSQ-Web-View'!
+View subclass: #DownloadPageView
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-View'!
+!classDefinition: 'DownloadPageView class' category: #'CoDNaSQ-Web-View'!
+DownloadPageView class
 	instanceVariableNames: ''!
 
 !classDefinition: #HomePage category: #'CoDNaSQ-Web-View'!
@@ -496,6 +526,16 @@ canHandle: aRequest
 
 	^ aRequest url includesSubString: '/contact'! !
 
+!DownloadPagePath methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:00:01'!
+handle
+
+	^ DownloadPageController new :: index: request! !
+
+!DownloadPagePath class methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:00:31'!
+canHandle: aRequest
+
+	^ aRequest url includesSubString: '/download'! !
+
 !FaviconPath methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:19:49'!
 handle
 
@@ -634,6 +674,11 @@ index: request
 
 	^ self respondSuccessfully: request with: (ContactPageView new)! !
 
+!DownloadPageController methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:02:33'!
+index: request
+
+	^ self respondSuccessfully: request with: (DownloadPageView new)! !
+
 !SearchController methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 01:13:34'!
 advancedSearch: aRequest
 	
@@ -697,7 +742,7 @@ body
 
 	^ MainView withPartial: self aboutPageDetails :: body! !
 
-!AboutPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:35:25'!
+!AboutPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:19:16'!
 example
 
 	^ Div containing: {
@@ -705,7 +750,7 @@ example
 		Paragraph with: 'The fructose-1,6-bisphosphatase (FBPase) is a key regulatory enzyme of gluconeogenic pathway. It catalyzes the hydrolysis of fructose-1,6-bisphosphate to fructose-6-phosphate and phosphate.
 This tetrameric enzyme presents two conformational states: R state, in which the enzyme is active and bounded with the substrate or product; and the T form, where the enzyme is bound to AMP in presence or absence of metallic ions.' :: css: #('has-margin-b-7').
 
-		Img src: '/assets/about.png' alt: 'R and T state of FBPase. 1RDX conformer in gold colour and 1RDY showed in cian' :: css: #('has-margin-b-7').
+		Img src: 'https://github.com/gstn-caruso/codnasq/blob/master/assets/about.png?raw=true' alt: 'R and T state of FBPase. 1RDX conformer in gold colour and 1RDY showed in cian' :: css: #('has-margin-b-7').
 		
 		Paragraph with: 'R and T state of FBPase. 1RDX conformer in gold colour and 1RDY showed in cian.' :: css: #('has-margin-b-7').
 		
@@ -1357,6 +1402,78 @@ introductionText
 			Paragraph with: 'Please contact us if you think we should work together. We are always looking forward to establish new and exciting collaborations!!' :: css: #('has-margin-b-7').
 	} :: css: #('has-margin-b-1')! !
 
+!DownloadPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:05:52'!
+body
+
+	^ MainView withPartial: self downloadPageDetails :: body! !
+
+!DownloadPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:18:14'!
+downloadPageDetails
+
+	 ^ Div containing: {
+		Div css: #(card) containing: {
+			Heading with: 'Download' :: css: #('card-header' 'card-header-title' 'title').
+			Div css: #('card-content') containing: {
+				Paragraph with: 'Download a custom semicolon-separated file with the main information about protein clusters in CoDNaS-Q.'
+					:: css: #('has-margin-l-6').
+				
+				Hyperlink to: 'https://drive.google.com/file/d/1Ejfnn0bZsqvLOhzPSt4hq5A1WNGNG6yt/view?usp=sharing' with: 'Click here' 
+					:: css: #('button' 'is-link' 'has-margin-6').
+				
+				Table
+					headers:  #()
+					rows: {
+						{ 'Cluster ID' . 'CoDNaS-Q identification number'} .
+						{ 'Oligomeric State' . 'Subunits Quantity'} .
+						{ 'PDB ID query' . 'query PDB code'} .
+						{ 'Biological Assembly query' . 'query Biological Assembly (or Chain ID)'} .
+						{ 'PDB ID target' . 'target PDB code'} .
+						{ 'Biological Assembly target' . 'target Biological Assembly (or Chain ID)'} .
+						{ 'Type of alignment' . 'Basic structure alignments are denoted by `b`, composite alignments are denoted by `c`, and sequence alignments are denoted by `q`.'} .
+						{ 'Rank of alignment' . 'Rank of alignment'} .
+						{ 'Structural similarity' . 'Measure of structural similarity based on Gaussian functions. If the structurally equivalent parts in query and target match perfectly, S is equal to L. With increasing spatial deviation of the aligned residues, S approaches 0.'} .
+						{ 'Query cover' . 'Query cover based on similarity score, expressed in percent (= 100 x S/Qn, where Qn is the length of the query sequence).'} .
+						{ 'Target cover' . 'Target cover based on similarity score, expressed in percent (= 100 x S/Tn, where Tn is the length of the target sequence).'} .
+						{ 'Structurally equivalent residue pairs' . 'Number of residue pairs that are structurally equivalent (= alignment length).'} .
+						{ 'Query cover based on alignment length' . 'Query cover based on alignment length, expressed in percent (= 100 x L/Qn, where Qn is the length of the query sequence).'} .
+						{ 'Target cover based on alignment length' . 'Target cover based on alignment length, expressed in percent (= 100 x L/Tn, where Tn is the length of the target sequence).'} .
+						{ 'Typical distance error' . 'For details on the construction of this per-residue measure of structural similarity, see Sippl & Wiederstein (2012).'} .
+						{ 'RMSD' . 'Root-mean-square error of superposition in Angstroms, calculated using all structurally equivalent C-alpha atoms.'} .
+						{ 'Sequence identity' . 'Sequence identity of query and target in the equivalent regions, expressed in percent.'} .
+						{ 'Permutations' . 'Number of permutations in the alignment.'} .
+						{ 'Query resolution' . 'Experimental resolution of query'} .
+						{ 'Target resolution' . 'Experimental resolution of target'} .
+						{ 'Query method' . 'Experimental technique of the query'} .
+						{ 'Target method' . 'Experimental technique of the target'} .
+						{ 'Query length' . 'Oligomer length'} .
+						{ 'Target length' . 'Oligomer length'} .
+						{ 'Query name' . 'Name of molecule query'} .
+						{ 'Target name' . 'Name of molecule target'} .
+						{ 'Query organism' . 'Species source registered in the PDB entry'} .
+						{ 'Target organism' . 'Species source registered in the PDB entry'} .
+						{ 'Query ligands' . 'Query ligands included in the PDB file'} .
+						{ 'Target ligands' . 'Target ligands included in the PDB file'} .
+						{ 'Query description' . 'Query title of the PDB entry'} .
+						{ 'Target description' . 'Target title of the PDB entry'} .
+						{ 'Target UniProt ID' . 'Target UniProt entry name'} .
+						{ 'Target Gene names' . 'Gene name according UniProt'} .
+						{ 'Target Pfam' . 'Target Pfam ID'} .
+						{ 'Query UniProt ID' . 'Query UniProt entry name'} .
+						{ 'Query Gene names' . 'Gene name according UniProt'} .
+						{ 'Query Pfam' . 'Query Pfam ID'} .
+						{ 'Grupo' . 'Tertiary vs Quaternary state comparison'} .
+						{ 'target pH' . 'Target pH conditions'} .
+						{ 'target Temperature' . 'Target experimental Temperature (K)'} .
+						{ 'query pH' . 'Query pH conditions'} .
+						{ 'query Temperature' . 'Target experimental Temperature (K)'} .
+						{ 'QueryChainID' . 'Query PDB code and chain identificators of the maximum tertiary pair for the cluster'} .
+						{ 'TargetChainID' . 'Target PDB code and chain identificators of the maximum tertiary pair for the cluster'} .
+						{ 'maxRMSD_T' . 'Maximum Tertiary RMSD measured in the cluster. In Angstroms'}
+					}
+			} :: css: #('table' 'is-bordered' 'is-striped' 'is-hoverable' 'is-fullwidth')
+		}
+	}! !
+
 !HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:14:35'!
 body
 		
@@ -1403,7 +1520,7 @@ searchBar
 	
 	^ HtmlForm action: '/cluster/search' method: 'get' enctype: 'url-encoded' containing: formContent! !
 
-!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:25:36'!
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:06:48'!
 body
 
 	^ Div containing: {
@@ -1413,7 +1530,8 @@ body
 			}.
 			Div css: #('navbar-menu') containing: {
 				Div css: #('navbar-end') containing: {					
-					self navItemTo: '/advanced_search' with: 'Advanced Search' icon: 'fa-search'.	
+					self navItemTo: '/advanced_search' with: 'Advanced Search' icon: 'fa-search'.
+					self navItemTo: '/download' with: 'Download' icon: 'fa-download'.	
 					self navItemTo: '/about' with: 'About' icon: 'fa-info'.
 					self navItemTo: '/contact' with: 'Contact us' icon: 'fa-address-card'.
 				}
