@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 2 July 2019 at 12:44:30 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 2 July 2019 at 12:46:48 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 94!
+!provides: 'CoDNaSQ' 1 95!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -1565,7 +1565,7 @@ searchBar
 	
 	^ HtmlForm action: '/cluster/search' method: 'get' enctype: 'url-encoded' containing: formContent! !
 
-!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:06:48'!
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:46:34'!
 body
 
 	^ Div containing: {
@@ -1576,7 +1576,8 @@ body
 			Div css: #('navbar-menu') containing: {
 				Div css: #('navbar-end') containing: {					
 					self navItemTo: '/advanced_search' with: 'Advanced Search' icon: 'fa-search'.
-					self navItemTo: '/download' with: 'Download' icon: 'fa-download'.	
+					self navItemTo: '/download' with: 'Download' icon: 'fa-download'.
+					self navItemTo: '/stats' with: 'Statistics' icon: 'fa-chart-line'.	
 					self navItemTo: '/about' with: 'About' icon: 'fa-info'.
 					self navItemTo: '/contact' with: 'Contact us' icon: 'fa-address-card'.
 				}
