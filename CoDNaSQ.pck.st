@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 2 July 2019 at 12:46:48 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 5 July 2019 at 2:06:37 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 95!
+!provides: 'CoDNaSQ' 1 96!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -138,6 +138,16 @@ StaticPath subclass: #StatisticsPagePath
 	category: 'CoDNaSQ-Web-Path'!
 !classDefinition: 'StatisticsPagePath class' category: #'CoDNaSQ-Web-Path'!
 StatisticsPagePath class
+	instanceVariableNames: ''!
+
+!classDefinition: #StylesPath category: #'CoDNaSQ-Web-Path'!
+StaticPath subclass: #StylesPath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-Path'!
+!classDefinition: 'StylesPath class' category: #'CoDNaSQ-Web-Path'!
+StylesPath class
 	instanceVariableNames: ''!
 
 !classDefinition: #AboutPageController category: #'CoDNaSQ-Web'!
@@ -622,6 +632,26 @@ handle
 canHandle: aRequest
 
 	^ aRequest url includesSubString: '/stats'! !
+
+!StylesPath methodsFor: 'as yet unclassified' stamp: 'GC 7/5/2019 01:00:45'!
+handle
+	|styles|
+	
+	styles _ self stylesPath asFileEntry binaryContents readStream.
+	
+	^ request send200Response: styles contentType: 'text/css; charset=utf-8'
+! !
+
+!StylesPath methodsFor: 'as yet unclassified' stamp: 'GC 7/5/2019 01:01:21'!
+stylesPath
+
+
+	^ '/Users/gaston/Code/Smalltalk/codnasq/assets/styles.css'! !
+
+!StylesPath class methodsFor: 'as yet unclassified' stamp: 'GC 7/5/2019 01:02:27'!
+canHandle: aRequest
+
+	^ aRequest url includesSubString: '/styles.css'! !
 
 !AboutPageController methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 22:02:06'!
 index: request
@@ -1565,26 +1595,124 @@ searchBar
 	
 	^ HtmlForm action: '/cluster/search' method: 'get' enctype: 'url-encoded' containing: formContent! !
 
-!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:46:34'!
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/5/2019 01:34:04'!
 body
 
-	^ Div containing: {
-		Nav css: #(navbar 'is-info has-shadow has-margin-b-5') containing: {
-			Div css: #('navbar-brand has-text-weight-bold') containing: {
-				Hyperlink to: '/' with: (Img src: '/assets/logo.png' alt: 'codnas q logo' :: render) :: css: #('navbar-item')
-			}.
-			Div css: #('navbar-menu') containing: {
-				Div css: #('navbar-end') containing: {					
-					self navItemTo: '/advanced_search' with: 'Advanced Search' icon: 'fa-search'.
-					self navItemTo: '/download' with: 'Download' icon: 'fa-download'.
-					self navItemTo: '/stats' with: 'Statistics' icon: 'fa-chart-line'.	
-					self navItemTo: '/about' with: 'About' icon: 'fa-info'.
-					self navItemTo: '/contact' with: 'Contact us' icon: 'fa-address-card'.
+	^ Div css: #(site) containing: {
+		Div css: #('site-content') containing: {
+			Nav css: #(navbar 'is-info has-shadow has-margin-b-5') containing: {
+				Div css: #('navbar-brand has-text-weight-bold') containing: {
+					Hyperlink to: '/' with: (Img src: '/assets/logo.png' alt: 'codnas q logo' :: render) :: css: #('navbar-item')
+				}.
+				Div css: #('navbar-menu') containing: {
+					Div css: #('navbar-end') containing: {					
+						self navItemTo: '/advanced_search' with: 'Advanced Search' icon: 'fa-search'.
+						self navItemTo: '/download' with: 'Download' icon: 'fa-download'.
+						self navItemTo: '/stats' with: 'Statistics' icon: 'fa-chart-line'.	
+						self navItemTo: '/about' with: 'About' icon: 'fa-info'.
+						self navItemTo: '/contact' with: 'Contact us' icon: 'fa-address-card'.
+					}
 				}
+			} .
+			Div css: #('column' 'is-four-fifths' 'is-offset-1') containing: { partial }
+		}.
+		self footer
+	}:: render! !
+
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/5/2019 01:44:35'!
+contactUsFooter
+
+	^ Div css: #('column') containing: {
+		Ul containing: {
+			Li containing: { 
+				Paragraph with: 'Contact us' :: css: #('footer-section-titile')
+			}.
+			Li containing: { Hyperlink 
+				to: 'http://ufq.unq.edu.ar/sbg/files/map_sbg-unq.png' 
+				with: 'Rooms 31-33, Department of Science & Technology, UNQ'
+			}.
+			Li containing: { Hyperlink 
+				to: 'https://goo.gl/maps/PZjY8QTAmCtXTT578'
+				with: 'Roque Saenz Pe&ntilde;a 352, Bernal, Buenos Aires, Argentina'								
+			}.
+			Li containing: {
+				Paragraph with: '(+54)-11-4365-7100'
 			}
-		} .
-		Div css: #('column' 'is-four-fifths' 'is-offset-1') containing: { partial } 
-	} :: render! !
+		}
+	}! !
+
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/5/2019 02:03:21'!
+footer
+
+	^ Footer containing: {
+		Div css: #('content') containing: {
+			Div css: #(columns) containing: {
+				self contactUsFooter.
+				self fundedByFooter.
+				self membersOfFooter
+			}.
+			Div css: #('footer-description' 'has-text-centered') containing: {
+				Paragraph with: 
+					('CoDNaS-Q is developed and maintained by the {1} at {2} in Bernal, Buenos Aires, Argentina.' 
+					format: {
+						Hyperlink to: 'http://ufq.unq.edu.ar/sbg' with: 'Structural Bioinformatics Group' :: render.
+						Hyperlink to: 'http://www.unq.edu.ar' with: 'National University of Quilmes' :: render
+					}).
+				Paragraph with: 
+					('This website is built in {1} by {2}. Shared under MIT.' 
+					format: {
+						Hyperlink to: 'http://www.cuis-smalltalk.org/' with: 'Cuis Smalltalk' :: render.
+						Hyperlink to: 'https://github.com/gstn-caruso' with: 'Gast&oacute;n Caruso' :: render
+					})
+			}.
+		} :: css: #('is-size-7')
+	}! !
+
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/5/2019 01:44:38'!
+fundedByFooter
+
+	^ Div css: #('column') containing: {
+			Ul containing: {
+				Li containing: { 
+					Paragraph with: 'Funded by' :: css: #('footer-section-titile')
+				}.
+				Li containing: { Hyperlink 
+					to: 'http://www.unq.edu.ar' 
+					with: 'National University of Quilmes (UNQ)'
+				}.
+				Li containing: { Hyperlink 
+					to: 'https://www.conicet.gov.ar/'
+					with: 'National Scientific and Technical Research Council (CONICET)'								
+				}.
+				Li containing: { Hyperlink 
+					to: 'https://www.argentina.gob.ar/ciencia/agencia'
+					with: 'National Agency for Promotion of Science and Technology (ANPCyT)'								
+				}.
+			}
+		}! !
+
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/5/2019 01:44:43'!
+membersOfFooter
+
+	^ Div css: #('column') containing: {
+		Ul containing: {
+			Li containing: { 
+				Paragraph with: 'Members of' :: css: #('footer-section-titile') 
+			}.
+			Li containing: { Hyperlink 
+				to: 'http://a2b2c.org/' 
+				with: 'Argentine Association for Bioinformatics and Computational Biology (A2B2C)'
+			}.
+			Li containing: { Hyperlink 
+				to: 'http://www.rsg-argentina.iscbsc.org/'
+				with: 'Regional Student Group - Argentina (RSG-Argentina)'								
+			}.
+			Li containing: { Hyperlink 
+				to: 'https://www.iscb.org/'
+				with: 'International Society for Computational Biology (ISCB)'								
+			}.
+		}
+	}! !
 
 !MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 22:48:58'!
 navItemTo: path with: label icon: cssClassIcon

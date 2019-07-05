@@ -1,0 +1,28 @@
+.site {
+	display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.site-content{
+	flex: 1;
+}
+
+.footer {
+	border-top: #0000001f solid 1px;
+	margin-top: 5%;
+	padding: 3rem 6.5rem 0;
+}
+
+.footer-description {
+	margin: 2.5% 0 1%;
+}
+
+.footer .content ul {
+	list-style: none;
+}
+
+.footer-section-titile {
+	margin-bottom: 3%;
+	font-weight: bold;
+}
