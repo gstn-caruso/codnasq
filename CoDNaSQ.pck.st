@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 5 July 2019 at 2:06:37 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 7 July 2019 at 12:41:21 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 96!
+!provides: 'CoDNaSQ' 1 98!
 !requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -332,7 +332,7 @@ StatisticsPageView class
 
 !classDefinition: #Cluster category: #'CoDNaSQ-Model'!
 Object subclass: #Cluster
-	instanceVariableNames: 'oligomericState conformerPairs id'
+	instanceVariableNames: 'oligomericState conformerPairs id maxRMSDTertiary'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Model'!
@@ -1032,12 +1032,10 @@ maximumRMSDCuaternary
 
 	^ self maximumPairByRMSD :: ifNil: [ 'no data' ] ifNotNil: [ self maximumPairByRMSD rmsd asString, ' &#8491' ]! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:50:17'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 00:30:44'!
 maximumRMSDTertiary
-	| maximumPairByRMSDTertiary |
-	maximumPairByRMSDTertiary _ ClusterRepository instance maximumChainPairByRMSDOf: self cluster.
 	
-	^ maximumPairByRMSDTertiary ifNil: [ 'no data' ] ifNotNil: [ maximumPairByRMSDTertiary rmsd asString, ' &#8491' ]! !
+	^ self cluster maxRMSDTertiary asString, ' &#8491'! !
 
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:50:11'!
 maximumRmsdPairDetailsOf: cluster
@@ -1847,14 +1845,25 @@ id: aPdbId oligomericState: anOligomericState
 	id _ aPdbId.
 	oligomericState _ anOligomericState ! !
 
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:46:21'!
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 00:28:10'!
 initialize
 	
 	super initialize.
 	
 	id _ ''.
 	oligomericState _ ''.
+	maxRMSDTertiary  _ 0.
 	conformerPairs _ Set new! !
+
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 00:27:43'!
+maxRMSDTertiary
+
+	^ maxRMSDTertiary! !
+
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 00:27:55'!
+maxRMSDTertiary: anRMSD
+
+	maxRMSDTertiary _ anRMSD ! !
 
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:26:21'!
 maxResolution
@@ -2131,7 +2140,7 @@ pdbId: aPDBID biologicalAssembly: ba resolution: aResolution method: aMethod
 			description: aDescription; uniProtId: aUniProtId; geneName: aGeneName;
 				pfam: aPfamId; cluster: aCluster! !
 
-!ConformerChain methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:01:04'!
+!ConformerChain methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 00:39:08'!
 = anObject
 
 	^ (anObject isMemberOf: self class) and: [ self conformer = anObject conformer ]! !
@@ -2397,14 +2406,15 @@ allChainPairsOf: aCluster
 
 	^ aCluster allConformers collect: [:conformer | conformer chainPairs ] :: asOrderedCollection flatten! !
 
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/29/2019 10:01:50'!
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 00:28:44'!
 deserialize: csvFile
 	| csvLines |
 	
 	csvLines _ csvFile lines collect: [:line | line substrings: ';' ] :: reject: [ :element | element isEmptyOrNil ].
 			
-	csvLines allButFirst do: [ :csvLine | | aConformer anotherConformer conformerPair cluster |
+	csvLines allButFirst do: [ :csvLine | | aConformer anotherConformer conformerPair cluster maximumChainPairByRMSD |
 		cluster _ self findOrCreate: ('CQ', (csvLine at: 1)) oligomericState: (csvLine at: 2).
+		cluster maxRMSDTertiary: (csvLine at: 46).
 			
 		aConformer _ Conformer 
 			pdbId: (csvLine at: 3)
@@ -2508,7 +2518,7 @@ maximumPairByRMSDOf: aCluster
 
 	^ aCluster conformerPairs detectMax: [ :pair | pair rmsd ]! !
 
-!ConformerChainRepository methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 03:30:31'!
+!ConformerChainRepository methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 00:39:12'!
 deserialize: csvFile
 	|leftLinesAmount csvLines |
 	
@@ -2540,7 +2550,7 @@ deserialize: csvFile
 				
 				ConformerRepository instance save: aConformer.
 				^ aConformer 
-			].
+		].
 			
 		target _ ConformerRepository instance 
 			find: (csvLine at: 5) 
@@ -2564,7 +2574,7 @@ deserialize: csvFile
 				
 				ConformerRepository instance save: anotherConformer.
 				^ anotherConformer 
-			].
+		].
 		
 		queryChain _ ConformerChain new.
 		queryChain conformer: query.
