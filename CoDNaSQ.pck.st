@@ -1,7 +1,7 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 8 July 2019 at 2:42:06 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 8 July 2019 at 3:07:42 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 101!
-!requires: 'Cuis-Web' 1 3 nil!
+!provides: 'CoDNaSQ' 1 102!
+!requires: 'Cuis-Web' 1 36 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
 SystemOrganization addCategory: #'CoDNaSQ-Web'!
@@ -592,13 +592,14 @@ canHandle: aRequest
 	
 	^ aRequest url includesSubString: '/advanced_search'! !
 
-!AssetsPath methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:32:17'!
+!AssetsPath methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:52:25'!
 handle
-	| imgUrl |
+	| imgUrl applicationPath |
 	
 	imgUrl _ request url findTokens: '/' :: last.
+	applicationPath _ CuisWebApplication instance rootPath.
 	
-	^ RootController new :: respondSuccessfully: request withImageIn: ('/home/pi/Code/codnasq/assets/', imgUrl)
+	^ RootController new :: respondSuccessfully: request withImageIn: (applicationPath, 'assets/', imgUrl)
 ! !
 
 !AssetsPath class methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:19:03'!
@@ -654,10 +655,13 @@ canHandle: aRequest
 
 	^ aRequest url includesSubString: '/download'! !
 
-!FaviconPath methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:19:49'!
+!FaviconPath methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:58:54'!
 handle
-
-	^ RootController new :: respondSuccessfully: request withImageIn: '/home/pi/Code/codnasq/assets/favicon.ico'
+	| faviconFilePath |
+	
+	faviconFilePath _ CuisWebApplication instance rootPath, 'assets/favicon.ico'.
+	
+	^ RootController new :: respondSuccessfully: request withImageIn: faviconFilePath
 ! !
 
 !FaviconPath class methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:27:19'!
@@ -665,14 +669,14 @@ canHandle: aRequest
 
 	^ aRequest url includesSubString: '/favicon.ico'! !
 
-!PdbFilePath methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 16:51:10'!
+!PdbFilePath methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 03:02:31'!
 handle
 	| pdbId pdbData |
 	
 	pdbId _  request url findTokens: '/' :: last.
 	
 	[
-		pdbData _ ('/home/pi/pdbs/',pdbId,'.pdb') asFileEntry binaryContents readStream.
+		pdbData _ (CuisWebApplication instance rootPath, 'pdbs/',pdbId,'.pdb') asFileEntry binaryContents readStream.
 		request stream200Response: pdbData size: pdbData size type: 'text/plain'
 	 ] on: Error do: [ :anError |  request send404Response ].! !
 
@@ -691,21 +695,21 @@ canHandle: aRequest
 
 	^ aRequest url = '/codnasq' or: [ aRequest url = '/codnasq/cluster' or: [ aRequest url = '/' ] ]! !
 
-!ScriptsPath methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:09:38'!
+!ScriptsPath methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:55:34'!
 handle
 	|script fileName|
 	
 	fileName _ request url findTokens: '/' :: last.
-	script _ (self stylesPath, fileName) asFileEntry binaryContents readStream.
+	script _ (self scriptsPath, fileName) asFileEntry binaryContents readStream.
 	
 	^ request send200Response: script contentType: 'application/javascript; charset=utf-8'
 ! !
 
-!ScriptsPath methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:04:01'!
-stylesPath
+!ScriptsPath methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:55:34'!
+scriptsPath
 
 
-	^ '/Users/gaston/Code/Smalltalk/codnasq/scripts/'! !
+	^ CuisWebApplication instance rootPath, 'scripts/'! !
 
 !ScriptsPath class methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:04:28'!
 canHandle: aRequest
@@ -741,11 +745,11 @@ handle
 	^ request send200Response: styles contentType: 'text/css; charset=utf-8'
 ! !
 
-!StylesPath methodsFor: 'as yet unclassified' stamp: 'GC 7/5/2019 01:01:21'!
+!StylesPath methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:55:17'!
 stylesPath
 
 
-	^ '/Users/gaston/Code/Smalltalk/codnasq/assets/styles.css'! !
+	^ CuisWebApplication instance rootPath, 'assets/styles.css'! !
 
 !StylesPath class methodsFor: 'as yet unclassified' stamp: 'GC 7/5/2019 01:02:27'!
 canHandle: aRequest
