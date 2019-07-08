@@ -116,7 +116,12 @@ document.addEventListener('DOMContentLoaded', function () {
     nodeEnter
       .append('a')
       .attr('xlink:href', function (d) {
-        return `http://localhost:8080/cluster/search?query=${d.name}&criteria=all`;
+        if((d._children !== undefined) && d._children.length !== 0){
+          return `/cluster/search?query=${d.name}&criteria=oligomericState`;
+        };
+        if(d.children === undefined && d._children === undefined){
+          return `/cluster/show/${d.name}`;
+        }
       })
       .append('rect')
       .attr('class', 'clickable')

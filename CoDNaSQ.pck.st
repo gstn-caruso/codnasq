@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 8 July 2019 at 3:07:42 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 8 July 2019 at 4:27:33 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 102!
+!provides: 'CoDNaSQ' 1 104!
 !requires: 'Cuis-Web' 1 36 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -777,7 +777,7 @@ new: request
 
 	^ self respondSuccessfully: request with: (NewProtein new)! !
 
-!ClusterController methodsFor: 'endpoints' stamp: 'GC 6/25/2019 01:48:31'!
+!ClusterController methodsFor: 'endpoints' stamp: 'GC 7/8/2019 04:21:59'!
 search: request
 	| query criteria page |
 	
@@ -821,6 +821,17 @@ search: request
 															  atPage: page
 															  totalPages: (conformersBySource size / 10) ceiling
 					)
+		].
+		['oligomericState']
+			-> [|clustersByOligomericState paginatedConformers conformersByOligomericState|
+				clustersByOligomericState _ ClusterRepository instance likeOligomericStateName: query.
+				conformersByOligomericState _ clustersByOligomericState collect: [:cluster | cluster allConformers ] :: asOrderedCollection flatten.
+				paginatedConformers _ Paginate : conformersByOligomericState :: atPage: page.
+				
+				self respondSuccessfully: request 
+					with: (ConformerSearchResultView containing: paginatedConformers 
+															  atPage: page
+															  totalPages: (clustersByOligomericState size / 10) ceiling)
 		]
 	}! !
 
@@ -871,9 +882,10 @@ parseSelectedOption: selectedOptionString
 		[ 'Name' ] -> [ ^ 'name' ]
 	}! !
 
-!SearchController methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 04:45:48'!
+!SearchController methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 03:38:38'!
 resultsFor: aRequest
 	| searchingCriteria parsedQuery results |
+	
 	searchingCriteria _ Json readFrom: (aRequest  getContent readStream).
 	parsedQuery _ searchingCriteria collect: [ :json | ((self parseSelectedOption: (json keys first)) -> json values first) ].
 	
@@ -2647,6 +2659,11 @@ import: filePath
 		csvFile _ filePath asFileEntry readStream upToEnd. 
 		self deserialize: csvFile 
 	] forkAt: Processor userBackgroundPriority! !
+
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 04:22:50'!
+likeOligomericStateName: oligomericStateName 
+
+	^ elements select: [ :conformer | conformer oligomericStateName = oligomericStateName ]! !
 
 !ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/28/2019 18:18:05'!
 maximumChainPairByRMSDOf: aCluster
