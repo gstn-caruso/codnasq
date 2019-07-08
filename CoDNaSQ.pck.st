@@ -1,7 +1,7 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3795] on 7 July 2019 at 3:57:43 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 8 July 2019 at 2:42:06 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 100!
-!requires: 'Cuis-Web' 1 34 nil!
+!provides: 'CoDNaSQ' 1 101!
+!requires: 'Cuis-Web' 1 3 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
 SystemOrganization addCategory: #'CoDNaSQ-Web'!
@@ -70,6 +70,26 @@ StaticPath subclass: #AssetsPath
 AssetsPath class
 	instanceVariableNames: ''!
 
+!classDefinition: #BrowseAPIPath category: #'CoDNaSQ-Web-Path'!
+StaticPath subclass: #BrowseAPIPath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-Path'!
+!classDefinition: 'BrowseAPIPath class' category: #'CoDNaSQ-Web-Path'!
+BrowseAPIPath class
+	instanceVariableNames: ''!
+
+!classDefinition: #BrowsePath category: #'CoDNaSQ-Web-Path'!
+StaticPath subclass: #BrowsePath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-Path'!
+!classDefinition: 'BrowsePath class' category: #'CoDNaSQ-Web-Path'!
+BrowsePath class
+	instanceVariableNames: ''!
+
 !classDefinition: #ContactPagePath category: #'CoDNaSQ-Web-Path'!
 StaticPath subclass: #ContactPagePath
 	instanceVariableNames: ''
@@ -120,6 +140,16 @@ StaticPath subclass: #RootPath
 RootPath class
 	instanceVariableNames: ''!
 
+!classDefinition: #ScriptsPath category: #'CoDNaSQ-Web-Path'!
+StaticPath subclass: #ScriptsPath
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-Path'!
+!classDefinition: 'ScriptsPath class' category: #'CoDNaSQ-Web-Path'!
+ScriptsPath class
+	instanceVariableNames: ''!
+
 !classDefinition: #SearchClusterPath category: #'CoDNaSQ-Web-Path'!
 StaticPath subclass: #SearchClusterPath
 	instanceVariableNames: ''
@@ -158,6 +188,16 @@ RootController subclass: #AboutPageController
 	category: 'CoDNaSQ-Web'!
 !classDefinition: 'AboutPageController class' category: #'CoDNaSQ-Web'!
 AboutPageController class
+	instanceVariableNames: ''!
+
+!classDefinition: #BrowseController category: #'CoDNaSQ-Web'!
+RootController subclass: #BrowseController
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web'!
+!classDefinition: 'BrowseController class' category: #'CoDNaSQ-Web'!
+BrowseController class
 	instanceVariableNames: ''!
 
 !classDefinition: #ClusterController category: #'CoDNaSQ-Web'!
@@ -238,6 +278,16 @@ View subclass: #AdvancedSearchView
 	category: 'CoDNaSQ-Web-View'!
 !classDefinition: 'AdvancedSearchView class' category: #'CoDNaSQ-Web-View'!
 AdvancedSearchView class
+	instanceVariableNames: ''!
+
+!classDefinition: #BrowseView category: #'CoDNaSQ-Web-View'!
+View subclass: #BrowseView
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'CoDNaSQ-Web-View'!
+!classDefinition: 'BrowseView class' category: #'CoDNaSQ-Web-View'!
+BrowseView class
 	instanceVariableNames: ''!
 
 !classDefinition: #ClusterView category: #'CoDNaSQ-Web-View'!
@@ -332,7 +382,7 @@ StatisticsPageView class
 
 !classDefinition: #Cluster category: #'CoDNaSQ-Model'!
 Object subclass: #Cluster
-	instanceVariableNames: 'oligomericState conformerPairs id maxRMSDTertiary group'
+	instanceVariableNames: 'oligomericState conformerPairs id maxRMSDTertiary'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Model'!
@@ -556,6 +606,34 @@ canHandle: aRequest
 
 	^ aRequest url includesSubString: '/assets/'! !
 
+!BrowseAPIPath methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:01:15'!
+groupedClusters
+	|clusters|
+	
+	clusters _ ClusterRepository instance all groupBy: [:cluster | cluster oligomericStateName ].
+
+	^ clusters asJsonString! !
+
+!BrowseAPIPath methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 23:15:18'!
+handle
+
+	^ request send200Response: (self groupedClusters) contentType: 'application/json'! !
+
+!BrowseAPIPath class methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 21:37:06'!
+canHandle: aRequest
+
+	^ aRequest url includesSubString: '/api/browse'! !
+
+!BrowsePath methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 20:44:31'!
+handle
+
+	^ BrowseController new :: index: request! !
+
+!BrowsePath class methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 21:38:33'!
+canHandle: aRequest
+
+	^ aRequest url = '/browse'! !
+
 !ContactPagePath methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 18:40:30'!
 handle
 
@@ -613,6 +691,27 @@ canHandle: aRequest
 
 	^ aRequest url = '/codnasq' or: [ aRequest url = '/codnasq/cluster' or: [ aRequest url = '/' ] ]! !
 
+!ScriptsPath methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:09:38'!
+handle
+	|script fileName|
+	
+	fileName _ request url findTokens: '/' :: last.
+	script _ (self stylesPath, fileName) asFileEntry binaryContents readStream.
+	
+	^ request send200Response: script contentType: 'application/javascript; charset=utf-8'
+! !
+
+!ScriptsPath methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:04:01'!
+stylesPath
+
+
+	^ '/Users/gaston/Code/Smalltalk/codnasq/scripts/'! !
+
+!ScriptsPath class methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:04:28'!
+canHandle: aRequest
+
+	^ aRequest url beginsWith: '/scripts/'! !
+
 !SearchClusterPath methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 01:17:48'!
 handle
 
@@ -657,6 +756,11 @@ canHandle: aRequest
 index: request
 
 	^ self respondSuccessfully: request with: (AboutPageView new)! !
+
+!BrowseController methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 21:11:28'!
+index: request
+
+	^ self respondSuccessfully: request with: (BrowseView new)! !
 
 !ClusterController methodsFor: 'endpoints' stamp: 'GC 5/18/2019 13:55:21'!
 index: request
@@ -943,6 +1047,29 @@ searchingForm
 				} :: id: 'searchFields'			
 			)! !
 
+!BrowseView methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 21:12:51'!
+body
+
+	^ MainView withPartial: self browseDetails :: body! !
+
+!BrowseView methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 21:46:02'!
+browseDetails
+	^ Div containing: {
+		Div css: #(card) containing: {
+			Heading with: 'Browse' :: css: #('card-header' 'card-header-title' 'title').
+			Div css: #('card-content') containing: {
+				Div containing: {} :: id: 'search'
+			}
+		}
+	}! !
+
+!BrowseView methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:11:40'!
+scripts
+
+	^ super scripts,
+		'<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>',
+		'<script type="text/javascript" src="/scripts/chartScript.js"></script>'! !
+
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 03:39:00'!
 avgRMSDTertiary
 	| allChainPairs |
@@ -967,7 +1094,7 @@ cluster: clusterToRender
 
 	aCluster _ clusterToRender! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 03:57:04'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:36:38'!
 clusterDetails
 	| maxResolution minResolution |
 		
@@ -986,16 +1113,12 @@ clusterDetails
 				Paragraph with: self cluster oligomericStateName
 			}.
 			Div css: #('panel-block') containing: {
-				Paragraph with: 'Group:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
-				Paragraph with: self cluster group
-			}.
-			Div css: #('panel-block') containing: {
 				Paragraph with: 'Conformers:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
 				Paragraph with: self cluster size asString
 			}.
 			Div css: #('panel-block') containing: {
 				Paragraph with: 'Max RMSD Quaternary:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
-				Paragraph with: self maximumPairByRMSD rmsd asString, '&#8491;'
+				Paragraph with: self maximumRMSDQuaternary
 			}.
 			Div css: #('panel-block') containing: {
 				Paragraph with: 'Max RMSD Tertiary:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
@@ -1031,17 +1154,17 @@ conformers: cluster
 maximumPairByRMSD
 	^ ClusterRepository instance maximumPairByRMSDOf: self cluster! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 03:02:36'!
-maximumRMSDCuaternary
-
-	^ self maximumPairByRMSD :: ifNil: [ 'no data' ] ifNotNil: [ self maximumPairByRMSD rmsd asString, ' &#8491' ]! !
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:39:32'!
+maximumRMSDQuaternary
+	
+	^ self maximumPairByRMSD rmsd asString, '&#8491'! !
 
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 00:30:44'!
 maximumRMSDTertiary
 	
 	^ self cluster maxRMSDTertiary asString, ' &#8491'! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 22:50:11'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:36:45'!
 maximumRmsdPairDetailsOf: cluster
 	| query target |
 	
@@ -1066,7 +1189,7 @@ maximumRmsdPairDetailsOf: cluster
 			{ 'Query cover based on alignment length' . ' ' . ' ' . self maximumPairByRMSD queryCoverBasedOnAlignmentLength } .
 			{ 'Target cover based on alignment length' . ' ' . ' ' . self maximumPairByRMSD targetCoverBasedOnAlignmentLength } .
 			{ 'Typical distance error' . ' ' . ' ' . self maximumPairByRMSD typicalDistanceError } .
-			{ 'RMSD Quaternary' . ' ' . ' ' . self maximumPairByRMSD rmsd asString, ' &#8491;' } .
+			{ 'RMSD Quaternary' . ' ' . ' ' . self maximumRMSDQuaternary } .
 			{ 'RMSD Tertiary' . ' ' . ' ' . self maximumRMSDTertiary } .
 			
 		}  :: css: #('table' 'is-bordered' 'is-striped' 'is-hoverable' 'is-fullwidth')! !
@@ -1597,25 +1720,12 @@ searchBar
 	
 	^ HtmlForm action: '/cluster/search' method: 'get' enctype: 'url-encoded' containing: formContent! !
 
-!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/5/2019 01:34:04'!
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 20:46:38'!
 body
 
 	^ Div css: #(site) containing: {
 		Div css: #('site-content') containing: {
-			Nav css: #(navbar 'is-info has-shadow has-margin-b-5') containing: {
-				Div css: #('navbar-brand has-text-weight-bold') containing: {
-					Hyperlink to: '/' with: (Img src: '/assets/logo.png' alt: 'codnas q logo' :: render) :: css: #('navbar-item')
-				}.
-				Div css: #('navbar-menu') containing: {
-					Div css: #('navbar-end') containing: {					
-						self navItemTo: '/advanced_search' with: 'Advanced Search' icon: 'fa-search'.
-						self navItemTo: '/download' with: 'Download' icon: 'fa-download'.
-						self navItemTo: '/stats' with: 'Statistics' icon: 'fa-chart-line'.	
-						self navItemTo: '/about' with: 'About' icon: 'fa-info'.
-						self navItemTo: '/contact' with: 'Contact us' icon: 'fa-address-card'.
-					}
-				}
-			} .
+			self navBar .
 			Div css: #('column' 'is-four-fifths' 'is-offset-1') containing: { partial }
 		}.
 		self footer
@@ -1716,14 +1826,33 @@ membersOfFooter
 		}
 	}! !
 
-!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 22:48:58'!
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 21:02:30'!
+navBar
+
+	^ Nav css: #(navbar 'is-info has-shadow has-margin-b-5') containing: {
+		Div css: #('navbar-brand has-text-weight-bold') containing: {
+			Hyperlink to: '/' with: (Img src: '/assets/logo.png' alt: 'codnas q logo' :: render) :: css: #('navbar-item')
+		}.
+		Div css: #('navbar-menu') containing: {
+			Div css: #('navbar-end') containing: {
+				self navItemTo: '/browse' with: 'Browse' icon: 'fa-stream'.			
+				self navItemTo: '/advanced_search' with: 'Advanced Search' icon: 'fa-search'.
+				self navItemTo: '/download' with: 'Download' icon: 'fa-download'.
+				self navItemTo: '/stats' with: 'Statistics' icon: 'fa-chart-line'.	
+				self navItemTo: '/about' with: 'About' icon: 'fa-info'.
+				self navItemTo: '/contact' with: 'Contact us' icon: 'fa-address-card'.
+			}
+		}
+	}! !
+
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 21:10:02'!
 navItemTo: path with: label icon: cssClassIcon
 	| icon |
 	
 	icon _ Icon css: { 'fas' . cssClassIcon .  'has-margin-r-7' } :: render.
 
 	^ Div css: #('navbar-item') containing: {
-		Hyperlink to: path with: (icon, label) :: css: #('navbar-item' 'has-text-light')
+		Hyperlink to: path with: (icon, label) :: css: #('navbar-item')
 	}! !
 
 !MainView methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:09:01'!
@@ -1833,14 +1962,6 @@ conformerPairs
 
 	^ conformerPairs ! !
 
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 03:56:57'!
-group
-	^ group asUppercase ! !
-
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 03:52:53'!
-group: aConformerGroupId
-	group _ aConformerGroupId! !
-
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
 hash
 
@@ -1866,6 +1987,11 @@ initialize
 	oligomericState _ ''.
 	maxRMSDTertiary  _ 0.
 	conformerPairs _ Set new! !
+
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 23:42:33'!
+jsonWriteOn: aStream
+
+	aStream nextPutAll: '"', self id, '"'! !
 
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 00:27:43'!
 maxRMSDTertiary
@@ -2418,16 +2544,15 @@ allChainPairsOf: aCluster
 
 	^ aCluster allConformers collect: [:conformer | conformer chainPairs ] :: asOrderedCollection flatten! !
 
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 03:53:40'!
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 00:28:44'!
 deserialize: csvFile
 	| csvLines |
 	
 	csvLines _ csvFile lines collect: [:line | line substrings: ';' ] :: reject: [ :element | element isEmptyOrNil ].
 			
-	csvLines allButFirst do: [ :csvLine | | aConformer anotherConformer conformerPair cluster |
+	csvLines allButFirst do: [ :csvLine | | aConformer anotherConformer conformerPair cluster maximumChainPairByRMSD |
 		cluster _ self findOrCreate: ('CQ', (csvLine at: 1)) oligomericState: (csvLine at: 2).
 		cluster maxRMSDTertiary: (csvLine at: 46).
-		cluster group: (csvLine at: 39).
 			
 		aConformer _ Conformer 
 			pdbId: (csvLine at: 3)

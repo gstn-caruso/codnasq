@@ -26,3 +26,32 @@
 	margin-bottom: 3%;
 	font-weight: bold;
 }
+
+.navbar-item {
+	padding: .4em;
+	color: white;
+}
+
+.navbar-item:hover{
+	background-color: #118fe4;
+	color: white;
+}
+
+a.navbar-item:hover {
+	background-color: #118fe4;
+	color: white;
+}
+
+.node circle {
+	fill: #fff;
+	stroke: steelblue;
+	stroke-width: 3px;
+}
+
+.node text { font: 12px sans-serif; }
+
+.link {
+	fill: none;
+	stroke: #ccc;
+	stroke-width: 2px;
+}
