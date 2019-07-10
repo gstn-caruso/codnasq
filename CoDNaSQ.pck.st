@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 8 July 2019 at 4:27:33 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 9 July 2019 at 11:52:11 pm'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 104!
+!provides: 'CoDNaSQ' 1 105!
 !requires: 'Cuis-Web' 1 36 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -382,7 +382,7 @@ StatisticsPageView class
 
 !classDefinition: #Cluster category: #'CoDNaSQ-Model'!
 Object subclass: #Cluster
-	instanceVariableNames: 'oligomericState conformerPairs id maxRMSDTertiary'
+	instanceVariableNames: 'oligomericState conformerPairs id maxRMSDTertiary group'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Model'!
@@ -1110,7 +1110,7 @@ cluster: clusterToRender
 
 	aCluster _ clusterToRender! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:36:38'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/9/2019 23:38:32'!
 clusterDetails
 	| maxResolution minResolution |
 		
@@ -1123,6 +1123,10 @@ clusterDetails
 			Div css: #('panel-block') containing: {
 				Paragraph with: 'Cluster ID:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
 				Paragraph with: self cluster id
+			}.
+			Div css: #('panel-block') containing: {
+				Paragraph with: 'Group:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+				Paragraph with: self cluster group
 			}.
 			Div css: #('panel-block') containing: {
 				Paragraph with: 'Oligomeric State:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
@@ -1170,10 +1174,10 @@ conformers: cluster
 maximumPairByRMSD
 	^ ClusterRepository instance maximumPairByRMSDOf: self cluster! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/8/2019 02:39:32'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/9/2019 23:38:38'!
 maximumRMSDQuaternary
 	
-	^ self maximumPairByRMSD rmsd asString, '&#8491'! !
+	^ self maximumPairByRMSD rmsd asString, ' &#8491'! !
 
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 00:30:44'!
 maximumRMSDTertiary
@@ -1978,6 +1982,16 @@ conformerPairs
 
 	^ conformerPairs ! !
 
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 7/9/2019 23:36:53'!
+group
+
+	^ group asUppercase! !
+
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 7/9/2019 23:31:38'!
+group: aClusterGroupId
+
+	group _ aClusterGroupId ! !
+
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 5/27/2019 23:47:38'!
 hash
 
@@ -2560,15 +2574,16 @@ allChainPairsOf: aCluster
 
 	^ aCluster allConformers collect: [:conformer | conformer chainPairs ] :: asOrderedCollection flatten! !
 
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 00:28:44'!
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 7/9/2019 23:32:36'!
 deserialize: csvFile
 	| csvLines |
 	
 	csvLines _ csvFile lines collect: [:line | line substrings: ';' ] :: reject: [ :element | element isEmptyOrNil ].
 			
-	csvLines allButFirst do: [ :csvLine | | aConformer anotherConformer conformerPair cluster maximumChainPairByRMSD |
+	csvLines allButFirst do: [ :csvLine | | aConformer anotherConformer conformerPair cluster |
 		cluster _ self findOrCreate: ('CQ', (csvLine at: 1)) oligomericState: (csvLine at: 2).
 		cluster maxRMSDTertiary: (csvLine at: 46).
+		cluster group: (csvLine at: 39).
 			
 		aConformer _ Conformer 
 			pdbId: (csvLine at: 3)
