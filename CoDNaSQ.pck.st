@@ -1,7 +1,7 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 9 July 2019 at 11:59:42 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 10 July 2019 at 12:03:16 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 106!
-!requires: 'Cuis-Web' 1 36 nil!
+!provides: 'CoDNaSQ' 1 108!
+!requires: 'Cuis-Web' 1 38 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
 SystemOrganization addCategory: #'CoDNaSQ-Web'!
@@ -2575,11 +2575,11 @@ allChainPairsOf: aCluster
 
 	^ aCluster allConformers collect: [:conformer | conformer chainPairs ] :: asOrderedCollection flatten! !
 
-!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 7/9/2019 23:32:36'!
+!ClusterRepository methodsFor: 'as yet unclassified' stamp: 'GC 7/10/2019 00:02:24'!
 deserialize: csvFile
 	| csvLines |
 	
-	csvLines _ csvFile lines collect: [:line | line substrings: ';' ] :: reject: [ :element | element isEmptyOrNil ].
+	csvLines _ csvFile lines collect: [:line | line findTokens: ';' ] :: reject: [ :element | element isEmptyOrNil ].
 			
 	csvLines allButFirst do: [ :csvLine | | aConformer anotherConformer conformerPair cluster |
 		cluster _ self findOrCreate: ('CQ', (csvLine at: 1)) oligomericState: (csvLine at: 2).
