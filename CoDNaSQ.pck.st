@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 9 July 2019 at 11:52:11 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 9 July 2019 at 11:59:42 pm'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 105!
+!provides: 'CoDNaSQ' 1 106!
 !requires: 'Cuis-Web' 1 36 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -2008,7 +2008,7 @@ id: aPdbId oligomericState: anOligomericState
 	id _ aPdbId.
 	oligomericState _ anOligomericState ! !
 
-!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 00:28:10'!
+!Cluster methodsFor: 'as yet unclassified' stamp: 'GC 7/9/2019 23:59:31'!
 initialize
 	
 	super initialize.
@@ -2016,7 +2016,8 @@ initialize
 	id _ ''.
 	oligomericState _ ''.
 	maxRMSDTertiary  _ 0.
-	conformerPairs _ Set new! !
+	conformerPairs _ Set new.
+	group _ ''! !
 
 !Cluster methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 23:42:33'!
 jsonWriteOn: aStream
