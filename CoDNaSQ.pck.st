@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 10 July 2019 at 12:03:16 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 11 July 2019 at 4:53:51 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 108!
+!provides: 'CoDNaSQ' 1 109!
 !requires: 'Cuis-Web' 1 38 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -492,7 +492,7 @@ ConformerRepository class
 
 !classDefinition: #ConformersTable category: #'CoDNaSQ-Web-View'!
 Object subclass: #ConformersTable
-	instanceVariableNames: 'conformers'
+	instanceVariableNames: 'conformers highlightedConformer excludesClusterColumn'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'CoDNaSQ-Web-View'!
@@ -1086,15 +1086,6 @@ scripts
 		'<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>',
 		'<script type="text/javascript" src="/scripts/chartScript.js"></script>'! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 03:39:00'!
-avgRMSDTertiary
-	| allChainPairs |
-	allChainPairs _ ClusterRepository instance allChainPairsOf: self cluster.
-	
-	^ allChainPairs 
-		ifEmpty: [ 'no data' ] 
-		ifNotEmpty: [ (allChainPairs average: [ :chainPair | chainPair rmsd asNumber ]) asString, ' &#8491' ]! !
-
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 5/23/2019 23:26:26'!
 body
 
@@ -1110,7 +1101,7 @@ cluster: clusterToRender
 
 	aCluster _ clusterToRender! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/9/2019 23:38:32'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 02:36:57'!
 clusterDetails
 	| maxResolution minResolution |
 		
@@ -1144,16 +1135,14 @@ clusterDetails
 				Paragraph with: 'Max RMSD Tertiary:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
 				Paragraph with: self maximumRMSDTertiary
 			}.
-			
-			Div css: #('panel-block') containing: {
-				Paragraph with: 'Average RMSD Tertiary:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
-				Paragraph with: self avgRMSDTertiary
-			}.
 			Div css: #('panel-block') containing: {
 				Paragraph with: 'Resolution:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
 				Paragraph with: '[', minResolution, ' - ', maxResolution,']'
 			}.
 		} .
+		
+		self renderRepresentativeConformerPanel.
+		
 		Div css: #(panel) containing: {
 			Paragraph with: 'Maximum RMSD Pair information' :: css: #('panel-heading' 'has-text-weight-bold').
 			self pair3DView .
@@ -1165,10 +1154,10 @@ clusterDetails
 		}
 	}! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/17/2019 19:46:22'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 04:41:32'!
 conformers: cluster
 
-	^ ConformersTable renderWith: cluster allConformers! !
+	^ ConformersTable renderExcludingClusterColumnWith: cluster allConformers! !
 
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 04:53:24'!
 maximumPairByRMSD
@@ -1229,6 +1218,28 @@ printStructuralSimilarity: conformerPair
 	truncatedStructuralSimilarity _ structuralSimilarityPercent truncateTo: 0.01.
 	
 	^  truncatedStructuralSimilarity asString, '%'! !
+
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 02:53:31'!
+renderRepresentativeConformerPanel
+	|representativeConformer|
+	
+	representativeConformer _ ConformerRepository instance representativeOfCluster: self cluster.
+
+	^ Div css: #(panel) containing: {
+		Paragraph with: 'Representative conformer' :: css: #('panel-heading' 'has-text-weight-bold').
+		Div css: #('panel-block') containing: {
+			Paragraph with: 'Name:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+			Paragraph with: representativeConformer name 
+		}.
+		Div css: #('panel-block') containing: {
+			Paragraph with: 'Species:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+			Paragraph with: representativeConformer source
+		}.
+		Div css: #('panel-block') containing: {
+			Paragraph with: 'Length:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+			Paragraph with: representativeConformer length
+		}.
+	} ! !
 
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 17:05:58'!
 scripts
@@ -1363,7 +1374,7 @@ body
 
 	^ MainView withPartial: self clusterDetails :: body! !
 
-!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:21:35'!
+!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 02:04:13'!
 clusterDetails
 	| maxResolution minResolution |
 		
@@ -1444,8 +1455,8 @@ clusterDetails
 			}
 		} .
 		Div css: #(panel) containing: {
-			Paragraph with: 'Siblings' :: css: #('panel-heading' 'has-text-weight-bold').
-			Div css: #('panel-block') containing: { self siblings}
+			Paragraph with: 'Other conformers' :: css: #('panel-heading' 'has-text-weight-bold').
+			Div css: #('panel-block') containing: { self renderOtherConformersInCluster }
 		}
 	}! !
 
@@ -1498,6 +1509,12 @@ printLigandNames: conformerLigands
 			] 
 		) flatten allButLast! !
 
+!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 04:41:27'!
+renderOtherConformersInCluster
+
+	^ ConformersTable renderExcludingClusterColumnWith: conformer cluster allConformers
+	! !
+
 !ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 6/21/2019 05:41:06'!
 scripts
 
@@ -1513,12 +1530,6 @@ scripts
 				stage.loadFile("rcsb://',conformer pdbId,'", {defaultRepresentation: true});
 			});
 	      </script>'! !
-
-!ConformerView methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:47:32'!
-siblings
-
-	^ ConformersTable renderWith: conformer cluster allConformers 
-	! !
 
 !ConformerView class methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 06:46:25'!
 forConformer: conformerToDisplay
@@ -1906,13 +1917,13 @@ body
 
 	^ MainView withPartial: self statisticDetails :: body! !
 
-!StatisticsPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/2/2019 00:44:23'!
+!StatisticsPageView methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 04:19:15'!
 statisticDetails
 
 	^ Div containing: {
 		Div css: #(card) containing: {
 			Heading with: 'Download' :: css: #('card-header' 'card-header-title' 'title').
-			Div css: #('card-content') containing: {
+			Div css: #('card-content' 'statistics-panel') containing: {
 				Heading with: 'Summary' :: css: #('title' 'has-text-weight-bold' 'has-margin-b-7').
 			
 				Paragraph with: 'Number of clusters (~different proteins): 3649' .
@@ -2820,6 +2831,11 @@ likeType: conformerType
 
 	^ elements select: [ :conformer | conformer name :: includesSubstring: conformerType caseSensitive: false ]! !
 
+!ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 02:45:24'!
+representativeOfCluster: aCluster
+
+	^ elements detect: [ :conformer | conformer pdbId = (aCluster id withoutPrefix: 'CQ') ]! !
+
 !ConformerRepository methodsFor: 'as yet unclassified' stamp: 'GC 6/23/2019 05:02:22'!
 where: aQuery
 
@@ -2827,16 +2843,47 @@ where: aQuery
 		aQuery allSatisfy: [:criteria | (element instVarNamed: criteria key) includesSubstring: (criteria value) caseSensitive: false  ] 
 	]! !
 
+!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 04:48:59'!
+clusterId: aConformer
+	| conformerClusterId |
+	
+	conformerClusterId _ aConformer cluster id asString.
+
+	^ excludesClusterColumn 
+		ifFalse: [ Hyperlink to: ('/cluster/show/', conformerClusterId) with: conformerClusterId :: render ]! !
+
 !ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 01:28:28'!
 conformers: someConformers
 
 	conformers _ someConformers ! !
 
-!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 6/20/2019 20:27:25'!
+!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 04:38:43'!
+excludingClusterColumn: boolean
+
+	excludesClusterColumn _ boolean ! !
+
+!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 04:52:15'!
+headers
+	| defaultTableColumns tableColumns |
+	
+	defaultTableColumns _ #('PDB' 'Biological Assembly' 'Resolution' 'Length' 'Name' 'Species').
+	
+	tableColumns _ OrderedCollection newFrom: defaultTableColumns.
+	excludesClusterColumn ifFalse: [ tableColumns addFirst: 'Cluster' ].
+	
+	^ tableColumns 
+		! !
+
+!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 04:37:34'!
+initialize
+
+	excludesClusterColumn _ false! !
+
+!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 04:48:02'!
 render
 
 	^ Table 
-		headers: #('Cluster' 'PDB' 'Biological Assembly' 'Resolution' 'Longitude' 'Name' 'Species') 
+		headers: self headers 
 		rows: (conformers collect: [ :each | |typeLink typeLinkUrl sourceLinkUrl sourceLink|
 			typeLinkUrl _ '/cluster/search?query={1}&criteria=type' format: {each type copyReplaceAll: ' ' with: '+' } .
 			typeLink _ Hyperlink 
@@ -2848,17 +2895,22 @@ render
 							to: sourceLinkUrl
 							with: each source asLowercase capitalized :: render.
 			{ 
-				Hyperlink to: ('/cluster/show/', each cluster id asString) with: each cluster id asString :: render . 
+				self clusterId: each. 
 				Hyperlink to: ('/conformer/show/', each pdbId) with: each pdbId :: render .
 				each biologicalAssembly asString . 
 				each resolution asString . 
 				each length asString . 
 				typeLink . 
 				sourceLink 
-			}
+			} reject: [:row | row isNil ]
 		]) :: css: #('table' 'is-bordered' 'is-striped' 'is-hoverable' 'is-fullwidth')
 	
 	! !
+
+!ConformersTable class methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 04:41:09'!
+renderExcludingClusterColumnWith: someConformers
+
+	^ self new :: conformers: someConformers; excludingClusterColumn: true :: render! !
 
 !ConformersTable class methodsFor: 'as yet unclassified' stamp: 'GC 5/24/2019 01:28:50'!
 renderWith: someConformers

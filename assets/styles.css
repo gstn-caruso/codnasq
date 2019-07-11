@@ -55,3 +55,14 @@ a.navbar-item:hover {
 	stroke: #ccc;
 	stroke-width: 2px;
 }
+
+.statistics-panel img {
+	display: block;
+	margin: 0 auto;
+}
+
+@media screen and (min-width: 1024px) {
+  .statistics-panel img {
+    max-width: 65%;
+  }
+}
