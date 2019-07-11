@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 11 July 2019 at 7:29:32 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 11 July 2019 at 7:51:43 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 110!
+!provides: 'CoDNaSQ' 1 111!
 !requires: 'Cuis-Web' 1 38 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -873,12 +873,12 @@ advancedSearch: aRequest
 	
  	^ self respondSuccessfully: aRequest with: AdvancedSearchView new! !
 
-!SearchController methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 16:37:24'!
+!SearchController methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 07:34:29'!
 parseSelectedOption: selectedOptionString
 
 	selectedOptionString caseOf: {
 		[ 'PDB' ] -> [ ^ 'pdbId' ].
-		[ 'Species' ] -> [ ^ 'source' ].
+		[ 'Organism' ] -> [ ^ 'source' ].
 		[ 'Name' ] -> [ ^ 'name' ]
 	}! !
 
@@ -1043,7 +1043,7 @@ scripts
 		</script>
 	'! !
 
-!AdvancedSearchView methodsFor: 'as yet unclassified' stamp: 'GC 6/30/2019 16:35:43'!
+!AdvancedSearchView methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 07:34:04'!
 searchingForm
 
 	^ HtmlForm action: '/advanced_search' method: 'post' containing:(
@@ -1054,7 +1054,7 @@ searchingForm
 							Select name: 'criteria' withOptions: { 
 								{ 'cluster-id' . 'PDB' } .
 								{ 'type' . 'Name' } .
-								{ 'source' . 'Species' }
+								{ 'source' . 'Organism' }
 							}
 						}.
 						Hyperlink with: (Icon css: #('fas' 'fa-plus' 'has-margin-r-7') :: render) onClick: 'addField()'
@@ -1219,7 +1219,7 @@ printStructuralSimilarity: conformerPair
 	
 	^  truncatedStructuralSimilarity asString, '%'! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 02:53:31'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 07:34:11'!
 renderRepresentativeConformerPanel
 	|representativeConformer|
 	
@@ -1232,7 +1232,7 @@ renderRepresentativeConformerPanel
 			Paragraph with: representativeConformer name 
 		}.
 		Div css: #('panel-block') containing: {
-			Paragraph with: 'Species:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
+			Paragraph with: 'Organism:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
 			Paragraph with: representativeConformer source
 		}.
 		Div css: #('panel-block') containing: {
@@ -1722,7 +1722,7 @@ heading
 		Heading with: 'Conformational Diversity of Native State - Quaternary' :: css: #('title' 'has-margin-t-7')
 	}! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/25/2019 01:58:25'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 07:34:23'!
 searchBar
 	| formContent |
 	
@@ -1734,7 +1734,7 @@ searchBar
 					{ 'all' . 'All fields' } .
 					{ 'pdb' . 'PDB' } .
 					{ 'type' . 'Name' } .
-					{ 'source' . 'Species' }
+					{ 'source' . 'Organism' }
 				}
 			}.
 			FormInput new :: type: 'submit' :: value: 'Search' :: css: #('button' 'is-info')
@@ -2563,6 +2563,11 @@ initialize
 
 	elements _ Set new! !
 
+!Repository methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 07:46:13'!
+remove: anElement
+
+	elements remove: anElement ifAbsent: []! !
+
 !Repository methodsFor: 'as yet unclassified' stamp: 'GC 5/30/2019 02:36:23'!
 save: element
 
@@ -2862,11 +2867,11 @@ excludingClusterColumn: boolean
 
 	excludesClusterColumn _ boolean ! !
 
-!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 04:52:15'!
+!ConformersTable methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 07:34:15'!
 headers
 	| defaultTableColumns tableColumns |
 	
-	defaultTableColumns _ #('PDB' 'Biological Assembly' 'Resolution' 'Length' 'Name' 'Species').
+	defaultTableColumns _ #('PDB' 'Biological Assembly' 'Resolution' 'Length' 'Name' 'Organism').
 	
 	tableColumns _ OrderedCollection newFrom: defaultTableColumns.
 	excludesClusterColumn ifFalse: [ tableColumns addFirst: 'Cluster' ].
