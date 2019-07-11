@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 11 July 2019 at 4:53:51 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 11 July 2019 at 7:29:32 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 109!
+!provides: 'CoDNaSQ' 1 110!
 !requires: 'Cuis-Web' 1 38 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -1762,7 +1762,7 @@ body
 		self footer
 	}:: render! !
 
-!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/5/2019 01:44:35'!
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 07:29:07'!
 contactUsFooter
 
 	^ Div css: #('column') containing: {
@@ -1771,7 +1771,7 @@ contactUsFooter
 				Paragraph with: 'Contact us' :: css: #('footer-section-titile')
 			}.
 			Li containing: { Hyperlink 
-				to: 'http://ufq.unq.edu.ar/sbg/files/map_sbg-unq.png' 
+				to: 'http://ufq.unq.edu.ar/sbg/images/map_sbg-unq.png' 
 				with: 'Rooms 31-33, Department of Science & Technology, UNQ'
 			}.
 			Li containing: { Hyperlink 
