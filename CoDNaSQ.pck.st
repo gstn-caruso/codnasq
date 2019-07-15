@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 11 July 2019 at 7:51:43 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 15 July 2019 at 2:22:31 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 111!
+!provides: 'CoDNaSQ' 1 112!
 !requires: 'Cuis-Web' 1 38 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -1101,7 +1101,7 @@ cluster: clusterToRender
 
 	aCluster _ clusterToRender! !
 
-!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 02:36:57'!
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/15/2019 02:14:13'!
 clusterDetails
 	| maxResolution minResolution |
 		
@@ -1117,7 +1117,7 @@ clusterDetails
 			}.
 			Div css: #('panel-block') containing: {
 				Paragraph with: 'Group:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
-				Paragraph with: self cluster group
+				Paragraph with: (self renderGroupName: self cluster group)
 			}.
 			Div css: #('panel-block') containing: {
 				Paragraph with: 'Oligomeric State:' :: css: #('has-text-weight-semibold' 'has-padding-r-7').
@@ -1218,6 +1218,15 @@ printStructuralSimilarity: conformerPair
 	truncatedStructuralSimilarity _ structuralSimilarityPercent truncateTo: 0.01.
 	
 	^  truncatedStructuralSimilarity asString, '%'! !
+
+!ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/15/2019 02:21:43'!
+renderGroupName: aGroupName
+
+	^ aGroupName caseOf: {
+		[ #A ] -> [ 'Tertiary deformations' ].
+		[ #B ] -> [ 'Mixed motions'  ].
+		[ #C ] -> [ 'Rigid-body displacements' ]
+	} otherwise: [ ^ aGroupName ]! !
 
 !ClusterView methodsFor: 'as yet unclassified' stamp: 'GC 7/11/2019 07:34:11'!
 renderRepresentativeConformerPanel
@@ -1705,12 +1714,12 @@ downloadPageDetails
 		}
 	}! !
 
-!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 6/27/2019 05:14:35'!
+!HomePage methodsFor: 'as yet unclassified' stamp: 'GC 7/15/2019 02:12:17'!
 body
 		
 	^ MainView withPartial: (Div css: #(box 'has-text-centered') containing: {
 		Div containing: { self heading } .
-		Div containing: {  self searchBar }
+		Div containing: { self searchBar }
 	}) :: body! !
 
 !HomePage methodsFor: 'as yet unclassified' stamp: 'GC 7/1/2019 23:27:37'!
