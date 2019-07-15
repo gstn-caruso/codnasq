@@ -21,25 +21,20 @@
 .footer .content ul {
 	list-style: none;
 }
+.navbar-brand { padding: 0 .2em 0 .2em; }
+.navbar-item { padding: 0 .5em 0 .5em; }
+.navbar-menu.is-active a { 
+	padding: .4em .2em .4em .2em; 
+	color: black;
+}
+.navbar-item a { 
+	height: 100%;
+	color: white;
+}
 
 .footer-section-titile {
 	margin-bottom: 3%;
 	font-weight: bold;
-}
-
-.navbar-item {
-	padding: .4em;
-	color: white;
-}
-
-.navbar-item:hover{
-	background-color: #118fe4;
-	color: white;
-}
-
-a.navbar-item:hover {
-	background-color: #118fe4;
-	color: white;
 }
 
 .node circle {

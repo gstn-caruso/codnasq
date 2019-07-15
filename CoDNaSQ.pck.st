@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 15 July 2019 at 2:22:31 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 15 July 2019 at 3:28:50 am'!
 'Description Conformational diversity of Native State database Quaternary'!
-!provides: 'CoDNaSQ' 1 112!
+!provides: 'CoDNaSQ' 1 114!
 !requires: 'Cuis-Web' 1 38 nil!
 SystemOrganization addCategory: #'CoDNaSQ-Model'!
 SystemOrganization addCategory: #'CoDNaSQ-Persistence'!
@@ -1843,6 +1843,11 @@ fundedByFooter
 			}
 		}! !
 
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/15/2019 03:27:24'!
+hamburgerIcon
+
+	^ Hyperlink to: '#' with: '<span></span><span></span><span></span>' :: css: #('navbar-burger' 'burger'); target: 'navbarButtons'! !
+
 !MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/5/2019 01:44:43'!
 membersOfFooter
 
@@ -1866,12 +1871,15 @@ membersOfFooter
 		}
 	}! !
 
-!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 21:02:30'!
+!MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/15/2019 03:21:47'!
 navBar
 
 	^ Nav css: #(navbar 'is-info has-shadow has-margin-b-5') containing: {
+		PlainHTML containing: '<script type="text/javascript" src="/scripts/navbar.js"></script>'.
+		
 		Div css: #('navbar-brand has-text-weight-bold') containing: {
-			Hyperlink to: '/' with: (Img src: '/assets/logo.png' alt: 'codnas q logo' :: render) :: css: #('navbar-item')
+			Hyperlink to: '/' with: (Img src: '/assets/logo.png' alt: 'codnas q logo' :: render) :: css: #('navbar-item').
+			self hamburgerIcon.
 		}.
 		Div css: #('navbar-menu') containing: {
 			Div css: #('navbar-end') containing: {
@@ -1882,7 +1890,7 @@ navBar
 				self navItemTo: '/about' with: 'About' icon: 'fa-info'.
 				self navItemTo: '/contact' with: 'Contact us' icon: 'fa-address-card'.
 			}
-		}
+		} :: id: 'navbarButtons'
 	}! !
 
 !MainView methodsFor: 'as yet unclassified' stamp: 'GC 7/7/2019 21:10:02'!
