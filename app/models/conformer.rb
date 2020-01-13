@@ -1,0 +1,2 @@
+class Conformer < ApplicationRecord
+end
