@@ -15,7 +15,7 @@
   <% @conformers.each do |conformer| %>
     <tr>
       <td><%= conformer.pdb_id %></td>
-      <td><%= conformer.pdb_id %></td>
+      <td><%= link_to(conformer.pdb_id, conformers_show_path(conformer.pdb_id)) %></td>
       <td><%= conformer.biological_assembly %></td>
       <td><%= conformer.resolution %></td>
       <td><%= conformer.length %></td>
