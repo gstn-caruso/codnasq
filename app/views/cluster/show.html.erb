@@ -1,0 +1,22 @@
+<h1>Cluster information</h1>
+
+<table>
+  <tr>
+    <th>Cluster ID</th>
+    <th>Group</th>
+    <th>Oligomeric State</th>
+    <th>Conformers</th>
+    <th>Max RMSD Quaternary</th>
+    <th>Max RMSD Tertiary</th>
+    <th>Resolution:</th>
+  </tr>
+  <tr>
+    <td><%= @cluster.codnasq_id %></td>
+    <td><%= @cluster.group %></td>
+    <td><%= @cluster.oligomeric_state %></td>
+    <td><%= @cluster.conformers_amount %></td>
+    <td>N/A</td>
+    <td><%= @cluster.max_rmsd_tertiary %></td>
+    <td>N/A</td>
+  </tr>
+</table>

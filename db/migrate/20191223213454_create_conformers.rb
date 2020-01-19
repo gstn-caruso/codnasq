@@ -1,7 +1,7 @@
 class CreateConformers < ActiveRecord::Migration[6.0]
   def change
     create_table :conformers do |t|
-      t.string :group
+      t.string :cluster_id
 
       t.string :pdb_id
       t.integer :biological_assembly

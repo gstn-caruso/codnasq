@@ -4,6 +4,8 @@ class CreateConformerPair < ActiveRecord::Migration[6.0]
       t.integer :query_id
       t.integer :target_id
 
+      t.string :cluster_id
+
       t.string :alignment_type
       t.integer :alignment_rank
       t.integer :structural_similarity

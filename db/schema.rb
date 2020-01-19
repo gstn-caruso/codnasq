@@ -10,11 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_13_054909) do
+ActiveRecord::Schema.define(version: 2020_01_19_013628) do
+
+  create_table "clusters", force: :cascade do |t|
+    t.string "codnasq_id"
+    t.integer "oligomeric_state"
+    t.float "max_rmsd_tertiary"
+    t.string "grupo"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "conformer_pairs", force: :cascade do |t|
     t.integer "query_id"
     t.integer "target_id"
+    t.string "cluster_id"
     t.string "alignment_type"
     t.integer "alignment_rank"
     t.integer "structural_similarity"
@@ -32,7 +42,7 @@ ActiveRecord::Schema.define(version: 2020_01_13_054909) do
   end
 
   create_table "conformers", force: :cascade do |t|
-    t.string "group"
+    t.string "cluster_id"
     t.string "pdb_id"
     t.integer "biological_assembly"
     t.float "resolution"
@@ -47,14 +57,6 @@ ActiveRecord::Schema.define(version: 2020_01_13_054909) do
     t.string "pfam_id"
     t.float "ph"
     t.integer "temperature"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "groups", force: :cascade do |t|
-    t.string "name"
-    t.string "cluster_id"
-    t.integer "oligomeric_state"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
