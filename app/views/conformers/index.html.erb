@@ -1,0 +1,26 @@
+<h1>Conformers</h1>
+
+<%= paginate @conformers %>
+
+<table>
+  <tr>
+    <th>Cluster</th>
+    <th>PDB</th>
+    <th>Biological Assembly</th>
+    <th>Resolution</th>
+    <th>Length</th>
+    <th>Name</th>
+    <th>Organism</th>
+  </tr>
+  <% @conformers.each do |conformer| %>
+    <tr>
+      <td><%= conformer.pdb_id %></td>
+      <td><%= link_to(conformer.pdb_id, conformers_show_path(conformer.pdb_id)) %></td>
+      <td><%= conformer.biological_assembly %></td>
+      <td><%= conformer.resolution %></td>
+      <td><%= conformer.length %></td>
+      <td><%= conformer.name %></td>
+      <td><%= conformer.organism %></td>
+    </tr>
+  <% end %>
+</table>

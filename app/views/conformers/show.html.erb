@@ -1,0 +1,47 @@
+<script src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var stage = new NGL.Stage("viewport");
+    stage.loadFile(<%= "`rcsb://#{@conformer.pdb_id}`" %>, {defaultRepresentation: true});
+  });
+</script>
+
+<h1>Conformer information</h1>
+
+<table>
+  <tr>
+    <th>PDB ID:</th>
+    <th>Pfam IDs:</th>
+    <th>UniProt ID:</th>
+    <th>Gene names:</th>
+    <th>Biological assembly:</th>
+    <th>Ligands:</th>
+    <th>Resolution:</th>
+    <th>Length:</th>
+    <th>Name:</th>
+    <th>Organism:</th>
+    <th>pH:</th>
+    <th>Temperature:</th>
+  </tr>
+  <tr>
+    <td><%= link_to(@conformer.pdb_id, "https://www.rcsb.org/structure/#{@conformer.pdb_id}") %></td>
+    <td>
+      <% @conformer.pfam_ids.each do |pfam_id| %>
+        <%= link_to(pfam_id, "https://pfam.xfam.org/family/#{pfam_id}") %>
+      <% end %>
+    </td>
+    <td><%= link_to(@conformer.uniprot_id, "https://www.uniprot.org/uniprot/#{@conformer.uniprot_id}") %></td>
+    <td><%= @conformer.gene_names %></td>
+    <td><%= @conformer.biological_assembly %></td>
+    <td><%= @conformer.ligands %></td>
+    <td><%= @conformer.resolution %></td>
+    <td><%= @conformer.length %></td>
+    <td><%= @conformer.name %></td>
+    <td><%= @conformer.organism %></td>
+    <td><%= @conformer.ph %></td>
+    <td><%= @conformer.temperature %></td>
+  </tr>
+</table>
+
+<h1>3D View</h1>
+<div id="viewport" style="width:400px; height:300px;"></div>
