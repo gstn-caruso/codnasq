@@ -1,6 +1,6 @@
 require 'sqlite3'
 
-DATABASE_PATH = '/home/gaston/Code/codnasq/db/test_database.db'.freeze
+DATABASE_PATH = "#{Rails.root}/db/seed_database.db".freeze
 
 # Print DB queries to StdOut
 # ActiveRecord::Base.logger = Logger.new(STDOUT)
