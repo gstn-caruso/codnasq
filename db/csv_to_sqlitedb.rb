@@ -1,8 +1,8 @@
 require 'csv'
 require 'sqlite3'
 
-CSV_PATH = '/home/gaston/Code/codnasq/db/dbq3.csv'.freeze
-DATABASE_PATH = 'test_database.db'.freeze
+CSV_PATH = "#{Rails.root}/db/dbq3.csv".freeze
+DATABASE_PATH = 'seed_database.db'.freeze
 
 system("rm #{DATABASE_PATH}")
 puts 'previous DB was removed'
