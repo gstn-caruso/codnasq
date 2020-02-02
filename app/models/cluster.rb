@@ -5,6 +5,14 @@ class Cluster < ApplicationRecord
   alias_attribute :group, :grupo
 
   def conformers_amount
-    Conformer.where(cluster_id: codnasq_id).count
+    conformers.count
+  end
+
+  def max_min_resolution
+    "[#{conformers.minimum(:resolution)} - #{conformers.maximum(:resolution)}]"
+  end
+
+  def conformers
+    Conformer.where(cluster_id: codnasq_id)
   end
 end
