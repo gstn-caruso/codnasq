@@ -8,7 +8,7 @@ DATABASE_PATH = "#{Rails.root}/db/seed_database.db".freeze
 db = SQLite3::Database.open(DATABASE_PATH)
 
 def perform(query:, to_db:, returning_hashes_with:)
-  timestamps = {created_at: DateTime.now, updated_at: DateTime.now}
+  timestamps = { created_at: DateTime.now, updated_at: DateTime.now }
   to_db.execute(query).map { |row| Hash[returning_hashes_with.zip(row)].merge(timestamps) }
 end
 
@@ -19,7 +19,6 @@ end
 select_clusters = <<-SQL
   SELECT DISTINCT `Cluster ID`, `Oligomeric State`, `maxRMSD-T`, `grupo` FROM codnasq;
 SQL
-
 
 cluster_keys = %i[codnasq_id oligomeric_state max_rmsd_tertiary grupo]
 clusters_from_db = perform(query: select_clusters, to_db: db, returning_hashes_with: cluster_keys)

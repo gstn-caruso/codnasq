@@ -45,3 +45,43 @@
 
 <h1>3D View</h1>
 <div id="viewport" style="width:400px; height:300px;"></div>
+
+<h1>Cluster information</h1>
+
+<table>
+  <tr>
+    <th>Cluster ID:</th>
+    <th>Oligomeric State:</th>
+    <th>Conformers:</th>
+    <th>Resolution:</th>
+  </tr>
+  <tr>
+    <th><%= @conformer.cluster.codnasq_id %></th>
+    <th><%= @conformer.cluster.oligomeric_state %></th>
+    <th><%= @conformer.cluster.conformers_amount %></th>
+    <th><%= @conformer.cluster.max_min_resolution %></th>
+  </tr>
+</table>
+
+<h1>Other conformers</h1>
+
+<table>
+  <tr>
+    <th>PDB</th>
+    <th>Biological Assembly</th>
+    <th>Resolution</th>
+    <th>Length</th>
+    <th>Name</th>
+    <th>Organism</th>
+  </tr>
+  <% @conformer.cluster.conformers.each do |sibling| %>
+    <tr>
+      <th><%= link_to(sibling.pdb_id, conformers_show_path(sibling.pdb_id)) %></th>
+      <th><%= sibling.biological_assembly %></th>
+      <th><%= sibling.resolution %></th>
+      <th><%= sibling.length %></th>
+      <th><%= sibling.name %></th>
+      <th><%= sibling.organism %></th>
+    </tr>
+<% end %>
+</table>
