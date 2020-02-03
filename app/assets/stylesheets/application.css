@@ -13,3 +13,7 @@
  *= require_tree .
  *= require_self
  */
+
+.has-padding-r-7 {
+  padding-right: 0.7rem;
+}
