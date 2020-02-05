@@ -1,0 +1,24 @@
+<div class="column is-four-fifths is-offset-1">
+  <div class="box has-text-centered">
+    <div>
+      <div><img src="/assets/logo.png" alt="codnas q logo" class="column is-offset-2 is-two-thirds">
+        <h1 class="title has-margin-t-7">Conformational Diversity of Native State - Quaternary</h1></div>
+    </div>
+    <div>
+      <%= form_tag(cluster_search_path, method: :get) do %>
+        <div class="field has-addons is-grouped-centered column is-offset-3 is-three-fifths">
+          <%= text_field_tag('query', '', class: 'input has-margin-r-7', placeholder: 'Search by...') %>
+          <div class='select has-margin-r-7'>
+            <%= select_tag('criteria', options_for_select(['All fields', 'PDB', 'Name', 'Organism'], 'All fields')) %>
+          </div>
+          <%= submit_tag('Search', class: 'button is-info') %>
+        </div>
+        <div class="has-margin-t-6">
+          <span><small>Example entries: </small></span>
+          <small><%= link_to('2vcq', cluster_show_path('2vcq')) %></small>
+          <span><small> | </small></span><small><a href="/cluster/search?query=Hydrolase&amp;criteria=type">Hydrolase</a></small><span><small> | </small></span><small><a href="/cluster/search?query=Mus+musculus&amp;criteria=source">Mus
+          musculus</a></small></div>
+      <% end %>
+    </div>
+  </div>
+</div>

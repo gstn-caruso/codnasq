@@ -1,4 +1,4 @@
-<%= paginate conformers %>
+<%= paginate @conformers %>
 
 <table class="table is-bordered is-striped is-hoverable is-fullwidth">
   <tr>
@@ -10,7 +10,7 @@
     <th>Name</th>
     <th>Organism</th>
   </tr>
-  <% conformers.each do |conformer| %>
+  <% @conformers.each do |conformer| %>
     <tr>
       <td><%= link_to("CQ#{conformer.cluster.codnasq_id}", cluster_show_path(conformer.cluster)) %></td>
       <td><%= link_to(conformer.pdb_id, conformers_show_path(conformer.pdb_id)) %></td>
@@ -23,4 +23,4 @@
   <% end %>
 </table>
 
-<%= paginate conformers %>
+<%= paginate @conformers %>
