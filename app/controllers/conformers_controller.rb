@@ -1,6 +1,6 @@
 class ConformersController < ApplicationController
   def index
-    @conformers = Conformer.page params[:page]
+    render 'conformers/index', locals: { conformers: Conformer.page(params[:page]) }
   end
 
   def show

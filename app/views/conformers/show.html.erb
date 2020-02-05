@@ -13,8 +13,13 @@
     <p><%= link_to(@conformer.pdb_id, "https://www.rcsb.org/structure/#{@conformer.pdb_id}") %></p>
   </div>
   <div class="panel-block">
+    <p class="has-text-weight-semibold has-padding-r-7">Description</p>
+    <p><%= @conformer.description %></p>
+  </div>
+  <div class="panel-block">
     <p class="has-text-weight-semibold has-padding-r-7">Pfam IDs</p>
-    <p><% @conformer.pfam_ids.each do |pfam_id| %>
+    <p>
+      <% @conformer.pfam_ids.each do |pfam_id| %>
         <%= link_to(pfam_id, "https://pfam.xfam.org/family/#{pfam_id}") %>
       <% end %>
     </p>
@@ -70,7 +75,7 @@
   <p class="panel-heading has-text-weight-bold">Cluster information</p>
   <div class="panel-block">
     <p class="has-text-weight-semibold has-padding-r-7">Cluster ID</p>
-    <p><%= @conformer.cluster.codnasq_id %></p>
+    <p><%= "CQ#{@conformer.cluster.codnasq_id}" %></p>
   </div>
   <div class="panel-block">
     <p class="has-text-weight-semibold has-padding-r-7">Oligomeric State</p>
@@ -87,7 +92,7 @@
 </div>
 
 <div class="panel">
-  <p class="panel-heading has-text-weight-bold">Other conformers</p>
+  <p class="panel-heading has-text-weight-bold">Other conformers of the same cluster</p>
   <table class="table is-bordered is-striped is-hoverable is-fullwidth">
     <tr>
       <th>PDB</th>
