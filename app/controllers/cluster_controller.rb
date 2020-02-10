@@ -1,6 +1,6 @@
 class ClusterController < ApplicationController
   def show
-    @cluster = Cluster.find_by_codnasq_id(params[:codnasq_id])
+    @cluster = Cluster.find_by_codnasq_id(params[:codnasq_id]) || Cluster.find(params[:codnasq_id])
   end
 
   def search
