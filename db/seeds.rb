@@ -5,6 +5,8 @@ DATABASE_PATH = "#{Rails.root}/db/seed_database.db".freeze
 # Print DB queries to StdOut
 # ActiveRecord::Base.logger = Logger.new(STDOUT)
 
+load('csv_to_sqlitedb')
+
 db = SQLite3::Database.open(DATABASE_PATH)
 
 def perform(query:, to_db:, returning_hashes_with:)
