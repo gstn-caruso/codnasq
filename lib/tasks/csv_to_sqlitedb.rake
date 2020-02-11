@@ -1,22 +1,26 @@
 require 'csv'
 require 'sqlite3'
 
-CSV_PATH = "#{Rails.root}/db/dbq3.csv".freeze
-DATABASE_PATH = 'seed_database.db'.freeze
 
-system("rm #{DATABASE_PATH}")
-puts 'previous DB was removed'
+desc 'Create SQLite DB from conformers CSV'
+namespace :init do
+  task csv_to_sqlite: :environment do
+    CSV_PATH = "#{Rails.root}/db/dbq3.csv".freeze
+    DATABASE_PATH = 'seed_database.db'.freeze
 
-lines = []
-CSV.foreach(CSV_PATH) { |line| lines << line }
-lines.shift
-puts 'CSV on memory'
+    system("rm #{DATABASE_PATH}")
+    puts 'previous DB was removed'
 
-line_values = lines.map { |line| "('#{line.join.split(';').map { |v| "#{v}" }.join("','")}')" }.join(',')
-puts 'CSV lines were parsed'
+    lines = []
+    CSV.foreach(CSV_PATH) { |line| lines << line }
+    lines.shift
+    puts 'CSV on memory'
 
-db = SQLite3::Database.new(DATABASE_PATH)
-create_db = <<-SQL
+    line_values = lines.map { |line| "('#{line.join.split(';').map { |v| "#{v}" }.join("','")}')" }.join(',')
+    puts 'CSV lines were parsed'
+
+    db = SQLite3::Database.new(DATABASE_PATH)
+    create_db = <<-SQL
     create table codnasq (
     id INTEGER PRIMARY KEY,
     `Cluster ID` TEXT,
@@ -66,9 +70,9 @@ create_db = <<-SQL
     `TargetChainID` TEXT,
     `maxRMSD-T` NUMERIC
   );
-SQL
+    SQL
 
-insert_rows = <<-SQL
+    insert_rows = <<-SQL
       INSERT INTO codnasq
         (`Cluster ID`,
          `Oligomeric State`,
@@ -117,10 +121,12 @@ insert_rows = <<-SQL
          `TargetChainID`,
          `maxRMSD-T`)
       VALUES #{line_values}
-SQL
+    SQL
 
-db.execute(create_db)
-puts 'DB created'
+    db.execute(create_db)
+    puts 'DB created'
 
-db.execute(insert_rows)
-puts 'Rows were inserted'
+    db.execute(insert_rows)
+    puts 'Rows were inserted'
+  end
+end
