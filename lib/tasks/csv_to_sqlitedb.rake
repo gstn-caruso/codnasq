@@ -1,8 +1,7 @@
 require 'csv'
 require 'sqlite3'
 
-
-desc 'Create SQLite DB from conformers CSV'
+desc 'Creates SQLite DB from conformers CSV'
 namespace :init do
   task csv_to_sqlite: :environment do
     CSV_PATH = "#{Rails.root}/db/dbq3.csv".freeze
