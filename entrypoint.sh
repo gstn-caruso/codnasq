@@ -2,6 +2,7 @@
 set -e
 
 bundle exec rake assets:precompile
+bundle exec rails db:setup
 
 # Remove a potentially pre-existing server.pid for Rails.
 rm -f /myapp/tmp/pids/server.pid
