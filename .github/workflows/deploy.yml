@@ -14,5 +14,6 @@ jobs:
         port: ${{ secrets.PORT }}
         script: |
           cd /home/pi/Code/codnasq
+          git reset --hard HEAD
           git pull
           screen -d -m docker-compose build && docker-compose restart
