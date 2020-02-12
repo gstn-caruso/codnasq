@@ -1,16 +1,18 @@
-name: remote ssh command
+name: Deploy
 on: [push]
 jobs:
-
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
-    - name: executing remote ssh commands using password
+    - name: Deploy
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
-        script: cd /home/pi/Code/codnasq && docker-compose build && docker-compose restart
+        script: |
+          cd /home/pi/Code/codnasq
+          git pull
+          screen -d -m docker-compose build && docker-compose restart
