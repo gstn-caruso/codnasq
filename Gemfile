@@ -8,7 +8,6 @@ gem 'font-awesome-rails'
 gem 'kaminari'
 gem 'puma', '~> 4.1'
 gem 'rails', '~> 6.0.2', '>= 6.0.2.1'
-gem 'sass-rails', '>= 6'
 gem 'sqlite3', '~> 1.4'
 gem 'turbolinks', '~> 5'
 
