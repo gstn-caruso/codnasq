@@ -2,8 +2,7 @@ version: '3'
 services:
   web:
     build: .
-    environment:
-      - RAILS_ENV=production
+    restart: always
     command: bash -c "RUBYOPT='-W:no-deprecated -W:no-experimental' bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
       - .:/codnasq
