@@ -1,16 +1,12 @@
 FROM ruby:2.7.0
 
-ENV RAILS_ENV=production
+EXPOSE 3000
 
-RUN apt-get update -qq && apt-get install -y build-essential nodejs nano
+ARG RAILS_ENV=production
 
-RUN mkdir /myapp
+WORKDIR /codnasq
+COPY . /codnasq
 
-WORKDIR /myapp
-
-COPY Gemfile /myapp/Gemfile
-COPY Gemfile.lock /myapp/Gemfile.lock
-
-RUN bundle install --deployment
-
-COPY . /myapp
+RUN apt-get update -qq && apt-get install -y build-essential nodejs nano &&\
+    bundle config set deployment 'true' &&\
+    bundle install
