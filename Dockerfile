@@ -3,6 +3,7 @@ FROM ruby:2.7.0
 EXPOSE 3000
 
 ARG RAILS_ENV=production
+ARG RAILS_LOG_TO_STDOUT=true
 
 WORKDIR /codnasq
 COPY . /codnasq
