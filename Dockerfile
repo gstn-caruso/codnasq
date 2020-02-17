@@ -1,15 +1,19 @@
 FROM ruby:2.7.0
 
 EXPOSE 3000
+ARG RAILS_ENV="production"
 
-ENV RAILS_ENV=production
-ENV RAILS_LOG_TO_STDOUT=true
+RUN apt-get update -qq && apt-get install -y build-essential nodejs
 
 WORKDIR /codnasq
+
+COPY ./Gemfile /codnasq/Gemfile
+COPY ./Gemfile.lock /codnasq/Gemfile.lock
+
+RUN bundle install --without=development test
+
 COPY . /codnasq
 
-RUN apt-get update -qq && apt-get install -y build-essential nodejs nano
-RUN bundle install --without=development test
 RUN rails assets:precompile
 
 CMD ["rails", "server", "-b", "0.0.0.0"]
