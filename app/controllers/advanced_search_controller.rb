@@ -1,15 +1,16 @@
 class AdvancedSearchController < ApplicationController
   def index
-    @results = Kaminari.paginate_array(search_result).page(params[:page])
+    @results = search_result.page(params[:page])
   end
 
   private
 
   def search_result
-    clusters + conformers
+    found_cluster_ids = clusters.concat(clusters_with_matching_conformer_properties).uniq
+    Cluster.where(id: found_cluster_ids)
   end
 
-  def conformers
+  def clusters_with_matching_conformer_properties
     conditions = {}
     conditions[:description] = params[:conformer_desc] if params[:conformer_desc].present?
     conditions[:biological_assembly] = params[:conformer_ba] if params[:conformer_ba].present?
@@ -20,7 +21,7 @@ class AdvancedSearchController < ApplicationController
     conditions[:ph] = params[:conformer_ph] if params[:conformer_ph].present?
     conditions[:temperature] = params[:conformer_temp] if params[:conformer_temp].present?
 
-    Conformer.where(conditions)
+    Conformer.where(conditions).pluck(:cluster_id)
   end
 
   def clusters
@@ -31,6 +32,6 @@ class AdvancedSearchController < ApplicationController
     conditions[:oligomeric_state] = params[:cluster_oligomeric_state] if params[:cluster_oligomeric_state].present?
     conditions[:max_rmsd_tertiary] = params[:cluster_max_rmsd_tertiary] if params[:cluster_max_rmsd_tertiary].present?
 
-    Cluster.where(conditions)
+    Cluster.where(conditions).ids
   end
 end
