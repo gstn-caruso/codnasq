@@ -1,6 +1,9 @@
 class ClusterController < ApplicationController
   def show
-    @cluster = Cluster.find_by_codnasq_id(params[:codnasq_id]) || Cluster.find(params[:codnasq_id])
+    cluster = Cluster.find_by_codnasq_id(params[:codnasq_id]) || Cluster.find(params[:codnasq_id])
+    conformers_cluster = Conformer.where(cluster: cluster)
+
+    render 'cluster/show', locals: { cluster: cluster, conformers: conformers_cluster }
   end
 
   def search

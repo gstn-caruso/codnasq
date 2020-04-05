@@ -4,22 +4,22 @@
 
     <div class="panel-block">
       <p class="has-text-weight-semibold has-padding-r-7">Cluster ID</p>
-      <p><%= @cluster.codnasq_id %></p>
+      <p><%= cluster.codnasq_id %></p>
     </div>
 
     <div class="panel-block">
       <p class="has-text-weight-semibold has-padding-r-7">Group</p>
-      <p><%= @cluster.group %></p>
+      <p><%= cluster.group %></p>
     </div>
 
     <div class="panel-block">
       <p class="has-text-weight-semibold has-padding-r-7">Oligomeric State</p>
-      <p><%= @cluster.oligomeric_state %></p>
+      <p><%= cluster.oligomeric_state %></p>
     </div>
 
     <div class="panel-block">
       <p class="has-text-weight-semibold has-padding-r-7">Conformers</p>
-      <p><%= @cluster.conformers_amount %></p>
+      <p><%= cluster.conformers_amount %></p>
 
     </div>
     <div class="panel-block">
@@ -29,12 +29,36 @@
 
     <div class="panel-block">
       <p class="has-text-weight-semibold has-padding-r-7">Max RMSD Tertiary</p>
-      <p><%= @cluster.max_rmsd_tertiary %></p>
+      <p><%= cluster.max_rmsd_tertiary %></p>
     </div>
 
     <div class="panel-block">
       <p class="has-text-weight-semibold has-padding-r-7">Resolution:</p>
       <p>N/A</p>
     </div>
+  </div>
+
+  <div class="panel">
+    <p class="panel-heading has-text-weight-bold">Conformers</p>
+    <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+      <tr>
+        <th>PDB</th>
+        <th>Biological Assembly</th>
+        <th>Resolution</th>
+        <th>Length</th>
+        <th>Name</th>
+        <th>Organism</th>
+      </tr>
+      <% conformers.each do |conformer| %>
+        <tr>
+          <td><%= link_to(conformer.pdb_id, conformers_show_path(conformer.pdb_id)) %></td>
+          <td><%= conformer.biological_assembly %></td>
+          <td><%= conformer.resolution %></td>
+          <td><%= conformer.length %></td>
+          <td><%= conformer.name %></td>
+          <td><%= conformer.organism %></td>
+        </tr>
+      <% end %>
+    </table>
   </div>
 </div>
