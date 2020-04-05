@@ -18,3 +18,23 @@
 .has-padding-r-7 {
   padding-right: 0.7rem;
 }
+
+.search-results {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem;
+  width: 100%;
+  margin: 0 1rem 0 1rem;
+}
+
+.advanced-search {
+  display: flex;
+  margin-top: 1rem;
+}
+
+.panel:hover {
+  background: linear-gradient(to right, white 50%, rgba(10,10,10,.02) 50%);
+  background-size: 200% 100%;
+  background-position: right bottom;
+  transition: all .25s ease-in;
+}

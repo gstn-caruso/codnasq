@@ -1,117 +1,118 @@
-<script src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    var stage = new NGL.Stage("viewport");
-    stage.loadFile(<%= "`rcsb://#{@conformer.pdb_id}`" %>, {defaultRepresentation: true});
-  });
-</script>
+<div class="column">
+  <script src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var stage = new NGL.Stage("viewport");
+      stage.loadFile(<%= "`rcsb://#{@conformer.pdb_id}`" %>, {defaultRepresentation: true});
+    });
+  </script>
 
-<div class="panel">
-  <p class="panel-heading has-text-weight-bold">Conformer information</p>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">PDB ID</p>
-    <p><%= link_to(@conformer.pdb_id, "https://www.rcsb.org/structure/#{@conformer.pdb_id}") %></p>
+  <div class="panel">
+    <p class="panel-heading has-text-weight-bold">Conformer information</p>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">PDB ID</p>
+      <p><%= link_to(@conformer.pdb_id, "https://www.rcsb.org/structure/#{@conformer.pdb_id}") %></p>
+    </div>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">Description</p>
+      <p><%= @conformer.description %></p>
+    </div>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">Pfam IDs</p>
+      <p>
+        <% @conformer.pfam_ids.each do |pfam_id| %>
+          <%= link_to(pfam_id, "https://pfam.xfam.org/family/#{pfam_id}") %>
+        <% end %>
+      </p>
+    </div>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">UniProt ID</p>
+      <p><%= link_to(@conformer.uniprot_id, "https://www.uniprot.org/uniprot/#{@conformer.uniprot_id}") %></p>
+    </div>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">Gene names</p>
+      <p><%= @conformer.gene_names %></p>
+    </div>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">Biological assembly</p>
+      <p><%= @conformer.biological_assembly %></p>
+    </div>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">Ligands</p>
+      <p><%= @conformer.ligands %></p>
+    </div>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">Resolution</p>
+      <p><%= @conformer.resolution %></p>
+    </div>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">Length</p>
+      <p><%= @conformer.length %></p>
+    </div>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">Name</p>
+      <p><%= @conformer.name %></p>
+    </div>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">Organism</p>
+      <p><%= @conformer.organism %></p>
+    </div>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">pH</p>
+      <p><%= @conformer.ph %></p>
+    </div>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">Temperature</p>
+      <p><%= @conformer.temperature %></p>
+    </div>
   </div>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">Description</p>
-    <p><%= @conformer.description %></p>
-  </div>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">Pfam IDs</p>
-    <p>
-      <% @conformer.pfam_ids.each do |pfam_id| %>
-        <%= link_to(pfam_id, "https://pfam.xfam.org/family/#{pfam_id}") %>
-      <% end %>
-    </p>
-  </div>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">UniProt ID</p>
-    <p><%= link_to(@conformer.uniprot_id, "https://www.uniprot.org/uniprot/#{@conformer.uniprot_id}") %></p>
-  </div>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">Gene names</p>
-    <p><%= @conformer.gene_names %></p>
-  </div>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">Biological assembly</p>
-    <p><%= @conformer.biological_assembly %></p>
-  </div>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">Ligands</p>
-    <p><%= @conformer.ligands %></p>
-  </div>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">Resolution</p>
-    <p><%= @conformer.resolution %></p>
-  </div>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">Length</p>
-    <p><%= @conformer.length %></p>
-  </div>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">Name</p>
-    <p><%= @conformer.name %></p>
-  </div>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">Organism</p>
-    <p><%= @conformer.organism %></p>
-  </div>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">pH</p>
-    <p><%= @conformer.ph %></p>
-  </div>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">Temperature</p>
-    <p><%= @conformer.temperature %></p>
-  </div>
-</div>
 
-<div class="panel">
-  <p class="panel-heading has-text-weight-bold">3D View</p>
-  <div id="viewport" style="width:100%; height:400px;"></div>
-</div>
+  <div class="panel">
+    <p class="panel-heading has-text-weight-bold">3D View</p>
+    <div id="viewport" style="width:100%; height:400px;"></div>
+  </div>
 
-<div class="panel">
-  <p class="panel-heading has-text-weight-bold">Cluster information</p>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">Cluster ID</p>
-    <p><%= "CQ#{@conformer.cluster.codnasq_id}" %></p>
+  <div class="panel">
+    <p class="panel-heading has-text-weight-bold">Cluster information</p>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">Cluster ID</p>
+      <p><%= "CQ#{@conformer.cluster.codnasq_id}" %></p>
+    </div>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">Oligomeric State</p>
+      <p><%= @conformer.cluster.oligomeric_state %></p>
+    </div>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">Conformers</p>
+      <p><%= @conformer.cluster.conformers_amount %></p>
+    </div>
+    <div class="panel-block">
+      <p class="has-text-weight-semibold has-padding-r-7">Resolution</p>
+      <p><%= @conformer.cluster.max_min_resolution %></p>
+    </div>
   </div>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">Oligomeric State</p>
-    <p><%= @conformer.cluster.oligomeric_state %></p>
-  </div>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">Conformers</p>
-    <p><%= @conformer.cluster.conformers_amount %></p>
-  </div>
-  <div class="panel-block">
-    <p class="has-text-weight-semibold has-padding-r-7">Resolution</p>
-    <p><%= @conformer.cluster.max_min_resolution %></p>
-  </div>
-</div>
 
-<div class="panel">
-  <p class="panel-heading has-text-weight-bold">Other conformers of the same cluster</p>
-  <table class="table is-bordered is-striped is-hoverable is-fullwidth">
-    <tr>
-      <th>PDB</th>
-      <th>Biological Assembly</th>
-      <th>Resolution</th>
-      <th>Length</th>
-      <th>Name</th>
-      <th>Organism</th>
-    </tr>
-    <% @conformer.cluster.conformers.each do |sibling| %>
+  <div class="panel">
+    <p class="panel-heading has-text-weight-bold">Other conformers of the same cluster</p>
+    <table class="table is-bordered is-striped is-hoverable is-fullwidth">
       <tr>
-        <td><%= link_to(sibling.pdb_id, conformers_show_path(sibling.pdb_id)) %></td>
-        <td><%= sibling.biological_assembly %></td>
-        <td><%= sibling.resolution %></td>
-        <td><%= sibling.length %></td>
-        <td><%= sibling.name %></td>
-        <td><%= sibling.organism %></td>
+        <th>PDB</th>
+        <th>Biological Assembly</th>
+        <th>Resolution</th>
+        <th>Length</th>
+        <th>Name</th>
+        <th>Organism</th>
       </tr>
-    <% end %>
-  </table>
+      <% @conformer.cluster.conformers.each do |sibling| %>
+        <tr>
+          <td><%= link_to(sibling.pdb_id, conformers_show_path(sibling.pdb_id)) %></td>
+          <td><%= sibling.biological_assembly %></td>
+          <td><%= sibling.resolution %></td>
+          <td><%= sibling.length %></td>
+          <td><%= sibling.name %></td>
+          <td><%= sibling.organism %></td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
 </div>
-
