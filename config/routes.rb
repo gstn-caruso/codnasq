@@ -11,4 +11,5 @@ Rails.application.routes.draw do
   get '/statistics', to: 'statistics#index'
   get '/about', to: 'about#index'
   get '/contact', to: 'contact#index'
+  get '/advanced_search', to: 'advanced_search#index'
 end

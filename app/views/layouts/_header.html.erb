@@ -8,6 +8,10 @@
   <div id="navbarButtons" class="navbar-menu">
     <div class="navbar-end">
       <div class="navbar-item">
+        <%= fa_icon 'download' %>
+        <%= link_to('Advanced Search', :advanced_search, class: 'navbar-item') %>
+      </div>
+      <div class="navbar-item">
         <a href="/download" class="navbar-item">
           <%= fa_icon 'download' %>
           Download

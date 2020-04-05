@@ -1,0 +1,22 @@
+<div class="advanced-search">
+  <div class="column is-one-third">
+    <aside class="menu">
+      <%= paginate @results %>
+      <%= form_tag(advanced_search_path, method: "get") do %>
+        <%= render partial: 'cluster_search_fields' %>
+        <%= render partial: 'conformer_search_fields' %>
+        <%= submit_tag("Search", class: 'button') %>
+      <% end %>
+    </aside>
+  </div>
+  <div class="search-results">
+    <% @results.each do |result| %>
+      <% if result.is_a?(Cluster) %>
+        <%= render partial: 'cluster_search_result', locals: {result: result} %>
+      <% end %>
+      <% if result.is_a?(Conformer) %>
+        <%= render partial: 'conformer_search_result', locals: {result: result} %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
