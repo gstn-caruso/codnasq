@@ -1,13 +1,14 @@
 class AdvancedSearchController < ApplicationController
   def index
-    @results = search_result.page(params[:page])
+    clusters_to_display = search_result.empty? ? Cluster.all : search_result
+
+    @results = clusters_to_display.page(params[:page])
   end
 
   private
 
   def search_result
-    found_cluster_ids = clusters.concat(clusters_with_matching_conformer_properties).uniq
-    Cluster.where(id: found_cluster_ids)
+    clusters.merge(clusters_with_matching_conformer_properties)
   end
 
   def clusters_with_matching_conformer_properties
@@ -21,7 +22,9 @@ class AdvancedSearchController < ApplicationController
     conditions[:ph] = params[:conformer_ph] if params[:conformer_ph].present?
     conditions[:temperature] = params[:conformer_temp] if params[:conformer_temp].present?
 
-    Conformer.where(conditions).pluck(:cluster_id)
+    codnasq_cluster_ids = Conformer.where(conditions).pluck(:cluster_id)
+
+    conditions.blank? ? Cluster.none : Cluster.where(codnasq_id: codnasq_cluster_ids)
   end
 
   def clusters
@@ -32,6 +35,6 @@ class AdvancedSearchController < ApplicationController
     conditions[:oligomeric_state] = params[:cluster_oligomeric_state] if params[:cluster_oligomeric_state].present?
     conditions[:max_rmsd_tertiary] = params[:cluster_max_rmsd_tertiary] if params[:cluster_max_rmsd_tertiary].present?
 
-    Cluster.where(conditions).ids
+    Cluster.where(conditions)
   end
 end
