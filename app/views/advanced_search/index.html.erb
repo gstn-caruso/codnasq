@@ -11,12 +11,7 @@
   </div>
   <div class="search-results">
     <% @results.each do |result| %>
-      <% if result.is_a?(Cluster) %>
-        <%= render partial: 'cluster_search_result', locals: {result: result} %>
-      <% end %>
-      <% if result.is_a?(Conformer) %>
-        <%= render partial: 'conformer_search_result', locals: {result: result} %>
-      <% end %>
+      <%= render partial: 'cluster_search_result', locals: {result: result} %>
     <% end %>
   </div>
 </div>
