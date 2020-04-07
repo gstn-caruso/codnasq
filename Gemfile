@@ -6,9 +6,9 @@ ruby '2.7.0'
 gem 'bootsnap', '>= 1.4.2', require: false
 gem 'font-awesome-rails'
 gem 'kaminari'
+gem 'pg'
 gem 'puma', '~> 4.1'
 gem 'rails', '~> 6.0.2', '>= 6.0.2.1'
-gem 'sqlite3', '~> 1.4'
 
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
