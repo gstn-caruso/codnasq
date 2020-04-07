@@ -1,1 +1,1 @@
-production.sqlite3 filter=lfs diff=lfs merge=keepTheir
+*.sql filter=lfs diff=lfs merge=keepTheir
