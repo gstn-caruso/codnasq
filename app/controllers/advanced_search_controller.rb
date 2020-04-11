@@ -8,7 +8,8 @@ class AdvancedSearchController < ApplicationController
   private
 
   def search_result
-    clusters.merge(clusters_with_matching_conformer_properties)
+    clusters_merge = clusters.merge(clusters_with_matching_conformer_properties)
+    clusters_merge.any? ? clusters_merge : clusters
   end
 
   def clusters_with_matching_conformer_properties
