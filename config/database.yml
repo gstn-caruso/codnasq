@@ -1,0 +1,10 @@
+development:
+  adapter: postgresql
+  username: postgres
+  password: postgres
+  host: localhost
+  pool: 5
+  database: codnasq_dev
+
+production:
+  url: <%= ENV['DATABASE_URL'] %>
