@@ -1,0 +1,9 @@
+<p class="menu-label">
+  Cluster properties
+</p>
+<ul class="menu-list">
+  <%= render partial: 'search_field', locals: { key: :cluster_id, label: 'Cluster ID' } %>
+  <%= render partial: 'search_field', locals: { key: :cluster_group, label: 'Group' } %>
+  <%= render partial: 'search_field', locals: { key: :cluster_oligomeric_state, label: 'Oligomeric State' } %>
+  <%= render partial: 'search_field', locals: { key: :cluster_max_rmsd_tertiary, label: "Max RMSD Tertiary" } %>
+</ul>

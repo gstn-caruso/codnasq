@@ -1,26 +1,10 @@
-# Misc
-/.idea
-.DS_Store
+# Ignore bundler config.
+/.bundle
 
-# changes file
-*.changes
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+.byebug_history
 
-# system image
-*.image
-
-# Pharo Smalltalk Debug log file
-PharoDebug.log
-
-# Squeak Smalltalk Debug log file
-SqueakDebug.log
-
-# Monticello package cache
-/package-cache
-
-# playground cache
-/play-cache
-/play-stash
-
-# Metacello-github cache
-/github-cache
-github-*.zip
+.idea
+/db/development.sqlite3

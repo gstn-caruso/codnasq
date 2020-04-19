@@ -1,0 +1,9 @@
+<div class="panel">
+  <div class="panel-block has-text-weight-bold">
+    <%= link_to("Cluster: #{result.codnasq_id}", cluster_show_path(result.codnasq_id)) %>
+  </div>
+  <div class="panel-block">Group: <%= result.group %> </div>
+  <div class="panel-block">Oligomeric State: <%= result.oligomeric_state %> </div>
+  <div class="panel-block">Conformers' amount: <%= result.conformers.count %> </div>
+  <div class="panel-block">Max RMSD Tertiary: <%= result.max_rmsd_tertiary %> </div>
+</div>
