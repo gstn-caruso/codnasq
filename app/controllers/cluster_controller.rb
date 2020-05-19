@@ -7,15 +7,17 @@ class ClusterController < ApplicationController
   end
 
   def search
+    query = params[:query].downcase
+
     case params[:criteria]
     when 'Name'
-      @conformers = Conformer.where('name LIKE ?', "%#{params[:query]}%").page(params[:page])
+      @conformers = Conformer.where('lower(name) LIKE ?', "%#{query}%").page(params[:page])
     when 'Organism'
-      @conformers = Conformer.where('organism LIKE ?', "%#{params[:query]}%").page(params[:page])
+      @conformers = Conformer.where('lower(organism) LIKE ?', "%#{query}%").page(params[:page])
     when 'PDB'
-      redirect_to cluster_show_path(params[:query])
+      redirect_to cluster_show_path(query)
     else
-      @conformers = Conformer.search_in_all_fields(params[:query]).page(params[:page])
+      @conformers = Conformer.search_in_all_fields(query).page(params[:page])
     end
   end
 end
