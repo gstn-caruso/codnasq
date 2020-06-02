@@ -1,4 +1,36 @@
 <div class="column">
+   <script src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
+  <script>
+   var pdb_query = '3zpg-1'; <!-- reemplazar con variable del query del max -->
+    var pdb_target = '3zpc-1'; <!-- reemplazar con variable del target del max -->
+      
+    NGL.DatasourceRegistry.add(
+      'data',
+      new NGL.StaticDatasource(
+        '//ufq.unq.edu.ar/codnasq/topmatch/quaternary/3zpg/3zpg-1_3zpc-1/'
+      )
+    );
+    var stage = new NGL.Stage('NGL');
+    window.addEventListener(
+      'resize',
+      function (event) {
+        stage.handleResize();
+      },
+      false
+    );
+    Promise.all([
+      stage.loadFile(`data://${pdb_query}.pdb`).then(function (o) {
+        o.addRepresentation('cartoon', { color: 'lightgreen' });
+        o.autoView();
+        return o;
+      }),
+      stage.loadFile(`data://${pdb_target}.pdb`).then(function (o) {
+        o.addRepresentation('cartoon', { color: 'tomato' });
+        o.autoView();
+        return o;
+      }),
+    ]);    
+  </script>
   <div class="panel">
     <p class="panel-heading has-text-weight-bold">Cluster information</p>
 
@@ -37,27 +69,33 @@
       <p>N/A</p>
     </div>
   </div>
+  
+   <div class="panel">
+    <p class="panel-heading has-text-weight-bold">3D View</p>
+    <div id="NGL" style="width:50%; height:400px;"></div>
+  </div>
+  
 
   <div class="panel">
     <p class="panel-heading has-text-weight-bold">Conformers</p>
     <table class="table is-bordered is-striped is-hoverable is-fullwidth">
       <tr>
         <th>PDB</th>
-        <th>Biological Assembly</th>
         <th>Resolution</th>
         <th>Length</th>
         <th>Name</th>
         <th>Organism</th>
+        <th>Uniprot</th>
       </tr>
       <% conformers.each do |conformer| %>
         <tr>
           <td><%= link_to(conformer.pdb_id, conformers_show_path(conformer.pdb_id)) %></td>
-          <td><%= conformer.biological_assembly %></td>
           <td><%= conformer.resolution %></td>
           <td><%= conformer.length %></td>
           <td><%= conformer.name %></td>
           <td><%= conformer.organism %></td>
-        </tr>
+          <td><%= link_to(conformer.uniprot_id, conformers_show_path(conformer.uniprot_id)) %></td>
+       </tr>
       <% end %>
     </table>
   </div>
