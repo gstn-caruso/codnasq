@@ -32,7 +32,7 @@ class AdvancedSearchController < ApplicationController
     conditions = {}
 
     conditions[:codnasq_id] = params[:cluster_id] if params[:cluster_id].present?
-    conditions[:grupo] = params[:cluster_group] if params[:cluster_group].present?
+    conditions[:group] = params[:cluster_group] if params[:cluster_group].present?
     conditions[:oligomeric_state] = params[:cluster_oligomeric_state] if params[:cluster_oligomeric_state].present?
     conditions[:max_rmsd_tertiary] = params[:cluster_max_rmsd_tertiary] if params[:cluster_max_rmsd_tertiary].present?
 
