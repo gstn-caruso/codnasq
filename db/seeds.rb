@@ -8,3 +8,7 @@ seeds.each do |seed|
   statements = File.read(seed)
   ActiveRecord::Base.transaction { connection.execute(statements) }
 end
+
+Dir[File.join(Rails.root, 'db/data_migrations/**/*.rb')].sort.each do |data_migration|
+  load data_migration
+end
