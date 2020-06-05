@@ -1,10 +1,14 @@
-<div class="column is-four-fifths is-offset-1">
+<div class="column is-four-fifths is-offset-1 landing">
   <div class="box has-text-centered">
-    <div>
-      <div>
-        <%= image_tag('logo.png', alt: "codnas q logo", class: 'column is-offset-2 is-two-thirds') %>
-        <h1 class="title has-margin-t-7">Conformational Diversity of Native State - Quaternary</h1></div>
-    </div>
+    <%= image_tag('logo.png', alt: "codnas q logo", class: 'column is-offset-2 is-two-thirds') %>
+    <h1 class="title has-margin-t-7">Conformational Diversity of Native State - Quaternary</h1>
+    <p>
+      CoDNaS-Q is a high-quality collection of homo-oligomeric conformers obtained from the <%= link_to('Protein Data Bank (PDB)', 'https://www.rcsb.org') %>.
+    </p>
+    <p>
+      It allows the exploration of conformational diversity and its determinants at the quaternary level,
+      for a large number of proteins determined under different experimental conditions and from a wide variety of families and species.
+    </p>
     <div>
       <%= form_tag(cluster_search_path, method: :get) do %>
         <div class="field has-addons is-grouped-centered column is-offset-3 is-three-fifths">
