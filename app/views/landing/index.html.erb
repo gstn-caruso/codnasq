@@ -1,6 +1,6 @@
 <div class="column is-four-fifths is-offset-1 landing">
   <div class="box has-text-centered">
-    <%= image_tag('logo.png', alt: "codnas q logo", class: 'column is-offset-2 is-two-thirds') %>
+    <%= image_tag('logo.png', alt: "codnas q logo", class: 'logo') %>
     <h1 class="title has-margin-t-7">Conformational Diversity of Native State - Quaternary</h1>
     <p>
       CoDNaS-Q is a high-quality collection of homo-oligomeric conformers obtained from the <%= link_to('Protein Data Bank (PDB)', 'https://www.rcsb.org') %>.
@@ -24,6 +24,21 @@
           <span><small> | </small></span><small><a href="/cluster/search?query=Hydrolase&amp;criteria=type">Hydrolase</a></small><span><small> | </small></span><small><a href="/cluster/search?query=Mus+musculus&amp;criteria=source">Mus
           musculus</a></small></div>
       <% end %>
+
+      <div class="sample-gifs">
+        <%= link_to(
+                image_tag('tertiary_deformation.gif', alt: 'tertiary deformation clusters'),
+                advanced_search_path(cluster_group: 'Tertiary Deformations'))
+        %>
+        <%= link_to(
+                image_tag('mixed_motion.gif', alt: 'mixed motion clusters'),
+                advanced_search_path(cluster_group: 'Mixed Motions'))
+        %>
+        <%= link_to(
+                image_tag('rigid_body.gif', alt: 'rigid body clusters'),
+                advanced_search_path(cluster_group: 'Rigid Body'))
+        %>
+      </div>
     </div>
   </div>
 </div>
