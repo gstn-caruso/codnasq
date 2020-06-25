@@ -1,5 +1,5 @@
 ActiveRecord::Base.transaction do
-  Cluster.where(group: 'a').update_all(group: 'Tertiary Deformations')
-  Cluster.where(group: 'b').update_all(group: 'Mixed Motions')
-  Cluster.where(group: 'c').update_all(group: 'Rigid Body')
+  Cluster.where(cluster_group: 'a').update_all(cluster_group: 'Tertiary Deformations')
+  Cluster.where(cluster_group: 'b').update_all(cluster_group: 'Mixed Motions')
+  Cluster.where(cluster_group: 'c').update_all(cluster_group: 'Rigid Body')
 end
