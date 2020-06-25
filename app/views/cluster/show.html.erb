@@ -1,40 +1,202 @@
+<script src="https://d3js.org/d3.v4.js"></script>
+
+
+<!-- Create a div where the graph will take place -->
+
 <div class="column">
+  <script src="//unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          var stage = new NGL.Stage("viewport");
+          stage
+              .loadFile(<%= "`http://ufq.unq.edu.ar/codnasq/topmatch/pdb/#{query.pdb_id}.pdb`" %>)
+              .then(function (structureComponent) {
+                  structureComponent.addRepresentation("cartoon", {color: 'red'});
+                  structureComponent.autoView();
+              });
+
+          stage
+              .loadFile(<%= "`http://ufq.unq.edu.ar/codnasq/topmatch/pdb/#{target.pdb_id}.pdb`" %>)
+              .then(function (structureComponent) {
+                  structureComponent.addRepresentation("cartoon", {color: 'green'});
+                  structureComponent.autoView();
+              });
+      });
+  </script>
+
+
   <div class="panel">
     <p class="panel-heading has-text-weight-bold">Cluster information</p>
+    <div class="columns">
 
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Cluster ID</p>
-      <p><%= cluster.codnasq_id %></p>
+      <div class="column">
+        <div>
+          <%= render 'panel_block', title: 'Cluster ID', content: cluster.codnasq_id %>
+          <%= render 'panel_block', title: 'Group', content: cluster.cluster_group %>
+          <%= render 'panel_block', title: 'Oligomeric State', content: cluster.oligomeric_state %>
+          <%= render 'panel_block', title: 'Conformers', content: cluster.conformers_amount %>
+          <%= render 'panel_block', title: 'Max RMSD Quaternary (Å)', content: max_pair.rmsd %>
+          <%= render 'panel_block', title: 'Max RMSD Tertiary (Å)', content: cluster.max_rmsd_tertiary %>
+        </div>
+      </div>
+      <div class="column">
+        <div>
+          <h4 class="has-text-weight-bold">Name</h4>
+          <h4 class="has-text-weight-bold">Length</h4>
+          <h4 class="has-text-weight-bold">Organism</h4>
+          <h4 class="has-text-weight-bold">Description</h4>
+          <h4 class="has-text-weight-bold">Genes</h4>
+          <h4 class="has-text-weight-bold">Maximum Tertiary Pair</h4>
+        </div>
+      </div>
+      <div class="column">
+        <p class="has-text-centered">RMSD distribution (de ejemplo)</p>
+        <div style="width: 80px" id="dataviz_axisZoom"></div>
+
+        <!-- Create a div where the graph will take place -->
+        <script>
+
+            // set the dimensions and margins of the graph
+            var margin = {top: 10, right: 30, bottom: 30, left: 60},
+                width = 460 - margin.left - margin.right,
+                height = 400 - margin.top - margin.bottom;
+
+            // append the SVG object to the body of the page
+            var SVG = d3.select("#dataviz_axisZoom")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform",
+                    "translate(" + margin.left + "," + margin.top + ")");
+
+            //Read the data
+            d3.csv("https://raw.githubusercontent.com/Nahuele/planets-1/master/for_d3_plot.csv", function (data) {
+
+                // Add X axis
+                var x = d3.scaleLinear()
+                    .domain([0, 8])
+                    .range([0, width]);
+                var xAxis = SVG.append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x));
+
+                // Add Y axis
+                var y = d3.scaleLinear()
+                    .domain([0, 5])
+                    .range([height, 0]);
+                var yAxis = SVG.append("g")
+                    .call(d3.axisLeft(y));
+
+                // Add a clipPath: everything out of this area won't be drawn.
+                var clip = SVG.append("defs").append("SVG:clipPath")
+                    .attr("id", "clip")
+                    .append("SVG:rect")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("x", 0)
+                    .attr("y", 0);
+
+                // Create the scatter variable: where both the circles and the brush take place
+                var scatter = SVG.append('g')
+                    .attr("clip-path", "url(#clip)")
+
+                // Add circles
+                scatter
+                    .selectAll("circle")
+                    .data(data)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", function (d) {
+                        return x(d.RMSD);
+                    })
+                    .attr("cy", function (d) {
+                        return y(d.maxRMSDT);
+                    })
+                    .attr("r", 8)
+                    .style("fill", "#61a3a9")
+                    .style("opacity", 0.3)
+
+                // Set the zoom and Pan features: how much you can zoom, on which part, and what to do when there is a zoom
+                var zoom = d3.zoom()
+                    .scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
+                    .extent([[0, 0], [width, height]])
+                    .on("zoom", updateChart);
+
+                // This add an invisible rect on top of the chart area. This rect can recover pointer events: necessary to understand when the user zoom
+                SVG.append("rect")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .style("fill", "none")
+                    .style("pointer-events", "all")
+                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+                    .call(zoom);
+                // now the user can zoom and it will trigger the function called updateChart
+
+                // A function that updates the chart when the user zoom and thus new boundaries are available
+                function updateChart() {
+
+                    // recover the new scale
+                    var newX = d3.event.transform.rescaleX(x);
+                    var newY = d3.event.transform.rescaleY(y);
+
+                    // update axes with these new boundaries
+                    xAxis.call(d3.axisBottom(newX))
+                    yAxis.call(d3.axisLeft(newY))
+
+                    // update circle position
+                    scatter
+                        .selectAll("circle")
+                        .attr('cx', function (d) {
+                            return newX(d.Sepal_Length)
+                        })
+                        .attr('cy', function (d) {
+                            return newY(d.Petal_Length)
+                        });
+                }
+
+            })
+        </script>
+      </div>
+
+
     </div>
 
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Group</p>
-      <p><%= cluster.group %></p>
-    </div>
+  </div>
 
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Oligomeric State</p>
-      <p><%= cluster.oligomeric_state %></p>
-    </div>
 
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Conformers</p>
-      <p><%= cluster.conformers_amount %></p>
+  <div class="panel">
+    <p class="panel-heading has-text-weight-bold">Maximum RMSD pair Comparison</p>
+    <div class="columns">
+      <div class="column">
 
-    </div>
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Max RMSD Quaternary</p>
-      <p>N/A</p>
-    </div>
+        <div class="columns is-mobile">
+          <div class="column">
+            <div id="viewport" style="width:100%; height:400px;"></div>
+          </div>
 
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Max RMSD Tertiary</p>
-      <p><%= cluster.max_rmsd_tertiary %></p>
-    </div>
+          <div class="column">
 
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Resolution:</p>
-      <p>N/A</p>
+            <div>
+              <p class="has-text-weight-bold has-text-centered">Stats</p>
+              <%= render 'panel_block', title: 'PDB query', content: query.pdb_id %>
+              <%= render 'panel_block', title: 'PDB target', content: target.pdb_id %>
+              <%= render 'panel_block', title: 'Sequence Identity', content: max_pair.sequence_identity %>
+              <%= render 'panel_block', title: 'RMSD', content: max_pair.rmsd %>
+              <%= render 'panel_block', title: 'Structural similarity', content: max_pair.structural_similarity %>
+              <%= render 'panel_block', title: 'Coverage (on pdb query)', content: max_pair.query_cover %>
+              <%= render 'panel_block', title: 'Coverage (on pdb target)', content: max_pair.target_cover %>
+              <%= render 'panel_block', title: 'Structurally equivalent residue pairs', content: max_pair.structurally_equivalent_residue_pairs %>
+              <%= render 'panel_block', title: 'Cover based on alignment length (query)', content: max_pair.query_cover_based_on_alignment_length %>
+              <%= render 'panel_block', title: 'Cover based on alignment length (target)', content: max_pair.target_cover_based_on_alignment_length %>
+              <%= render 'panel_block', title: 'Typical distance error', content: max_pair.typical_distance_error %>
+              <%= render 'panel_block', title: 'Biological Assembly (query)', content: query.biological_assembly %>
+              <%= render 'panel_block', title: 'Biological Assembly (target)', content: target.biological_assembly %>
+              <%= render 'panel_block', title: 'Max RMSD Tertiary', content: cluster.max_rmsd_tertiary %>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

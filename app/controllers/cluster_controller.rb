@@ -3,7 +3,14 @@ class ClusterController < ApplicationController
     cluster = Cluster.find_by_codnasq_id(params[:codnasq_id]) || Cluster.find(params[:codnasq_id])
     conformers_cluster = Conformer.where(cluster: cluster)
 
-    render 'cluster/show', locals: { cluster: cluster, conformers: conformers_cluster }
+    render 'cluster/show',
+           locals: {
+             cluster: cluster,
+             conformers: conformers_cluster,
+             max_pair: cluster.max_rmsd_pair,
+             query: cluster.max_rmsd_pair.query,
+             target: cluster.max_rmsd_pair.target,
+           }
   end
 
   def search
