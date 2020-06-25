@@ -2,14 +2,11 @@ class Cluster < ApplicationRecord
   has_one :conformer_pair
   validates_uniqueness_of :codnasq_id
 
-<<<<<<< HEAD
   alias_attribute(:group, :cluster_group)
-=======
   def max_rmsd_pair
     ConformerPair.from_cluster(self).order('rmsd DESC').first
   end
 
->>>>>>> master
   def conformers_amount
     conformers.count
   end
