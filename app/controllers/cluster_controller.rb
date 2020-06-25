@@ -7,7 +7,9 @@ class ClusterController < ApplicationController
            locals: {
              cluster: cluster,
              conformers: conformers_cluster,
-             max_pair: cluster.max_rmsd_pair
+             max_pair: cluster.max_rmsd_pair,
+             query: cluster.max_rmsd_pair.query,
+             target: cluster.max_rmsd_pair.target,
            }
   end
 
