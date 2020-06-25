@@ -1,4 +1,19 @@
 <div class="column">
+  <script src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var stage = new NGL.Stage("viewport");
+      stage.loadFile(<%= "`http://ufq.unq.edu.ar/codnasq/topmatch/pdb/#{max_pair.query.pdb_id}.pdb`" %>).then(function(structureComponent){
+        structureComponent.addRepresentation("cartoon");
+        structureComponent.autoView();
+      });
+      stage.loadFile(<%= "`http://ufq.unq.edu.ar/codnasq/topmatch/pdb/#{max_pair.target.pdb_id}.pdb`" %>).then(function(structureComponent){
+        structureComponent.addRepresentation("cartoon");
+        structureComponent.autoView();
+      });
+    });
+  </script>
+
   <div class="panel">
     <p class="panel-heading has-text-weight-bold">Cluster information</p>
 
@@ -9,7 +24,7 @@
 
     <div class="panel-block">
       <p class="has-text-weight-semibold has-padding-r-7">Group</p>
-      <p><%= cluster.group %></p>
+      <p><%= cluster.cluster_group %></p>
     </div>
 
     <div class="panel-block">
@@ -24,7 +39,7 @@
     </div>
     <div class="panel-block">
       <p class="has-text-weight-semibold has-padding-r-7">Max RMSD Quaternary</p>
-      <p>N/A</p>
+      <p><%= max_pair.rmsd %></p>
     </div>
 
     <div class="panel-block">
@@ -36,6 +51,11 @@
       <p class="has-text-weight-semibold has-padding-r-7">Resolution:</p>
       <p>N/A</p>
     </div>
+  </div>
+
+  <div class="panel">
+    <p class="panel-heading has-text-weight-bold">3D View</p>
+    <div id="viewport" style="width:100%; height:400px;"></div>
   </div>
 
   <div class="panel">
