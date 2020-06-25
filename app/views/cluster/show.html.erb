@@ -1,61 +1,58 @@
 <div class="column">
-  <script src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
+  <script src="//unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       var stage = new NGL.Stage("viewport");
-      stage.loadFile(<%= "`http://ufq.unq.edu.ar/codnasq/topmatch/pdb/#{max_pair.query.pdb_id}.pdb`" %>).then(function(structureComponent){
-        structureComponent.addRepresentation("cartoon");
-        structureComponent.autoView();
-      });
-      stage.loadFile(<%= "`http://ufq.unq.edu.ar/codnasq/topmatch/pdb/#{max_pair.target.pdb_id}.pdb`" %>).then(function(structureComponent){
-        structureComponent.addRepresentation("cartoon");
-        structureComponent.autoView();
-      });
+      stage
+        .loadFile(<%= "`http://ufq.unq.edu.ar/codnasq/topmatch/pdb/#{query.pdb_id}.pdb`" %>)
+        .then(function (structureComponent) {
+          structureComponent.addRepresentation("cartoon");
+          structureComponent.autoView();
+        });
+
+      stage
+        .loadFile(<%= "`http://ufq.unq.edu.ar/codnasq/topmatch/pdb/#{target.pdb_id}.pdb`" %>)
+        .then(function (structureComponent) {
+          structureComponent.addRepresentation("cartoon");
+          structureComponent.autoView();
+        });
     });
   </script>
 
   <div class="panel">
     <p class="panel-heading has-text-weight-bold">Cluster information</p>
 
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Cluster ID</p>
-      <p><%= cluster.codnasq_id %></p>
-    </div>
+    <%= render 'panel_block', title: 'Cluster ID', content: cluster.codnasq_id %>
+    <%= render 'panel_block', title: 'Group', content: cluster.cluster_group %>
+    <%= render 'panel_block', title: 'Oligomeric State', content: cluster.oligomeric_state %>
+    <%= render 'panel_block', title: 'Conformers', content: cluster.conformers_amount %>
+    <%= render 'panel_block', title: 'Max RMSD Quaternary', content: max_pair.rmsd %>
+    <%= render 'panel_block', title: 'Max RMSD Tertiary', content: cluster.max_rmsd_tertiary %>
 
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Group</p>
-      <p><%= cluster.cluster_group %></p>
-    </div>
-
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Oligomeric State</p>
-      <p><%= cluster.oligomeric_state %></p>
-    </div>
-
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Conformers</p>
-      <p><%= cluster.conformers_amount %></p>
-
-    </div>
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Max RMSD Quaternary</p>
-      <p><%= max_pair.rmsd %></p>
-    </div>
-
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Max RMSD Tertiary</p>
-      <p><%= cluster.max_rmsd_tertiary %></p>
-    </div>
-
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Resolution:</p>
-      <p>N/A</p>
-    </div>
   </div>
 
   <div class="panel">
     <p class="panel-heading has-text-weight-bold">3D View</p>
     <div id="viewport" style="width:100%; height:400px;"></div>
+  </div>
+
+  <div class="panel">
+    <p class="panel-heading has-text-weight-bold">Max RMSD Pair</p>
+
+    <%= render 'panel_block', title: 'PDB query', content: query.pdb_id %>
+    <%= render 'panel_block', title: 'PDB target', content: target.pdb_id %>
+    <%= render 'panel_block', title: 'Sequence Identity', content: max_pair.sequence_identity %>
+    <%= render 'panel_block', title: 'RMSD', content: max_pair.rmsd %>
+    <%= render 'panel_block', title: 'Structural similarity', content: max_pair.structural_similarity %>
+    <%= render 'panel_block', title: 'Coverage (on pdb query)', content: max_pair.query_cover %>
+    <%= render 'panel_block', title: 'Coverage (on pdb target)', content: max_pair.target_cover %>
+    <%= render 'panel_block', title: 'Structurally equivalent residue pairs', content: max_pair.structurally_equivalent_residue_pairs %>
+    <%= render 'panel_block', title: 'Cover based on alignment length (query)', content: max_pair.query_cover_based_on_alignment_length %>
+    <%= render 'panel_block', title: 'Cover based on alignment length (target)', content: max_pair.target_cover_based_on_alignment_length %>
+    <%= render 'panel_block', title: 'Typical distance error', content: max_pair.typical_distance_error %>
+    <%= render 'panel_block', title: 'Biological Assembly (query)', content: query.biological_assembly %>
+    <%= render 'panel_block', title: 'Biological Assembly (target)', content: target.biological_assembly %>
+    <%= render 'panel_block', title: 'Max RMSD Tertiary', content: cluster.max_rmsd_tertiary %>
   </div>
 
   <div class="panel">

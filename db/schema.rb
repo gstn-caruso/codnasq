@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_25_034842) do
+ActiveRecord::Schema.define(version: 2020_06_25_061907) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,8 +25,8 @@ ActiveRecord::Schema.define(version: 2020_06_25_034842) do
   end
 
   create_table "conformer_pairs", force: :cascade do |t|
-    t.integer "query_id"
-    t.integer "target_id"
+    t.string "query_id"
+    t.string "target_id"
     t.string "cluster_id"
     t.string "alignment_type"
     t.integer "alignment_rank"
