@@ -1,5 +1,5 @@
 # Conformational diversity of Native State database Quaternary
-![codnasq logo](https://github.com/gstn-caruso/codnasq/blob/master/assets/logo.png?raw=true)
+![codnasq logo](https://raw.githubusercontent.com/gstn-caruso/codnasq/master/app/assets/images/logo.png)
 
 CoDNaS Quaternary is a high confidence database of conformational diversity in proteins that present a biologically relevant quaternary structure.
 
