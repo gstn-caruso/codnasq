@@ -2,9 +2,7 @@ require 'csv'
 
 ActiveRecord::Base.logger = Logger.new(STDOUT)
 
-csv_location = ''
-
-count = 0
+csv_location = "#{Rails.root}/db/CoDNaS-Q_max_all_fields.csv"
 
 clusters = []
 conformers = []
@@ -12,7 +10,6 @@ pairs = []
 
 CSV.open(csv_location, "r", {headers: true, col_sep: ";"}).each do |row|
   begin
-    puts count += 1
     next if row['Cluster_ID'].include?('+') || row['PDB_ID_query'].include?('+') || row['PDB_ID_target'].include?('+')
 
     cluster = {
