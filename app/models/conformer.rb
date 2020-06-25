@@ -8,6 +8,10 @@ class Conformer < ApplicationRecord
     where(CONFORMER_FULL_SEARCH_COLUMNS.map { |field| "lower(#{field}) like '%#{text}%'" }.join(' or '))
   end
 
+  def ligands
+    self[:ligands].sub('|' , ',')
+  end
+
   def pfam_ids
     pfam_id.split(',')
   end
