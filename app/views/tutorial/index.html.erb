@@ -24,9 +24,9 @@
             results.
             By default, the search is performed on all available fields. </p>
           <br>
-            <p>A drop-down menu allows the user to limit the
-              search
-              to pre-defined fields:</p>
+          <p>A drop-down menu allows the user to limit the
+            search
+            to pre-defined fields:</p>
 
           <div class="content">
             <div class="columns">
@@ -126,35 +126,40 @@
       </div>
       <div id="ClustersInfo" class="content-tab" style="display:none">
         <section>
-            <p>Cluster entries comprise the main source of information provided by CoDNAs-Q. As mentioned before, a cluster entry contains general information about a cluster and all its conformers.</p>
-            <br>
-            <p>A cluster entry has three different sections:</p>
-            <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-            <div class="columns">
-              <div class="column">
-                <div class="has-text-centered">
-                  <p class="has-text-weight-bold">Cluster information</p>
-                </div>
-              </div>
-              <div class="column">
-                <p>General information about the cluster, including oligomeric state of the protein(s) involved, number of conformers in the cluster, and brief statistics about the structures available and their comparison.</p>
-              </div>
-            </div>
+          <p>Cluster entries comprise the main source of information provided by CoDNAs-Q. As mentioned before, a
+            cluster entry contains general information about a cluster and all its conformers.</p>
+          <br>
+          <p>A cluster entry has three different sections:</p>
           <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-            <div class="columns">
-              <div class="column">
-                <div class="has-text-centered">
-                  <p class="has-text-weight-bold">Maximum RMSD pair information</p>
-                </div>
-              </div>
-              <div class="column">
-                <p>
-                  Provides a comparison of the pair of conformers in the cluster that result in the maximum quaternary RMSD between any pair of conformers. The table shows columns with exclusive data for each of the two conformers, plus a third column provided the output of their structural comparison, as calculated with TopMatch. An interactive 3D display of the superposed structures is also shown.
-                </p>
+          <div class="columns">
+            <div class="column">
+              <div class="has-text-centered">
+                <p class="has-text-weight-bold">Cluster information</p>
               </div>
             </div>
+            <div class="column">
+              <p>General information about the cluster, including oligomeric state of the protein(s) involved, number of
+                conformers in the cluster, and brief statistics about the structures available and their comparison.</p>
+            </div>
+          </div>
+          <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+          <div class="columns">
+            <div class="column">
+              <div class="has-text-centered">
+                <p class="has-text-weight-bold">Maximum RMSD pair information</p>
+              </div>
+            </div>
+            <div class="column">
+              <p>
+                Provides a comparison of the pair of conformers in the cluster that result in the maximum quaternary
+                RMSD between any pair of conformers. The table shows columns with exclusive data for each of the two
+                conformers, plus a third column provided the output of their structural comparison, as calculated with
+                TopMatch. An interactive 3D display of the superposed structures is also shown.
+              </p>
+            </div>
+          </div>
           <figure class="image">
             <img src="https://i.imgur.com/e9CtArE.png" style="width: 60%;height: 60%;display: block;
                 margin-left: auto;
@@ -162,16 +167,17 @@
           </figure>
           <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-            <div class="columns">
-              <div class="column">
-                <div class="has-text-centered">
-                  <p class="has-text-weight-bold">Conformers in cluster</p>
-                </div>
-              </div>
-              <div class="column">
-                <p>Provides a table (analogous to the Search Results table) listing all conformers included in this cluster, with general information about them.</p>
+          <div class="columns">
+            <div class="column">
+              <div class="has-text-centered">
+                <p class="has-text-weight-bold">Conformers in cluster</p>
               </div>
             </div>
+            <div class="column">
+              <p>Provides a table (analogous to the Search Results table) listing all conformers included in this
+                cluster, with general information about them.</p>
+            </div>
+          </div>
           <figure class="image">
             <img src="https://i.imgur.com/T7zU0y1.png" style="width: 60%;height: 60%;display: block;
                 margin-left: auto;
@@ -184,10 +190,7 @@
             <br>
             <p>For example, to access the cluster ID CQ1wa9:</p>
             <a href="https://codnasq.herokuapp.com/cluster/1wa9">https://codnasq.herokuapp.com/cluster/1wa9</a>
-
-
           </div>
-
 
 
         </section>
@@ -195,7 +198,8 @@
       <div id="Search" class="content-tab" style="display:none">
         <section>
           <div class="column">
-              <p>After a search, the results page shows a table of matching PDB entries. Each row corresponds to a different conformer from a certain cluster. General information about each cluster is displayed.</p>
+            <p>After a search, the results page shows a table of matching PDB entries. Each row corresponds to a
+              different conformer from a certain cluster. General information about each cluster is displayed.</p>
           </div>
           <figure class="image">
             <img src="https://i.imgur.com/6pnX5rb.png" style="width: 70%;height: 70%;display: block;
@@ -204,8 +208,9 @@
           </figure>
           <hr style="height:1px;border-width:0;color:gray;background-color:gray">
           <div>
-            <p>We define a conformer as any of the alternative structures for a protein; each PDB identifier describes a different conformer. All conformers in CoDNaS-Q are oligomeric proteins.
-              <p>From the results table, the user can access a certain entry in CoDNaS-Q.</p>
+            <p>We define a conformer as any of the alternative structures for a protein; each PDB identifier describes a
+              different conformer. All conformers in CoDNaS-Q are oligomeric proteins.
+            <p>From the results table, the user can access a certain entry in CoDNaS-Q.</p>
             <br>
 
             <p>There are two types of entries in CoDNaS (described in more detail below):</p>
@@ -213,12 +218,17 @@
           </div>
           <br>
 
-          <div >
-              <li >Clicking on a Cluster ID (first column) would take the user to a Cluster entry, with information about a cluster and all conformers that it contains.</li>
-              <li>Clicking on a PDB ID (second column) takes the user to a Conformer entry, with information specific to that conformer.</li>
+          <div>
+            <li>Clicking on a Cluster ID (first column) would take the user to a Cluster entry, with information about a
+              cluster and all conformers that it contains.
+            </li>
+            <li>Clicking on a PDB ID (second column) takes the user to a Conformer entry, with information specific to
+              that conformer.
+            </li>
           </div>
           <br>
-          <p>It is also possible to click on the Name or Species columns to retrieve a list of entries matching the protein name or the organism, respectively.</p>
+          <p>It is also possible to click on the Name or Species columns to retrieve a list of entries matching the
+            protein name or the organism, respectively.</p>
         </section>
       </div>
     </div>
