@@ -41,12 +41,12 @@
       </div>
       <div class="column">
         <div>
-          <h4 class="has-text-weight-bold">Name</h4>
-          <h4 class="has-text-weight-bold">Length</h4>
-          <h4 class="has-text-weight-bold">Organism</h4>
-          <h4 class="has-text-weight-bold">Description</h4>
-          <h4 class="has-text-weight-bold">Genes</h4>
-          <h4 class="has-text-weight-bold">Maximum Tertiary Pair</h4>
+          <%= render 'panel_block', title: 'Name', content: query.name %>
+          <%= render 'panel_block', title: 'Length', content: query.length %>
+          <%= render 'panel_block', title: 'Organism', content: query.organism %>
+          <%= render 'panel_block', title: 'Description', content: query.description %>
+          <%= render 'panel_block', title: 'Genes', content: query.gene_names %>
+          <%= render 'panel_block', title: 'Maximum Tertiary Pair', content: "(#{query.pdb_id}, #{target.pdb_id})" %>
         </div>
       </div>
       <div class="column">
