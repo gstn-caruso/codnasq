@@ -2,78 +2,78 @@ require 'csv'
 
 ActiveRecord::Base.logger = Logger.new(STDOUT)
 
-csv_location = "#{Rails.root}/db/CoDNaS-Q_max_all_fields.csv"
+csv_location = "#{Rails.root}/db/dbq.csv"
 
 clusters = []
 conformers = []
 pairs = []
 
-CSV.open(csv_location, "r", {headers: true, col_sep: ";"}).each do |row|
+CSV.open(csv_location, "r", {headers: true, col_sep: ";", quote_char: "\x00"}).each do |row|
   begin
-    next if row['Cluster_ID'].include?('+') || row['PDB_ID_query'].include?('+') || row['PDB_ID_target'].include?('+')
+    next if row['Cluster ID'].include?('+') || row['PDB ID query'].include?('+') || row['PDB ID target'].include?('+')
 
     cluster = {
-      codnasq_id: row['Cluster_ID'],
-      oligomeric_state: row['Oligomeric_State'],
+      codnasq_id: row['Cluster ID'],
+      oligomeric_state: row['Oligomeric State'],
       max_rmsd_tertiary: row['maxRMSD-T'],
-      cluster_group: row['Group'],
+      cluster_group: row['grupo'],
       created_at: Time.now,
       updated_at: Time.now,
     }
 
     query = {
-      cluster_id: row['Cluster_ID'],
-      pdb_id: row['PDB_ID_query'],
-      biological_assembly: row['Biological_Assembly_query'],
-      resolution: row['Query_resolution'],
-      method: row['Query_method'],
-      length: row['Query_length'],
-      name: row['Query_name'],
-      organism: row['Query_organism'],
-      ligands: row['Query_ligands'].sub('|', ','),
-      description: row['Query_description'],
-      uniprot_id: row['Query_UniProt_ID'],
-      gene_names: row['Query_Gene_names'],
-      pfam_id: row['Query_Pfam'],
-      ph: row['query_pH'],
-      temperature: row['query_Temperature'],
+      cluster_id: row['Cluster ID'],
+      pdb_id: row['PDB ID query'],
+      biological_assembly: row['Biological Assembly_query'],
+      resolution: row['Query resolution'],
+      method: row['Query method'],
+      length: row['Query length'],
+      name: row['Query name'],
+      organism: row['Query organism'],
+      ligands: row['Query ligands'].sub('|', ','),
+      description: row['Query description'],
+      uniprot_id: row['Query UniProt ID'],
+      gene_names: row['Query Gene names'],
+      pfam_id: row['Query Pfam'],
+      ph: row['query pH'],
+      temperature: row['query Temperature'],
       created_at: Time.now,
       updated_at: Time.now,
     }
 
     target = {
-      cluster_id: row['Cluster_ID'],
-      pdb_id: row['PDB_ID_target'],
-      biological_assembly: row['Biological_Assembly_target'],
-      resolution: row['Target_resolution'],
-      method: row['Target_method'],
-      length: row['Target_length'],
-      name: row['Target_name'],
-      organism: row['Target_organism'],
-      ligands: row['Target_ligands'].sub('|', ','),
-      description: row['Target_description'],
-      uniprot_id: row['Target_UniProt_ID'],
-      gene_names: row['Target_Gene_names'],
-      pfam_id: row['Target_Pfam'],
-      ph: row['target_pH'],
-      temperature: row['target_Temperature'],
+      cluster_id: row['Cluster ID'],
+      pdb_id: row['PDB ID target'],
+      biological_assembly: row['Biological Assembly target'],
+      resolution: row['Target resolution'],
+      method: row['Target method'],
+      length: row['Target length'],
+      name: row['Target name'],
+      organism: row['Target organism'],
+      ligands: row['Target ligands'].sub('|', ','),
+      description: row['Target description'],
+      uniprot_id: row['Target UniProt ID'],
+      gene_names: row['Target Gene names'],
+      pfam_id: row['Target Pfam'],
+      ph: row['target pH'],
+      temperature: row['target Temperature'],
       created_at: Time.now,
       updated_at: Time.now,
     }
 
     pair = {
-      query_id: row['PDB_ID_query'],
-      target_id: row['PDB_ID_target'],
-      cluster_id: row['Cluster_ID'],
-      alignment_type: row['Type_of_alignment'],
-      alignment_rank: row['Rank_of_alignment'],
-      structural_similarity: row['Structural_similarity'],
-      query_cover: row['Query_cover'],
-      target_cover: row['Target_cover'],
-      structurally_equivalent_residue_pairs: row['Structurally_equivalent_residue_pairs'],
-      query_cover_based_on_alignment_length: row['Query_cover_based_on_alignment_length'],
-      target_cover_based_on_alignment_length: row['Target_cover_based_on_alignment_length'],
-      typical_distance_error: row['Typical_distance_error'],
+      query_id: row['PDB ID query'],
+      target_id: row['PDB ID target'],
+      cluster_id: row['Cluster ID'],
+      alignment_type: row['Type of alignment'],
+      alignment_rank: row['Rank of alignment'],
+      structural_similarity: row['Structural similarity'],
+      query_cover: row['Query cover'],
+      target_cover: row['Target cover'],
+      structurally_equivalent_residue_pairs: row['Structurally equivalent residue pairs'],
+      query_cover_based_on_alignment_length: row['Query cover based on alignment length'],
+      target_cover_based_on_alignment_length: row['Target cover based on alignment length'],
+      typical_distance_error: row['Typical distance error'],
       rmsd: row['RMSD'],
       sequence_identity: row['Sequenceidentity'],
       permutations: row['Permutations'],
@@ -91,8 +91,8 @@ rescue CSV::MalformedCSVError => er
   next
 end
 
-Cluster.insert_all(clusters)
-Conformer.insert_all(conformers)
+Cluster.insert_all(clusters.uniq { |cluster| cluster[:codnasq_id] })
+Conformer.insert_all(conformers.uniq { |conformer| conformer[:pdb_id] })
 ConformerPair.insert_all(pairs)
 
 Dir[File.join(Rails.root, 'db/data_migrations/**/*.rb')].sort.each do |data_migration|
