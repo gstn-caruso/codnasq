@@ -69,29 +69,63 @@
                 .attr("transform",
                     "translate(" + margin.left + "," + margin.top + ")");
 
+            // Add X axis
+            var x = d3.scaleLinear()
+                .domain([0, 8.15])
+                .range([ 0, width ]);
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
+
+            // Add Y axis
+            var y = d3.scaleLinear()
+                .domain([0, 3])
+                .range([ height, 0]);
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+            // Load maximos
+            var xPosRMSDQuat = <%= max_pair.rmsd %>
+            var yPosRMSDTert = <%= cluster.max_rmsd_tertiary  %>
+
+                // Tooltip
+            var tooltip = d3.select("#my_dataviz")
+                .append("div")
+                .style("opacity", 0)
+                .attr("class", "tooltip")
+                .style("background-color", "white")
+                .style("border", "solid")
+                .style("border-width", "1px")
+                .style("border-radius", "5px")
+                .style("padding", "10px")
+
+            // Tooltip functions
+            var mouseover = function(d) {
+                tooltip
+                    .style("opacity", 1)
+            }
+
+            var mousemove = function(d) {
+                tooltip
+                    .html(`maxRMSD Q: ${xPosRMSDQuat} Å <br> maxRMSD T: ${yPosRMSDTert} Å `)
+                    .style("left", (d3.mouse(this)[0]+90) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+                    .style("top", (d3.mouse(this)[1]) + "px")
+            }
+
+            // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
+            var mouseleave = function(d) {
+                tooltip
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 0)
+            }
+
             //Read the data
             d3.csv("https://raw.githubusercontent.com/Nahuele/planets-1/master/d3_sin_no_data.csv", function(data) {
-
-                // Add X axis
-                var x = d3.scaleLinear()
-                    .domain([0, 8.15])
-                    .range([ 0, width ]);
-                svg.append("g")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(d3.axisBottom(x));
-
-                // Add Y axis
-                var y = d3.scaleLinear()
-                    .domain([0, 3])
-                    .range([ height, 0]);
-                svg.append("g")
-                    .call(d3.axisLeft(y));
-
                 // Color scale: give me a specie name, I return a color
                 var color = d3.scaleOrdinal()
                     .domain(["MM", "TD", "RB" ])
                     .range([ "#9EF35B", "#F35B5B", "#5B89FC"])
-
                 // Add dots
                 svg.append('g')
                     .selectAll("dot")
@@ -103,7 +137,24 @@
                     .attr("r", 5)
                     .style("fill", function (d) { return color(d.Group) } )
                     .style("opacity", 0.1)
-            })
+
+
+                svg.append('g')
+                    .selectAll("dot")
+                    .data(data)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", x(xPosRMSDQuat) )
+                    .attr("cy", y(yPosRMSDTert) )
+                    .attr("r", 10)
+                    .style("fill", "gray" )
+                    .on("mouseover", mouseover)
+                    .on("mousemove", mousemove)
+                    .on("mouseleave", mouseleave)
+
+                    })
+
+
 
 
         </script>
