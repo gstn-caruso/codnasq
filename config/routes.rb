@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   get '/cluster/:codnasq_id', to: 'cluster#show', as: 'cluster_show'
 
   get '/download', to: 'download#index'
+  get '/tutorial', to: 'tutorial#index'
   get '/statistics', to: 'statistics#index'
   get '/about', to: 'about#index'
   get '/contact', to: 'contact#index'

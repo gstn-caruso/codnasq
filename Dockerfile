@@ -7,18 +7,18 @@ ENV RUBYOPT='-W:no-deprecated -W:no-experimental'
 RUN apk update \
 && apk upgrade \
 && apk add --update --no-cache \
-    build-base curl-dev git sqlite-dev \
-    yaml-dev zlib-dev bash tzdata
+    build-base curl-dev git \
+    yaml-dev zlib-dev bash tzdata postgresql-dev
 
 WORKDIR /codnasq
 
-COPY ./db/production.sqlite3 /codnasq/db/production.sqlite3
 COPY ./Gemfile /codnasq/Gemfile
 COPY ./Gemfile.lock /codnasq/Gemfile.lock
 
 RUN bundle install --without=development test
 
 COPY . /codnasq
+RUN rails db:setup
 RUN rails assets:precompile
 RUN rm -rf tmp/cache
 
