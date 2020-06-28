@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_25_061907) do
+ActiveRecord::Schema.define(version: 2020_06_27_235048) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 2020_06_25_061907) do
     t.string "cluster_group"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["codnasq_id"], name: "index_clusters_on_codnasq_id", unique: true
   end
 
   create_table "conformer_pairs", force: :cascade do |t|
@@ -42,6 +43,7 @@ ActiveRecord::Schema.define(version: 2020_06_25_061907) do
     t.integer "permutations"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["query_id", "target_id"], name: "index_conformer_pairs_on_query_id_and_target_id", unique: true
   end
 
   create_table "conformers", force: :cascade do |t|
@@ -62,6 +64,7 @@ ActiveRecord::Schema.define(version: 2020_06_25_061907) do
     t.integer "temperature"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["pdb_id"], name: "index_conformers_on_pdb_id", unique: true
   end
 
 end
