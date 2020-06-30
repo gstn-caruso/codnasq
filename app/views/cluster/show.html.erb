@@ -192,24 +192,76 @@
           </div>
 
           <div class="column">
+            <p class="has-text-weight-bold has-text-centered" style="margin-bottom: 2rem">Stats</p>
+              <table class="table">
+                  <thead>
+                  <tr>
+                    <th></th>
+                    <th>Comparison</th>
+                    <th><p><%=query.pdb_id %> (query)</p>
+                    </th>
+                    <th><p><%=target.pdb_id %> (target)</p>
+                    </th>
 
-            <div>
-              <p class="has-text-weight-bold has-text-centered">Stats</p>
-              <%= render 'panel_block', title: 'PDB query', content: query.pdb_id %>
-              <%= render 'panel_block', title: 'PDB target', content: target.pdb_id %>
-              <%= render 'panel_block', title: 'Sequence Identity', content: max_pair.sequence_identity %>
-              <%= render 'panel_block', title: 'RMSD', content: max_pair.rmsd %>
-              <%= render 'panel_block', title: 'Structural similarity', content: max_pair.structural_similarity %>
-              <%= render 'panel_block', title: 'Coverage (on pdb query)', content: max_pair.query_cover %>
-              <%= render 'panel_block', title: 'Coverage (on pdb target)', content: max_pair.target_cover %>
-              <%= render 'panel_block', title: 'Structurally equivalent residue pairs', content: max_pair.structurally_equivalent_residue_pairs %>
-              <%= render 'panel_block', title: 'Cover based on alignment length (query)', content: max_pair.query_cover_based_on_alignment_length %>
-              <%= render 'panel_block', title: 'Cover based on alignment length (target)', content: max_pair.target_cover_based_on_alignment_length %>
-              <%= render 'panel_block', title: 'Typical distance error', content: max_pair.typical_distance_error %>
-              <%= render 'panel_block', title: 'Biological Assembly (query)', content: query.biological_assembly %>
-              <%= render 'panel_block', title: 'Biological Assembly (target)', content: target.biological_assembly %>
-              <%= render 'panel_block', title: 'Max RMSD Tertiary', content: cluster.max_rmsd_tertiary %>
-            </div>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td>Sequence Identity</td>
+                    <td><%=max_pair.sequence_identity %></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>RMSD</td>
+                    <td><%=max_pair.rmsd %> Å</td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Structural similarity</td>
+                    <td><%=max_pair.structural_similarity %></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Coverage</td>
+                    <td></td>
+                    <td><%=max_pair.query_cover %></td>
+                    <td><%=max_pair.target_cover %></td>
+                  </tr>
+                  <tr>
+                    <td>Structurally equivalent residue pairs</td>
+                    <td><%=max_pair.structurally_equivalent_residue_pairs %></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Cover based on alignment length</td>
+                    <td></td>
+                    <td><%=max_pair.query_cover_based_on_alignment_length%></td>
+                    <td><%=max_pair.target_cover_based_on_alignment_length %></td>
+                  </tr>
+                  <tr>
+                    <td>Typical distance error</td>
+                    <td><%=max_pair.typical_distance_error %></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Biological Assembly</td>
+                    <td></td>
+                    <td><%=query.biological_assembly  %></td>
+                    <td><%=target.biological_assembly  %></td>
+                  </tr>
+                  <tr>
+                    <td>maxRMSD Tertiary of the cluster</td>
+                    <td><%=cluster.max_rmsd_tertiary %> Å</td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+              </table>
+
           </div>
         </div>
       </div>
