@@ -28,7 +28,6 @@
   <div class="panel">
     <p class="panel-heading has-text-weight-bold">Cluster information</p>
     <div class="columns">
-
       <div class="column">
         <div>
           <%= render 'panel_block', title: 'Cluster ID', content: cluster.codnasq_id %>
@@ -50,15 +49,15 @@
         </div>
       </div>
       <div class="column">
-        <p class="has-text-centered">RMSD distribution</p>
+        <p class="has-text-centered">maxRMSD distribution</p>
         <div id="my_dataviz"></div>
         <!-- Create a div where the graph will take place -->
         <script>
 
             // set the dimensions and margins of the graph
-            var margin = {top: 10, right: 30, bottom: 30, left: 60},
-                width = 800 - margin.left - margin.right,
-                height = 400 - margin.top - margin.bottom;
+            var margin = {top: 10, right: 30, bottom: 40, left: 60},
+                width = 600 - margin.left - margin.right,
+                height = 380 - margin.top - margin.bottom;
 
             // append the svg object to the body of the page
             var svg = d3.select("#my_dataviz")
@@ -79,10 +78,24 @@
 
             // Add Y axis
             var y = d3.scaleLinear()
-                .domain([0, 3])
+                .domain([0, 2.7])
                 .range([ height, 0]);
             svg.append("g")
                 .call(d3.axisLeft(y));
+
+            // Label Y
+            svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -margin.left + 20)
+                .attr("x", -margin.top - height/2 + 90)
+                .text("maxRMSD Tertiary (Å)")
+            // Label X
+            svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("x", width/2 + margin.left + 20)
+                .attr("y", height + margin.top + 25)
+                .text("maxRMSD Quaternary (Å)");
 
             // Load maximos
             var xPosRMSDQuat = <%= max_pair.rmsd %>
@@ -93,6 +106,7 @@
                 .append("div")
                 .style("opacity", 0)
                 .attr("class", "tooltip")
+                .attr('style', 'position: absolute; opacity: 0;')
                 .style("background-color", "white")
                 .style("border", "solid")
                 .style("border-width", "1px")
@@ -107,9 +121,9 @@
 
             var mousemove = function(d) {
                 tooltip
-                    .html(`maxRMSD Q: ${xPosRMSDQuat} Å <br> maxRMSD T: ${yPosRMSDTert} Å `)
-                    .style("left", (d3.mouse(this)[0]+90) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
-                    .style("top", (d3.mouse(this)[1]) + "px")
+                    .html(`maxRMSD-Q: ${xPosRMSDQuat} Å <br> maxRMSD-T: ${yPosRMSDTert} Å `)
+                    .style('left', (d3.event.pageX+30) + 'px')
+                    .style('top', (d3.event.pageY+30) + 'px')
             }
 
             // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
@@ -137,6 +151,7 @@
                     .attr("r", 5)
                     .style("fill", function (d) { return color(d.Group) } )
                     .style("opacity", 0.1)
+
 
 
                 svg.append('g')
@@ -177,24 +192,76 @@
           </div>
 
           <div class="column">
+            <p class="has-text-weight-bold has-text-centered" style="margin-bottom: 2rem">Stats</p>
+              <table class="table">
+                  <thead>
+                  <tr>
+                    <th></th>
+                    <th>Comparison</th>
+                    <th><p><%=query.pdb_id %> (query)</p>
+                    </th>
+                    <th><p><%=target.pdb_id %> (target)</p>
+                    </th>
 
-            <div>
-              <p class="has-text-weight-bold has-text-centered">Stats</p>
-              <%= render 'panel_block', title: 'PDB query', content: query.pdb_id %>
-              <%= render 'panel_block', title: 'PDB target', content: target.pdb_id %>
-              <%= render 'panel_block', title: 'Sequence Identity', content: max_pair.sequence_identity %>
-              <%= render 'panel_block', title: 'RMSD', content: max_pair.rmsd %>
-              <%= render 'panel_block', title: 'Structural similarity', content: max_pair.structural_similarity %>
-              <%= render 'panel_block', title: 'Coverage (on pdb query)', content: max_pair.query_cover %>
-              <%= render 'panel_block', title: 'Coverage (on pdb target)', content: max_pair.target_cover %>
-              <%= render 'panel_block', title: 'Structurally equivalent residue pairs', content: max_pair.structurally_equivalent_residue_pairs %>
-              <%= render 'panel_block', title: 'Cover based on alignment length (query)', content: max_pair.query_cover_based_on_alignment_length %>
-              <%= render 'panel_block', title: 'Cover based on alignment length (target)', content: max_pair.target_cover_based_on_alignment_length %>
-              <%= render 'panel_block', title: 'Typical distance error', content: max_pair.typical_distance_error %>
-              <%= render 'panel_block', title: 'Biological Assembly (query)', content: query.biological_assembly %>
-              <%= render 'panel_block', title: 'Biological Assembly (target)', content: target.biological_assembly %>
-              <%= render 'panel_block', title: 'Max RMSD Tertiary', content: cluster.max_rmsd_tertiary %>
-            </div>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td>Sequence Identity</td>
+                    <td><%=max_pair.sequence_identity %></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>RMSD</td>
+                    <td><%=max_pair.rmsd %> Å</td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Structural similarity</td>
+                    <td><%=max_pair.structural_similarity %></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Coverage</td>
+                    <td></td>
+                    <td><%=max_pair.query_cover %></td>
+                    <td><%=max_pair.target_cover %></td>
+                  </tr>
+                  <tr>
+                    <td>Structurally equivalent residue pairs</td>
+                    <td><%=max_pair.structurally_equivalent_residue_pairs %></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Cover based on alignment length</td>
+                    <td></td>
+                    <td><%=max_pair.query_cover_based_on_alignment_length%></td>
+                    <td><%=max_pair.target_cover_based_on_alignment_length %></td>
+                  </tr>
+                  <tr>
+                    <td>Typical distance error</td>
+                    <td><%=max_pair.typical_distance_error %></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Biological Assembly</td>
+                    <td></td>
+                    <td><%=query.biological_assembly  %></td>
+                    <td><%=target.biological_assembly  %></td>
+                  </tr>
+                  <tr>
+                    <td>maxRMSD Tertiary of the cluster</td>
+                    <td><%=cluster.max_rmsd_tertiary %> Å</td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+              </table>
+
           </div>
         </div>
       </div>
