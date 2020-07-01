@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_27_235048) do
+ActiveRecord::Schema.define(version: 2020_07_01_011636) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,9 +47,9 @@ ActiveRecord::Schema.define(version: 2020_06_27_235048) do
   end
 
   create_table "conformers", force: :cascade do |t|
-    t.string "cluster_id"
-    t.string "pdb_id"
-    t.integer "biological_assembly"
+    t.string "cluster_id", null: false
+    t.string "pdb_id", null: false
+    t.integer "biological_assembly", null: false
     t.float "resolution"
     t.string "method"
     t.integer "length"

@@ -24,7 +24,7 @@ CSV.open(csv_location, "r", {headers: true, col_sep: ";", quote_char: "\x00"}).e
     query = {
       cluster_id: row['Cluster ID'],
       pdb_id: row['PDB ID query'],
-      biological_assembly: row['Biological Assembly_query'],
+      biological_assembly: row['Biological Assembly query'],
       resolution: row['Query resolution'],
       method: row['Query method'],
       length: row['Query length'],
