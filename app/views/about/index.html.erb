@@ -1,8 +1,10 @@
 <div class="column is-four-fifths is-offset-1" style="">
   <div style="">
-    <div class="card" style=""><h1 class="card-header card-header-title title">About CoDNaS-Q</h1>
+    <div class="card" style="">
+<!--      <h1 class=" card-header-title has-text-centered title">About CoDNaS-Q</h1>-->
       <div class="card-content" style="">
-        <div style=""><h1 class="title">What is CoDNaS-Q?</h1>
+        <div style=""><p class="has-text-weight-bold">What is CoDNaS-Q?</p>
+          <br>
           <p class="has-margin-b-7" name="">CoDNaS-Q <em>—Conformational Diversity of Native State-Quaternary—</em> is a
             high confidence database of conformational diversity in proteins that present a biologically relevant
             quaternary structure.</p>
@@ -12,16 +14,18 @@
             (<a name="" href="https://www.uniprot.org/">UniProt</a> and
             <a name="" href="https://pfam.xfam.org/">Pfam</a>) and structural information of the protein (RMSD,
             oligomeric state, conformers, etc).</p></div>
-        <div style=""><h1 class="title">What is it used for?</h1>
-          <h1 class="subtitle">Experimental conditions associated to conformational diversity. Applications,
-            implementation</h1>
+        <br>
+        <div style=""><p class="has-text-weight-bold">What is it used for?</p>
+         <br>
           <p class="has-margin-b-7" name="">The database allows the user find through different criteria and filters
             proteins in several conformations, taking into account their biological quaternary structure.The different
             redundant structures (conformers) have been structurally aligned all vs all in order to assess the
             conformational variability for a given protein. Additionally, the experimental conditions associated to each
             structure have been considered to allow users associate protein conformational changes with the biological
             function.</p></div>
-        <div style=""><h1 class="title">Database implementation</h1>
+        <br>
+        <div style=""><p class="has-text-weight-bold">Database implementation</p>
+          <br>
           <p class="has-margin-b-7" name="">CoDNaS Quaternary uses homoligomeric proteins annotated by the algorithm
             QSbio (Dey et al. 2018), that combines PISA (Krissinel and Henrick 2007), EPPIC (Duarte et al. 2012) and
             QSalign (Dey et al. 2018), to predict different parameters of protein complexes. Using the BlastClust, all
@@ -29,31 +33,31 @@
             structures are considered as putative conformers and provide snapshots of proteins dynamics. Structural
             alignments among each pair of conformeros for a given protein were performed by TopMatch. The maximum RMSD
             between pair of conformers is a measure of the protein conformational diversity.</p></div>
-        <div class="has-margin-b-7" style=""><h1 class="title">Example</h1>
+        <br>
+        <div class="has-margin-b-7" style=""><h4 class="has-text-weight-bold">Example</h4>
+          <br>
           <p class="has-margin-b-7" name="">The fructose-1,6-bisphosphatase (FBPase) is a key regulatory enzyme of
             gluconeogenic pathway. It catalyzes the hydrolysis of fructose-1,6-bisphosphate to fructose-6-phosphate and
             phosphate.
             This tetrameric enzyme presents two conformational states: R state, in which the enzyme is active and
             bounded with the substrate or product; and the T form, where the enzyme is bound to AMP in presence or
             absence of metallic ions.</p>
-          <img src="https://github.com/gstn-caruso/codnasq/blob/master/assets/about.png?raw=true" alt="R and T state of FBPase. 1RDX conformer in gold colour and 1RDY showed in cian" class="has-margin-b-7">
-          <p class="has-margin-b-7" name="">R and T state of FBPase. 1RDX conformer in gold colour and 1RDY showed in
+          <img src="https://github.com/gstn-caruso/codnasq/blob/master/app/assets/images/about.png?raw=true" alt="" class="has-margin-b-7"
+          style="width: 60%;height: 60%;display: block;
+              margin-left: auto;
+              margin-right: auto;">
+          <p class="has-margin-b-7 has-text-centered" name="">R and T state of FBPase. 1RDX conformer in gold colour and 1RDY showed in
             cian.</p>
+          <br>
           <p name="">In CoDNaS-Q we are able to find the R and T forms within the
             <a name="" href="/cluster/show/CQ1fpf">CQ1fpf</a> cluster, and 66 others conformers of this protein, some of
             them with the ligand bound. The maximum quaternary RMSD measured for this cluster is 3.38 Å.</p></div>
-        <div style=""><h1 class="title">Bibliography</h1>
-          <ul id="nil" name="">
-            <li class="has-padding-b-4" name="id=">
-              <p name="">Dey, S., Ritchie, D.W. and Levy, E.D. 2018. PDB-wide identification of biological assemblies
-                from conserved quaternary structure geometry. Nature Methods 15(1), pp. 67–72.</p></li>
-            <li class="has-padding-b-4" name="id=">
-              <p name="">Duarte, J.M., Srebniak, A., Schärer, M.A. and Capitani, G. 2012. Protein interface
-                classification by evolutionary analysis. BMC Bioinformatics 13, p. 334.</p></li>
-            <li class="has-padding-b-4" name="id=">
-              <p name="">Krissinel, E. and Henrick, K. 2007. Inference of macromolecular assemblies from crystalline
-                state. Journal of Molecular Biology 372(3), pp. 774–797.</p></li>
-          </ul>
+        <br>
+        <div style=""><h4 class="has-text-weight-bold">Bibliography</h4>
+          <br>
+         <li></li>
+         <li></li>
+         <li></li>
         </div>
       </div>
     </div>
