@@ -6,22 +6,22 @@
 <div class="column">
   <script src="//unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
   <script>
-      document.addEventListener("DOMContentLoaded", function () {
-          var stage = new NGL.Stage("viewport");
-          stage
-              .loadFile(<%= "`http://ufq.unq.edu.ar/codnasq/topmatch/pdb/#{query.pdb_id}.pdb`" %>)
-              .then(function (structureComponent) {
-                  structureComponent.addRepresentation("cartoon", {color: 'red'});
-                  structureComponent.autoView();
-              });
+    document.addEventListener("DOMContentLoaded", function () {
+      var stage = new NGL.Stage("viewport");
+      stage
+        .loadFile(<%= "`http://ufq.unq.edu.ar/codnasq/topmatch/pdb/#{query.pdb_id}.pdb`" %>)
+        .then(function (structureComponent) {
+          structureComponent.addRepresentation("cartoon", {color: 'red'});
+          structureComponent.autoView();
+        });
 
-          stage
-              .loadFile(<%= "`http://ufq.unq.edu.ar/codnasq/topmatch/pdb/#{target.pdb_id}.pdb`" %>)
-              .then(function (structureComponent) {
-                  structureComponent.addRepresentation("cartoon", {color: 'green'});
-                  structureComponent.autoView();
-              });
-      });
+      stage
+        .loadFile(<%= "`http://ufq.unq.edu.ar/codnasq/topmatch/pdb/#{target.pdb_id}.pdb`" %>)
+        .then(function (structureComponent) {
+          structureComponent.addRepresentation("cartoon", {color: 'green'});
+          structureComponent.autoView();
+        });
+    });
   </script>
 
 
@@ -54,122 +54,127 @@
         <!-- Create a div where the graph will take place -->
         <script>
 
-            // set the dimensions and margins of the graph
-            var margin = {top: 10, right: 30, bottom: 40, left: 60},
-                width = 600 - margin.left - margin.right,
-                height = 380 - margin.top - margin.bottom;
+          // set the dimensions and margins of the graph
+          var margin = {top: 10, right: 30, bottom: 40, left: 60},
+            width = 600 - margin.left - margin.right,
+            height = 380 - margin.top - margin.bottom;
 
-            // append the svg object to the body of the page
-            var svg = d3.select("#my_dataviz")
-                .append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform",
-                    "translate(" + margin.left + "," + margin.top + ")");
+          // append the svg object to the body of the page
+          var svg = d3.select("#my_dataviz")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
 
-            // Add X axis
-            var x = d3.scaleLinear()
-                .domain([0, 8.15])
-                .range([ 0, width ]);
-            svg.append("g")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x));
+          // Add X axis
+          var x = d3.scaleLinear()
+            .domain([0, 8.15])
+            .range([0, width]);
+          svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
 
-            // Add Y axis
-            var y = d3.scaleLinear()
-                .domain([0, 2.7])
-                .range([ height, 0]);
-            svg.append("g")
-                .call(d3.axisLeft(y));
+          // Add Y axis
+          var y = d3.scaleLinear()
+            .domain([0, 2.7])
+            .range([height, 0]);
+          svg.append("g")
+            .call(d3.axisLeft(y));
 
-            // Label Y
-            svg.append("text")
-                .attr("text-anchor", "end")
-                .attr("transform", "rotate(-90)")
-                .attr("y", -margin.left + 20)
-                .attr("x", -margin.top - height/2 + 90)
-                .text("maxRMSD Tertiary (Å)")
-            // Label X
-            svg.append("text")
-                .attr("text-anchor", "end")
-                .attr("x", width/2 + margin.left + 20)
-                .attr("y", height + margin.top + 25)
-                .text("maxRMSD Quaternary (Å)");
+          // Label Y
+          svg.append("text")
+            .attr("text-anchor", "end")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -margin.left + 20)
+            .attr("x", -margin.top - height / 2 + 90)
+            .text("maxRMSD Tertiary (Å)")
+          // Label X
+          svg.append("text")
+            .attr("text-anchor", "end")
+            .attr("x", width / 2 + margin.left + 20)
+            .attr("y", height + margin.top + 25)
+            .text("maxRMSD Quaternary (Å)");
 
-            // Load maximos
-            var xPosRMSDQuat = <%= max_pair.rmsd %>
-            var yPosRMSDTert = <%= cluster.max_rmsd_tertiary  %>
+          // Load maximos
+          var xPosRMSDQuat =
+          <%= max_pair.rmsd %>
+          var yPosRMSDTert =
+          <%= cluster.max_rmsd_tertiary  %>
 
-                // Tooltip
-            var tooltip = d3.select("#my_dataviz")
-                .append("div")
-                .style("opacity", 0)
-                .attr("class", "tooltip")
-                .attr('style', 'position: absolute; opacity: 0;')
-                .style("background-color", "white")
-                .style("border", "solid")
-                .style("border-width", "1px")
-                .style("border-radius", "5px")
-                .style("padding", "10px")
+          // Tooltip
+          var tooltip = d3.select("#my_dataviz")
+            .append("div")
+            .style("opacity", 0)
+            .attr("class", "tooltip")
+            .attr('style', 'position: absolute; opacity: 0;')
+            .style("background-color", "white")
+            .style("border", "solid")
+            .style("border-width", "1px")
+            .style("border-radius", "5px")
+            .style("padding", "10px")
 
-            // Tooltip functions
-            var mouseover = function(d) {
-                tooltip
-                    .style("opacity", 1)
-            }
+          // Tooltip functions
+          var mouseover = function (d) {
+            tooltip
+              .style("opacity", 1)
+          }
 
-            var mousemove = function(d) {
-                tooltip
-                    .html(`maxRMSD-Q: ${xPosRMSDQuat} Å <br> maxRMSD-T: ${yPosRMSDTert} Å `)
-                    .style('left', (d3.event.pageX+30) + 'px')
-                    .style('top', (d3.event.pageY+30) + 'px')
-            }
+          var mousemove = function (d) {
+            tooltip
+              .html(`maxRMSD-Q: ${xPosRMSDQuat} Å <br> maxRMSD-T: ${yPosRMSDTert} Å `)
+              .style('left', (d3.event.pageX + 30) + 'px')
+              .style('top', (d3.event.pageY + 30) + 'px')
+          }
 
-            // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
-            var mouseleave = function(d) {
-                tooltip
-                    .transition()
-                    .duration(200)
-                    .style("opacity", 0)
-            }
+          // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
+          var mouseleave = function (d) {
+            tooltip
+              .transition()
+              .duration(200)
+              .style("opacity", 0)
+          }
 
-            //Read the data
-            d3.csv("https://raw.githubusercontent.com/Nahuele/planets-1/master/d3_sin_no_data.csv", function(data) {
-                // Color scale: give me a specie name, I return a color
-                var color = d3.scaleOrdinal()
-                    .domain(["MM", "TD", "RB" ])
-                    .range([ "#9EF35B", "#F35B5B", "#5B89FC"])
-                // Add dots
-                svg.append('g')
-                    .selectAll("dot")
-                    .data(data)
-                    .enter()
-                    .append("circle")
-                    .attr("cx", function (d) { return x(d.RMSD); } )
-                    .attr("cy", function (d) { return y(d.maxRMSDT); } )
-                    .attr("r", 5)
-                    .style("fill", function (d) { return color(d.Group) } )
-                    .style("opacity", 0.1)
-
-
-
-                svg.append('g')
-                    .selectAll("dot")
-                    .data(data)
-                    .enter()
-                    .append("circle")
-                    .attr("cx", x(xPosRMSDQuat) )
-                    .attr("cy", y(yPosRMSDTert) )
-                    .attr("r", 10)
-                    .style("fill", "gray" )
-                    .on("mouseover", mouseover)
-                    .on("mousemove", mousemove)
-                    .on("mouseleave", mouseleave)
-
-                    })
+          //Read the data
+          d3.csv("https://raw.githubusercontent.com/Nahuele/planets-1/master/d3_sin_no_data.csv", function (data) {
+            // Color scale: give me a specie name, I return a color
+            var color = d3.scaleOrdinal()
+              .domain(["MM", "TD", "RB"])
+              .range(["#9EF35B", "#F35B5B", "#5B89FC"])
+            // Add dots
+            svg.append('g')
+              .selectAll("dot")
+              .data(data)
+              .enter()
+              .append("circle")
+              .attr("cx", function (d) {
+                return x(d.RMSD);
+              })
+              .attr("cy", function (d) {
+                return y(d.maxRMSDT);
+              })
+              .attr("r", 5)
+              .style("fill", function (d) {
+                return color(d.Group)
+              })
+              .style("opacity", 0.1)
 
 
+            svg.append('g')
+              .selectAll("dot")
+              .data(data)
+              .enter()
+              .append("circle")
+              .attr("cx", x(xPosRMSDQuat))
+              .attr("cy", y(yPosRMSDTert))
+              .attr("r", 10)
+              .style("fill", "gray")
+              .on("mouseover", mouseover)
+              .on("mousemove", mousemove)
+              .on("mouseleave", mouseleave)
+
+          })
 
 
         </script>
@@ -192,75 +197,74 @@
           </div>
 
           <div class="column">
-            <p class="has-text-weight-bold has-text-centered" style="margin-bottom: 2rem">Stats</p>
-              <table class="table">
-                  <thead>
-                  <tr>
-                    <th></th>
-                    <th>Comparison</th>
-                    <th><p><%=query.pdb_id %> (query)</p>
-                    </th>
-                    <th><p><%=target.pdb_id %> (target)</p>
-                    </th>
+            <table class="table">
+              <thead>
+              <tr>
+                <th></th>
+                <th>Comparison</th>
+                <th><p><%= query.pdb_id %> (query)</p>
+                </th>
+                <th><p><%= target.pdb_id %> (target)</p>
+                </th>
 
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr>
-                    <td>Sequence Identity</td>
-                    <td><%=max_pair.sequence_identity %></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>RMSD</td>
-                    <td><%=max_pair.rmsd %> Å</td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>Structural similarity</td>
-                    <td><%=max_pair.structural_similarity %></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>Coverage</td>
-                    <td></td>
-                    <td><%=max_pair.query_cover %></td>
-                    <td><%=max_pair.target_cover %></td>
-                  </tr>
-                  <tr>
-                    <td>Structurally equivalent residue pairs</td>
-                    <td><%=max_pair.structurally_equivalent_residue_pairs %></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>Cover based on alignment length</td>
-                    <td></td>
-                    <td><%=max_pair.query_cover_based_on_alignment_length%></td>
-                    <td><%=max_pair.target_cover_based_on_alignment_length %></td>
-                  </tr>
-                  <tr>
-                    <td>Typical distance error</td>
-                    <td><%=max_pair.typical_distance_error %></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>Biological Assembly</td>
-                    <td></td>
-                    <td><%=query.biological_assembly  %></td>
-                    <td><%=target.biological_assembly  %></td>
-                  </tr>
-                  <tr>
-                    <td>maxRMSD Tertiary of the cluster</td>
-                    <td><%=cluster.max_rmsd_tertiary %> Å</td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-              </table>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td>Sequence Identity</td>
+                <td><%= max_pair.sequence_identity %></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>RMSD</td>
+                <td><%= max_pair.rmsd %> Å</td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Structural similarity</td>
+                <td><%= max_pair.structural_similarity %></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Coverage</td>
+                <td></td>
+                <td><%= max_pair.query_cover %></td>
+                <td><%= max_pair.target_cover %></td>
+              </tr>
+              <tr>
+                <td>Structurally equivalent residue pairs</td>
+                <td><%= max_pair.structurally_equivalent_residue_pairs %></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Cover based on alignment length</td>
+                <td></td>
+                <td><%= max_pair.query_cover_based_on_alignment_length %></td>
+                <td><%= max_pair.target_cover_based_on_alignment_length %></td>
+              </tr>
+              <tr>
+                <td>Typical distance error</td>
+                <td><%= max_pair.typical_distance_error %></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Biological Assembly</td>
+                <td></td>
+                <td><%= query.biological_assembly %></td>
+                <td><%= target.biological_assembly %></td>
+              </tr>
+              <tr>
+                <td>maxRMSD Tertiary of the cluster</td>
+                <td><%= cluster.max_rmsd_tertiary %> Å</td>
+                <td></td>
+                <td></td>
+              </tr>
+            </table>
 
           </div>
         </div>
