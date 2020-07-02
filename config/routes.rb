@@ -13,4 +13,6 @@ Rails.application.routes.draw do
   get '/about', to: 'about#index'
   get '/contact', to: 'contact#index'
   get '/advanced_search', to: 'advanced_search#index'
+
+  get '/pdb/:pdb_id', to: 'pdb_files#show', as: 'pdb_show'
 end

@@ -9,14 +9,14 @@
     document.addEventListener("DOMContentLoaded", function () {
       var stage = new NGL.Stage("viewport");
       stage
-        .loadFile(<%= "`http://ufq.unq.edu.ar/codnasq/topmatch/pdb/#{query.pdb_id}.pdb`" %>)
+        .loadFile("<%= pdb_show_url(query.pdb_id) %>", {ext: "pdb"})
         .then(function (structureComponent) {
           structureComponent.addRepresentation("cartoon", {color: 'red'});
           structureComponent.autoView();
         });
 
       stage
-        .loadFile(<%= "`http://ufq.unq.edu.ar/codnasq/topmatch/pdb/#{target.pdb_id}.pdb`" %>)
+        .loadFile("<%= pdb_show_url(target.pdb_id) %>", {ext: "pdb"})
         .then(function (structureComponent) {
           structureComponent.addRepresentation("cartoon", {color: 'green'});
           structureComponent.autoView();
