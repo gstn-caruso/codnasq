@@ -1,220 +1,215 @@
-
 <div class="column is-four-fifths is-offset-1">
-  <div>
-    <div class="card"><h1 class="card-header card-header-title title">Download</h1>
-      <div class="table is-bordered is-striped is-hoverable is-fullwidth">
-        <p class="has-margin-l-6">Download a custom semicolon-separated file with the main information about
-          protein clusters in CoDNaS-Q.</p>
-        <a href="https://drive.google.com/file/d/1Ejfnn0bZsqvLOhzPSt4hq5A1WNGNG6yt/view?usp=sharing" class="button is-link has-margin-6">
-          Click here
-        </a>
-        <table>
-          <thead></thead>
-          <tbody>
-          <tr>
-            <td>Cluster ID</td>
-            <td>CoDNaS-Q identification number</td>
-          </tr>
-          <tr>
-            <td>Oligomeric State</td>
-            <td>Subunits Quantity</td>
-          </tr>
-          <tr>
-            <td>PDB ID query</td>
-            <td>query PDB code</td>
-          </tr>
-          <tr>
-            <td>Biological Assembly query</td>
-            <td>query Biological Assembly (or Chain ID)</td>
-          </tr>
-          <tr>
-            <td>PDB ID target</td>
-            <td>target PDB code</td>
-          </tr>
-          <tr>
-            <td>Biological Assembly target</td>
-            <td>target Biological Assembly (or Chain ID)</td>
-          </tr>
-          <tr>
-            <td>Type of alignment</td>
-            <td>Basic structure alignments are denoted by `b`, composite alignments are denoted by `c`, and sequence
-              alignments are denoted by `q`.
-            </td>
-          </tr>
-          <tr>
-            <td>Rank of alignment</td>
-            <td>Rank of alignment</td>
-          </tr>
-          <tr>
-            <td>Structural similarity</td>
-            <td>Measure of structural similarity based on Gaussian functions. If the structurally equivalent parts in
-              query and target match perfectly, S is equal to L. With increasing spatial deviation of the aligned
-              residues, S approaches 0.
-            </td>
-          </tr>
-          <tr>
-            <td>Query cover</td>
-            <td>Query cover based on similarity score, expressed in percent (= 100 x S/Qn, where Qn is the length of the
-              query sequence).
-            </td>
-          </tr>
-          <tr>
-            <td>Target cover</td>
-            <td>Target cover based on similarity score, expressed in percent (= 100 x S/Tn, where Tn is the length of
-              the target sequence).
-            </td>
-          </tr>
-          <tr>
-            <td>Structurally equivalent residue pairs</td>
-            <td>Number of residue pairs that are structurally equivalent (= alignment length).</td>
-          </tr>
-          <tr>
-            <td>Query cover based on alignment length</td>
-            <td>Query cover based on alignment length, expressed in percent (= 100 x L/Qn, where Qn is the length of the
-              query sequence).
-            </td>
-          </tr>
-          <tr>
-            <td>Target cover based on alignment length</td>
-            <td>Target cover based on alignment length, expressed in percent (= 100 x L/Tn, where Tn is the length of
-              the target sequence).
-            </td>
-          </tr>
-          <tr>
-            <td>Typical distance error</td>
-            <td>For details on the construction of this per-residue measure of structural similarity, see Sippl &amp;
-              Wiederstein (2012).
-            </td>
-          </tr>
-          <tr>
-            <td>RMSD</td>
-            <td>Root-mean-square error of superposition in Angstroms, calculated using all structurally equivalent
-              C-alpha atoms.
-            </td>
-          </tr>
-          <tr>
-            <td>Sequence identity</td>
-            <td>Sequence identity of query and target in the equivalent regions, expressed in percent.</td>
-          </tr>
-          <tr>
-            <td>Permutations</td>
-            <td>Number of permutations in the alignment.</td>
-          </tr>
-          <tr>
-            <td>Query resolution</td>
-            <td>Experimental resolution of query</td>
-          </tr>
-          <tr>
-            <td>Target resolution</td>
-            <td>Experimental resolution of target</td>
-          </tr>
-          <tr>
-            <td>Query method</td>
-            <td>Experimental technique of the query</td>
-          </tr>
-          <tr>
-            <td>Target method</td>
-            <td>Experimental technique of the target</td>
-          </tr>
-          <tr>
-            <td>Query length</td>
-            <td>Oligomer length</td>
-          </tr>
-          <tr>
-            <td>Target length</td>
-            <td>Oligomer length</td>
-          </tr>
-          <tr>
-            <td>Query name</td>
-            <td>Name of molecule query</td>
-          </tr>
-          <tr>
-            <td>Target name</td>
-            <td>Name of molecule target</td>
-          </tr>
-          <tr>
-            <td>Query organism</td>
-            <td>Species source registered in the PDB entry</td>
-          </tr>
-          <tr>
-            <td>Target organism</td>
-            <td>Species source registered in the PDB entry</td>
-          </tr>
-          <tr>
-            <td>Query ligands</td>
-            <td>Query ligands included in the PDB file</td>
-          </tr>
-          <tr>
-            <td>Target ligands</td>
-            <td>Target ligands included in the PDB file</td>
-          </tr>
-          <tr>
-            <td>Query description</td>
-            <td>Query title of the PDB entry</td>
-          </tr>
-          <tr>
-            <td>Target description</td>
-            <td>Target title of the PDB entry</td>
-          </tr>
-          <tr>
-            <td>Target UniProt ID</td>
-            <td>Target UniProt entry name</td>
-          </tr>
-          <tr>
-            <td>Target Gene names</td>
-            <td>Gene name according UniProt</td>
-          </tr>
-          <tr>
-            <td>Target Pfam</td>
-            <td>Target Pfam ID</td>
-          </tr>
-          <tr>
-            <td>Query UniProt ID</td>
-            <td>Query UniProt entry name</td>
-          </tr>
-          <tr>
-            <td>Query Gene names</td>
-            <td>Gene name according UniProt</td>
-          </tr>
-          <tr>
-            <td>Query Pfam</td>
-            <td>Query Pfam ID</td>
-          </tr>
-          <tr>
-            <td>Group</td>
-            <td>Tertiary vs Quaternary state comparison</td>
-          </tr>
-          <tr>
-            <td>target pH</td>
-            <td>Target pH conditions</td>
-          </tr>
-          <tr>
-            <td>target Temperature</td>
-            <td>Target experimental Temperature (K)</td>
-          </tr>
-          <tr>
-            <td>query pH</td>
-            <td>Query pH conditions</td>
-          </tr>
-          <tr>
-            <td>query Temperature</td>
-            <td>Target experimental Temperature (K)</td>
-          </tr>
-          <tr>
-            <td>QueryChainID</td>
-            <td>Query PDB code and chain identifiers of the maximum tertiary pair for the cluster</td>
-          </tr>
-          <tr>
-            <td>TargetChainID</td>
-            <td>Target PDB code and chain identifiers of the maximum tertiary pair for the cluster</td>
-          </tr>
-          <tr>
-            <td>maxRMSD_T</td>
-            <td>Maximum Tertiary RMSD measured in the cluster. In Angstroms</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+  <div class="table is-bordered is-striped is-hoverable is-fullwidth">
+    <p class="has-margin-top-down">Download a custom semicolon-separated file with the main information about
+      protein clusters in CoDNaS-Q.</p>
+    <a href="https://drive.google.com/file/d/1Ejfnn0bZsqvLOhzPSt4hq5A1WNGNG6yt/view?usp=sharing"
+       class="button is-link has-margin-top-down">
+      Click here
+    </a>
+    <table>
+      <tbody>
+      <tr>
+        <td>Cluster ID</td>
+        <td>CoDNaS-Q identification number</td>
+      </tr>
+      <tr>
+        <td>Oligomeric State</td>
+        <td>Subunits Quantity</td>
+      </tr>
+      <tr>
+        <td>PDB ID query</td>
+        <td>query PDB code</td>
+      </tr>
+      <tr>
+        <td>Biological Assembly query</td>
+        <td>query Biological Assembly (or Chain ID)</td>
+      </tr>
+      <tr>
+        <td>PDB ID target</td>
+        <td>target PDB code</td>
+      </tr>
+      <tr>
+        <td>Biological Assembly target</td>
+        <td>target Biological Assembly (or Chain ID)</td>
+      </tr>
+      <tr>
+        <td>Type of alignment</td>
+        <td>Basic structure alignments are denoted by `b`, composite alignments are denoted by `c`, and sequence
+          alignments are denoted by `q`.
+        </td>
+      </tr>
+      <tr>
+        <td>Rank of alignment</td>
+        <td>Rank of alignment</td>
+      </tr>
+      <tr>
+        <td>Structural similarity</td>
+        <td>Measure of structural similarity based on Gaussian functions. If the structurally equivalent parts in
+          query and target match perfectly, S is equal to L. With increasing spatial deviation of the aligned
+          residues, S approaches 0.
+        </td>
+      </tr>
+      <tr>
+        <td>Query cover</td>
+        <td>Query cover based on similarity score, expressed in percent (= 100 x S/Qn, where Qn is the length of the
+          query sequence).
+        </td>
+      </tr>
+      <tr>
+        <td>Target cover</td>
+        <td>Target cover based on similarity score, expressed in percent (= 100 x S/Tn, where Tn is the length of
+          the target sequence).
+        </td>
+      </tr>
+      <tr>
+        <td>Structurally equivalent residue pairs</td>
+        <td>Number of residue pairs that are structurally equivalent (= alignment length).</td>
+      </tr>
+      <tr>
+        <td>Query cover based on alignment length</td>
+        <td>Query cover based on alignment length, expressed in percent (= 100 x L/Qn, where Qn is the length of the
+          query sequence).
+        </td>
+      </tr>
+      <tr>
+        <td>Target cover based on alignment length</td>
+        <td>Target cover based on alignment length, expressed in percent (= 100 x L/Tn, where Tn is the length of
+          the target sequence).
+        </td>
+      </tr>
+      <tr>
+        <td>Typical distance error</td>
+        <td>For details on the construction of this per-residue measure of structural similarity, see Sippl &amp;
+          Wiederstein (2012).
+        </td>
+      </tr>
+      <tr>
+        <td>RMSD</td>
+        <td>Root-mean-square error of superposition in Angstroms, calculated using all structurally equivalent
+          C-alpha atoms.
+        </td>
+      </tr>
+      <tr>
+        <td>Sequence identity</td>
+        <td>Sequence identity of query and target in the equivalent regions, expressed in percent.</td>
+      </tr>
+      <tr>
+        <td>Permutations</td>
+        <td>Number of permutations in the alignment.</td>
+      </tr>
+      <tr>
+        <td>Query resolution</td>
+        <td>Experimental resolution of query</td>
+      </tr>
+      <tr>
+        <td>Target resolution</td>
+        <td>Experimental resolution of target</td>
+      </tr>
+      <tr>
+        <td>Query method</td>
+        <td>Experimental technique of the query</td>
+      </tr>
+      <tr>
+        <td>Target method</td>
+        <td>Experimental technique of the target</td>
+      </tr>
+      <tr>
+        <td>Query length</td>
+        <td>Oligomer length</td>
+      </tr>
+      <tr>
+        <td>Target length</td>
+        <td>Oligomer length</td>
+      </tr>
+      <tr>
+        <td>Query name</td>
+        <td>Name of molecule query</td>
+      </tr>
+      <tr>
+        <td>Target name</td>
+        <td>Name of molecule target</td>
+      </tr>
+      <tr>
+        <td>Query organism</td>
+        <td>Species source registered in the PDB entry</td>
+      </tr>
+      <tr>
+        <td>Target organism</td>
+        <td>Species source registered in the PDB entry</td>
+      </tr>
+      <tr>
+        <td>Query ligands</td>
+        <td>Query ligands included in the PDB file</td>
+      </tr>
+      <tr>
+        <td>Target ligands</td>
+        <td>Target ligands included in the PDB file</td>
+      </tr>
+      <tr>
+        <td>Query description</td>
+        <td>Query title of the PDB entry</td>
+      </tr>
+      <tr>
+        <td>Target description</td>
+        <td>Target title of the PDB entry</td>
+      </tr>
+      <tr>
+        <td>Target UniProt ID</td>
+        <td>Target UniProt entry name</td>
+      </tr>
+      <tr>
+        <td>Target Gene names</td>
+        <td>Gene name according UniProt</td>
+      </tr>
+      <tr>
+        <td>Target Pfam</td>
+        <td>Target Pfam ID</td>
+      </tr>
+      <tr>
+        <td>Query UniProt ID</td>
+        <td>Query UniProt entry name</td>
+      </tr>
+      <tr>
+        <td>Query Gene names</td>
+        <td>Gene name according UniProt</td>
+      </tr>
+      <tr>
+        <td>Query Pfam</td>
+        <td>Query Pfam ID</td>
+      </tr>
+      <tr>
+        <td>Group</td>
+        <td>Tertiary vs Quaternary state comparison</td>
+      </tr>
+      <tr>
+        <td>target pH</td>
+        <td>Target pH conditions</td>
+      </tr>
+      <tr>
+        <td>target Temperature</td>
+        <td>Target experimental Temperature (K)</td>
+      </tr>
+      <tr>
+        <td>query pH</td>
+        <td>Query pH conditions</td>
+      </tr>
+      <tr>
+        <td>query Temperature</td>
+        <td>Target experimental Temperature (K)</td>
+      </tr>
+      <tr>
+        <td>QueryChainID</td>
+        <td>Query PDB code and chain identifiers of the maximum tertiary pair for the cluster</td>
+      </tr>
+      <tr>
+        <td>TargetChainID</td>
+        <td>Target PDB code and chain identifiers of the maximum tertiary pair for the cluster</td>
+      </tr>
+      <tr>
+        <td>maxRMSD_T</td>
+        <td>Maximum Tertiary RMSD measured in the cluster. In Angstroms</td>
+      </tr>
+      </tbody>
+    </table>
   </div>
 </div>
