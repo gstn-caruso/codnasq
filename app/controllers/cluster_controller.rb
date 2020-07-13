@@ -1,6 +1,6 @@
 class ClusterController < ApplicationController
   def show
-    cluster = Cluster.find_by_codnasq_id(params[:codnasq_id]) || Cluster.find(params[:codnasq_id])
+    cluster = Cluster.find_by_codnasq_id(params[:codnasq_id]) || Cluster.find(cluster_id)
     conformers_cluster = Conformer.where(cluster: cluster)
 
     render 'cluster/show',
@@ -26,5 +26,11 @@ class ClusterController < ApplicationController
     else
       @conformers = Conformer.search_in_all_fields(query).page(params[:page])
     end
+  end
+
+  private
+
+  def cluster_id
+    Float(params[:codnasq_id], exception: false)
   end
 end
