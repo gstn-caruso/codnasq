@@ -6,8 +6,10 @@
 <div class="column">
   <script src="//unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
   <script>
+
     document.addEventListener("DOMContentLoaded", function () {
       var stage = new NGL.Stage("viewport");
+      stage.setParameters( { backgroundColor: "white" } );
       stage
         .loadFile("<%= pdb_show_url(query.pdb_id) %>", {ext: "pdb"})
         .then(function (structureComponent) {
@@ -22,6 +24,8 @@
           structureComponent.autoView();
         });
     });
+
+
   </script>
 
 
@@ -45,7 +49,7 @@
           <%= render 'panel_block', title: 'Organism', content: query.organism %>
           <%= render 'panel_block', title: 'Description', content: query.description %>
           <%= render 'panel_block', title: 'Genes', content: query.gene_names %>
-          <%= render 'panel_block', title: 'Maximum Tertiary Pair', content: "(#{query.pdb_id}, #{target.pdb_id})" %>
+          <%= render 'panel_block', title: 'Maximum Tertiary Pair', content: "(#{max_pair.max_rmsd_tert_q}, #{max_pair.max_rmsd_tert_t})" %>
         </div>
       </div>
       <div class="column">
@@ -296,3 +300,22 @@
     </table>
   </div>
 </div>
+
+<script>
+  // prevent scrolling in NGL div
+    let element = document.getElementById("viewport")
+    element.onmouseenter = function() {
+        const x = window.scrollX;
+        const y = window.scrollY;
+        element.addEventListener('DOMMouseScroll',wheel,false);
+    }
+
+    function wheel(event)
+    {
+        event.preventDefault();
+        event.returnValue=false;
+    }
+
+    element.onmousewheel=document.onmousewheel=wheel;
+
+</script>

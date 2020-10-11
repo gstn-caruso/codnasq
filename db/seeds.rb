@@ -75,6 +75,8 @@ CSV.open(csv_location, "r", {headers: true, col_sep: ";", quote_char: "\x00"}).e
       target_cover_based_on_alignment_length: row['Target cover based on alignment length'],
       typical_distance_error: row['Typical distance error'],
       rmsd: row['RMSD'],
+      max_rmsd_tert_q: row['QueryChainID'],
+      max_rmsd_tert_t: row['TargetChainID'],
       sequence_identity: row['Sequenceidentity'],
       permutations: row['Permutations'],
       created_at: Time.now,
