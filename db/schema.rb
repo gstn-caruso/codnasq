@@ -39,6 +39,8 @@ ActiveRecord::Schema.define(version: 2020_07_01_011636) do
     t.integer "target_cover_based_on_alignment_length"
     t.float "typical_distance_error"
     t.float "rmsd"
+    t.string "max_rmsd_tert_q"
+    t.string "max_rmsd_tert_t"
     t.integer "sequence_identity"
     t.integer "permutations"
     t.datetime "created_at", precision: 6, null: false
