@@ -36,10 +36,9 @@
         <div>
           <%= render 'panel_block', title: 'Cluster ID', content: cluster.codnasq_id %>
           <%= render 'panel_block', title: 'Group', content: cluster.cluster_group %>
-          <%= render 'panel_block', title: 'Oligomeric State', content: cluster.oligomeric_state %>
+          <%= render 'panel_block', title: 'Oligomeric State', content: rename_olig_state(cluster.oligomeric_state) %>
           <%= render 'panel_block', title: 'Conformers', content: cluster.conformers_amount %>
-          <%= render 'panel_block', title: 'Max RMSD Quaternary', content: "#{max_pair.rmsd} Å" %>
-          <%= render 'panel_block', title: 'Max RMSD Tertiary', content: "#{cluster.max_rmsd_tertiary} Å" %>
+          <%= render 'panel_block', title: 'Max RMSD Quaternary', content: "#{max_pair.rmsd} Å (#{ query.pdb_id}, #{target.pdb_id})" %>
         </div>
       </div>
       <div class="column">
@@ -52,6 +51,7 @@
           <%= render 'panel_block', title: 'Maximum Tertiary Pair', content: "(#{max_pair.max_rmsd_tert_q}, #{max_pair.max_rmsd_tert_t})" %>
         </div>
       </div>
+
       <div class="column">
         <p class="has-text-centered">maxRMSD distribution</p>
         <div id="my_dataviz"></div>
@@ -191,7 +191,7 @@
 
 
   <div class="panel">
-    <p class="panel-heading has-text-weight-bold">Maximum RMSD pair Comparison</p>
+    <p class="panel-heading has-text-weight-bold">Maximum RMSD Quaternary pair Comparison</p>
     <div class="columns">
       <div class="column">
 
@@ -263,10 +263,34 @@
                 <td><%= target.biological_assembly %></td>
               </tr>
               <tr>
-                <td>maxRMSD Tertiary of the cluster</td>
-                <td><b><%= cluster.max_rmsd_tertiary %> Å</b></td>
+                <td>pH</td>
                 <td></td>
+                <td><%= query.ph %></td>
+                <td><%= target.ph %></td>
+              </tr>
+              <tr>
+                <td>Length</td>
                 <td></td>
+                <td><%= query.length %></td>
+                <td><%= target.length %></td>
+              </tr>
+              <tr>
+                <td>Resolution</td>
+                <td></td>
+                <td><%= query.resolution %></td>
+                <td><%= target.resolution %></td>
+              </tr>
+              <tr>
+                <td>Temperature</td>
+                <td></td>
+                <td><%= query.temperature %></td>
+                <td><%= target.temperature %></td>
+              </tr>
+              <tr>
+                <td>Ligands</td>
+                <td></td>
+                <td><%= rename_ligands(query.ligands) %></td>
+                <td><%= rename_ligands(target.ligands) %></td>
               </tr>
             </table>
 

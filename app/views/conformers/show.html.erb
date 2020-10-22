@@ -42,7 +42,7 @@
     </div>
     <div class="panel-block">
       <p class="has-text-weight-semibold has-padding-r-7">Ligands</p>
-      <p><%= @conformer.ligands %></p>
+      <p><%= rename_ligands(@conformer.ligands) %></p>
     </div>
     </div>
     <div class="column">
@@ -90,7 +90,7 @@
         </div>
         <div class="panel-block">
           <p class="has-text-weight-semibold has-padding-r-7">Oligomeric State</p>
-          <p><%= @conformer.cluster.oligomeric_state %></p>
+          <p><%= rename_olig_state(@conformer.cluster.oligomeric_state) %></p>
         </div>
         <div class="panel-block">
           <p class="has-text-weight-semibold has-padding-r-7">Conformers</p>
