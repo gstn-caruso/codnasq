@@ -62,8 +62,8 @@ ActiveRecord::Schema.define(version: 2020_07_01_011636) do
     t.string "uniprot_id"
     t.string "gene_names"
     t.string "pfam_id"
-    t.float "ph"
-    t.integer "temperature"
+    t.string "ph"
+    t.string "temperature"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["pdb_id"], name: "index_conformers_on_pdb_id", unique: true

@@ -1,4 +1,4 @@
-module OligomericRenameHelper
+module RenameHelper
   def rename_olig_state(number)
     if number == 2
       'Dimer'
@@ -31,5 +31,9 @@ module OligomericRenameHelper
     else
       number
     end
+  end
+
+  def rename_ligands(ligands)
+    ligands.gsub('| ', ', ')
   end
 end
