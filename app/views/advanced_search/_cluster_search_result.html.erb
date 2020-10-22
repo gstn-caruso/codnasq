@@ -3,7 +3,7 @@
     <%= link_to("Cluster: #{result.codnasq_id}", cluster_show_path(result.codnasq_id)) %>
   </div>
   <div class="panel-block">Group: <%= result.cluster_group %> </div>
-  <div class="panel-block">Oligomeric State: <%= result.oligomeric_state %> </div>
+  <div class="panel-block">Oligomeric State: <%= rename_olig_state(result.oligomeric_state) %> </div>
   <div class="panel-block">Conformers Quantity: <%= result.conformers.count %> </div>
   <div class="panel-block">Max RMSD Quaternary: <%= result.max_rmsd_pair.rmsd %> Å</div>
   <div class="panel-block">Max RMSD Tertiary: <%= result.max_rmsd_tertiary %> Å</div>

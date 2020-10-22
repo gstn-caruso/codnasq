@@ -17,4 +17,5 @@ class Cluster < ApplicationRecord
   def conformers
     Conformer.where(cluster_id: codnasq_id)
   end
+
 end
