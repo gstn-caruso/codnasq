@@ -48,7 +48,7 @@
           <%= render 'panel_block', title: 'Organism', content: query.organism %>
           <%= render 'panel_block', title: 'Description', content: query.description %>
           <%= render 'panel_block', title: 'Genes', content: query.gene_names %>
-          <%= render 'panel_block', title: 'Maximum Tertiary Pair', content: "(#{max_pair.max_rmsd_tert_q}, #{max_pair.max_rmsd_tert_t})" %>
+          <%= render 'panel_block', title: 'Maximum Tertiary Pair', content: "#{cluster.max_rmsd_tertiary} Å (#{max_pair.max_rmsd_tert_q}, #{max_pair.max_rmsd_tert_t})" %>
         </div>
       </div>
 
