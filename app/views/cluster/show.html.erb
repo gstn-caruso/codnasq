@@ -38,8 +38,8 @@
           <%= render 'panel_block', title: 'Group', content: cluster.cluster_group %>
           <%= render 'panel_block', title: 'Oligomeric State', content: cluster.oligomeric_state %>
           <%= render 'panel_block', title: 'Conformers', content: cluster.conformers_amount %>
-          <%= render 'panel_block', title: 'Max RMSD Quaternary (Å)', content: max_pair.rmsd %>
-          <%= render 'panel_block', title: 'Max RMSD Tertiary (Å)', content: cluster.max_rmsd_tertiary %>
+          <%= render 'panel_block', title: 'Max RMSD Quaternary', content: "#{max_pair.rmsd} Å" %>
+          <%= render 'panel_block', title: 'Max RMSD Tertiary', content: "#{cluster.max_rmsd_tertiary} Å" %>
         </div>
       </div>
       <div class="column">
@@ -141,7 +141,7 @@
           }
 
           //Read the data
-          d3.csv("https://raw.githubusercontent.com/Nahuele/planets-1/master/d3_sin_no_data.csv", function (data) {
+          d3.csv("https://raw.githubusercontent.com/Nahuele/codnasq/master/app/assets/d3_sin_no_data.csv", function (data) {
             // Color scale: give me a specie name, I return a color
             var color = d3.scaleOrdinal()
               .domain(["MM", "TD", "RB"])
@@ -222,7 +222,7 @@
               </tr>
               <tr>
                 <td>RMSD</td>
-                <td><%= max_pair.rmsd %> Å</td>
+                <td><b><%= max_pair.rmsd %> Å</b></td>
                 <td></td>
                 <td></td>
               </tr>
@@ -264,7 +264,7 @@
               </tr>
               <tr>
                 <td>maxRMSD Tertiary of the cluster</td>
-                <td><%= cluster.max_rmsd_tertiary %> Å</td>
+                <td><b><%= cluster.max_rmsd_tertiary %> Å</b></td>
                 <td></td>
                 <td></td>
               </tr>
@@ -303,7 +303,7 @@
 
 <script>
   // prevent scrolling in NGL div
-    let element = document.getElementById("viewport")
+    let element = document.getElementById("viewport");
     element.onmouseenter = function() {
         const x = window.scrollX;
         const y = window.scrollY;

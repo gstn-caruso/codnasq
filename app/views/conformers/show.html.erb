@@ -86,7 +86,7 @@
         <p class="panel-heading has-text-weight-bold">Cluster information</p>
         <div class="panel-block">
           <p class="has-text-weight-semibold has-padding-r-7">Cluster ID</p>
-          <p><%= "CQ#{@conformer.cluster.codnasq_id}" %></p>
+          <%= link_to("CQ#{@conformer.cluster.codnasq_id}", "https://codnasq.herokuapp.com/cluster/#{@conformer.cluster.codnasq_id}" ) %>
         </div>
         <div class="panel-block">
           <p class="has-text-weight-semibold has-padding-r-7">Oligomeric State</p>
