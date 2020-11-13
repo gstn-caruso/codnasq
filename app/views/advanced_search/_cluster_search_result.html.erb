@@ -1,10 +1,20 @@
-<div class="panel">
-  <div class="panel-block has-text-weight-bold">
-    <%= link_to("Cluster: #{result.codnasq_id}", cluster_show_path(result.codnasq_id)) %>
+<%= link_to cluster_show_path(result.codnasq_id) do %>
+  <div class="panel">
+    <div class="panel-block has-text-weight-bold">
+      <span class="has-text-info">Cluster: <%= result.codnasq_id %></span>
+      <%#= link_to("Cluster: #{result.codnasq_id}", cluster_show_path(result.codnasq_id)) %>
+    </div>
+    <div class="columns">
+      <div class="column">
+        <div class="panel-block">Group: <%= result.cluster_group %> </div>
+        <div class="panel-block">Oligomeric State: <%= rename_olig_state(result.oligomeric_state) %> </div>
+        <div class="panel-block">Conformers Quantity: <%= result.conformers.count %> </div>
+        <div class="panel-block">Max RMSD Quaternary: <%= result.max_rmsd_pair.rmsd %> Å</div>
+        <div class="panel-block">Max RMSD Tertiary: <%= result.max_rmsd_tertiary %> Å</div>
+      </div>
+      <div class="column">
+        <%= image_tag("http://ufq.unq.edu.ar/codnasq/assets/thumbnailsClusters/#{result.codnasq_id}.png", alt: 'thumb_assembly') %>
+      </div>
+    </div>
   </div>
-  <div class="panel-block">Group: <%= result.cluster_group %> </div>
-  <div class="panel-block">Oligomeric State: <%= rename_olig_state(result.oligomeric_state) %> </div>
-  <div class="panel-block">Conformers Quantity: <%= result.conformers.count %> </div>
-  <div class="panel-block">Max RMSD Quaternary: <%= result.max_rmsd_pair.rmsd %> Å</div>
-  <div class="panel-block">Max RMSD Tertiary: <%= result.max_rmsd_tertiary %> Å</div>
-</div>
+<% end %>
