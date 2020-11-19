@@ -15,4 +15,5 @@ Rails.application.routes.draw do
   get '/advanced_search', to: 'advanced_search#index'
 
   get '/pdb/:pdb_id', to: 'pdb_files#show', as: 'pdb_show'
+
 end

@@ -28,10 +28,6 @@ class ClusterController < ApplicationController
     end
   end
 
-
-
-
-
   private
 
   def cluster_id
