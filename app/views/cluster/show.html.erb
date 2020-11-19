@@ -1,7 +1,7 @@
 <script src="https://d3js.org/d3.v4.js"></script>
 
 
-<div class="column">
+<div class="column" style="padding-right: 4rem; padding-left: 4rem">
   <script src="//unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
   <script>
       // const loader = document.querySelector('#loader')
@@ -31,7 +31,7 @@
       });
   </script>
 
-<!--Cluster information-->
+  <!--Cluster information-->
   <div class="panel">
     <p class="panel-heading has-text-weight-bold">Cluster information</p>
     <div class="columns">
@@ -87,7 +87,7 @@
                 .domain([0, 2.7])
                 .range([height, 0]);
             svg.append("g")
-                .call(d3.axisLeft(y).tickValues([0,1,2]));
+                .call(d3.axisLeft(y).tickValues([0, 1, 2]));
 
             // Label Y
             svg.append("text")
@@ -185,124 +185,203 @@
     </div>
   </div>
 
-<!--Max Comparison-->
+  <!--Max Comparison-->
   <div class="panel">
     <p class="panel-heading has-text-weight-bold">Maximum RMSD Quaternary pair Comparison</p>
-    <div class="columns">
+    <div class="columns" style="padding: 1rem">
       <div class="column">
-        <div class="columns">
+        <table class="table is-fullwidth">
+          <thead>
+<!--          <tr>-->
+<!--            <th></th>-->
+<!--            <th><p class="has-text-centered">Comparison</p></th>-->
+<!--            <th><p class="has-text-centered"><%#= query.pdb_id %> (query)</p>-->
+<!--            </th>-->
+<!--            <th><p class="has-text-centered"><%#= target.pdb_id %> (target)</p>-->
+<!--            </th>-->
+<!--          </tr>-->
+          <tr>
+            <th></th>
+            <th><p class="has-text-weight-normal has-text-centered is-italic">Sequence Identity</p></th>
+            <th><p class="has-text-weight-normal has-text-centered is-italic">RMSD</th>
+            <th><p class="has-text-weight-normal has-text-centered is-italic">Structural similarity</p></th>
+            <th><p class="has-text-weight-normal has-text-centered is-italic">Coverage</p></th>
+            <th><p class="has-text-weight-normal has-text-centered is-italic">Structurally equivalent residue pairs</p></th>
+            <th><p class="has-text-weight-normal has-text-centered is-italic">Cover based on alignment length</p></th>
+            <th><p class="has-text-weight-normal has-text-centered is-italic">Typical distance error</p></th>
+            <th><p class="has-text-weight-normal has-text-centered is-italic">Biological Assembly</p></th>
+            <th><p class="has-text-weight-normal has-text-centered is-italic">pH</p></th>
+            <th><p class="has-text-weight-normal has-text-centered is-italic">Length</p></th>
+            <th><p class="has-text-weight-normal has-text-centered is-italic">Resolution</p></th>
+            <th><p class="has-text-weight-normal has-text-centered is-italic">Temperature</p></th>
+            <th><p class="has-text-weight-normal has-text-centered is-italic">Ligands</p></th>
+          </tr>
+          </thead>
+          <tbody>
+
+          <tr>
+            <td><p class="has-text-weight-bold"><%= query.pdb_id %> (query)</p></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><p class="has-text-centered"><%= max_pair.query_cover %></p></td>
+            <td></td>
+            <td><p class="has-text-centered"><%= max_pair.query_cover_based_on_alignment_length %></p></td>
+            <td></td>
+            <td><p class="has-text-centered"><%= query.biological_assembly %></p></td>
+            <td><p class="has-text-centered"><%= query.ph %></p></td>
+            <td><p class="has-text-centered"><%= query.length %></p></td>
+            <td><p class="has-text-centered"><%= query.resolution %></p></td>
+            <td><p class="has-text-centered"><%= query.temperature %></p></td>
+            <td><p class="has-text-centered"><%= rename_ligands(query.ligands) %></p></td>
+          </tr>
+          <tr>
+            <td><p class="has-text-weight-bold"><%= target.pdb_id %> (target)</p></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><p class="has-text-centered"><%= max_pair.target_cover %></p></td>
+            <td></td>
+            <td><p class="has-text-centered"><%= max_pair.target_cover_based_on_alignment_length %></p></td>
+            <td></td>
+            <td><p class="has-text-centered"><%= target.biological_assembly %></p></td>
+            <td><p class="has-text-centered"><%= target.ph %></p></td>
+            <td><p class="has-text-centered"><%= target.length %></p></td>
+            <td><p class="has-text-centered"><%= target.resolution %></p></td>
+            <td><p class="has-text-centered"><%= target.temperature %></p></td>
+            <td><p class="has-text-centered"><%= rename_ligands(target.ligands) %></p></td>
+          </tr>
+          <tr>
+            <td><p class="has-text-weight-bold">Comparison</p></td>
+            <td><p class="has-text-centered"><%= max_pair.sequence_identity %></p></td>
+            <td><p class="has-text-left has-text-weight-bold" style="white-space: nowrap;"><%= max_pair.rmsd %> Å</p></td>
+            <td><p class="has-text-centered"><%= max_pair.structural_similarity %></p></td>
+            <td></td>
+            <td><p class="has-text-centered"><%= max_pair.structurally_equivalent_residue_pairs %></p></td>
+            <td></td>
+            <td><p class="has-text-centered"><%= max_pair.typical_distance_error %></p></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+
+          </tr>
+
+
+
+<!--          <tr>-->
+<!--            <td>Sequence Identity</td>-->
+<!--            <td><p class="has-text-centered"><%#= max_pair.sequence_identity %></p></td>-->
+<!--            <td></td>-->
+<!--            <td></td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>RMSD</td>-->
+<!--            <td><p class="has-text-centered has-text-weight-bold	"><%#= max_pair.rmsd %> Å</p></td>-->
+<!--            <td></td>-->
+<!--            <td></td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>Structural similarity</td>-->
+<!--            <td><p class="has-text-centered"><%#= max_pair.structural_similarity %></p></td>-->
+<!--            <td></td>-->
+<!--            <td></td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>Coverage</td>-->
+<!--            <td></td>-->
+<!--            <td><p class="has-text-centered"><%#= max_pair.query_cover %></p></td>-->
+<!--            <td><p class="has-text-centered"><%#= max_pair.target_cover %></p></td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>Structurally equivalent residue pairs</td>-->
+<!--            <td><p class="has-text-centered"><%#= max_pair.structurally_equivalent_residue_pairs %></p></td>-->
+<!--            <td></td>-->
+<!--            <td></td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>Cover based on alignment length</td>-->
+<!--            <td></td>-->
+<!--            <td><p class="has-text-centered"><%#= max_pair.query_cover_based_on_alignment_length %></p></td>-->
+<!--            <td><p class="has-text-centered"><%#= max_pair.target_cover_based_on_alignment_length %></p></td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>Typical distance error</td>-->
+<!--            <td><p class="has-text-centered"><%#= max_pair.typical_distance_error %></p></td>-->
+<!--            <td></td>-->
+<!--            <td></td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>Biological Assembly</td>-->
+<!--            <td></td>-->
+<!--            <td><p class="has-text-centered"><%#= query.biological_assembly %></p></td>-->
+<!--            <td><p class="has-text-centered"><%#= target.biological_assembly %></p></td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>pH</td>-->
+<!--            <td></td>-->
+<!--            <td><p class="has-text-centered"><%#= query.ph %></p></td>-->
+<!--            <td><p class="has-text-centered"><%#= target.ph %></p></td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>Length</td>-->
+<!--            <td></td>-->
+<!--            <td><p class="has-text-centered"><%#= query.length %></p></td>-->
+<!--            <td><p class="has-text-centered"><%#= target.length %></p></td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>Resolution</td>-->
+<!--            <td></td>-->
+<!--            <td><p class="has-text-centered"><%#= query.resolution %></p></td>-->
+<!--            <td><p class="has-text-centered"><%#= target.resolution %></p></td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>Temperature</td>-->
+<!--            <td></td>-->
+<!--            <td><p class="has-text-centered"><%#= query.temperature %></p></td>-->
+<!--            <td><p class="has-text-centered"><%#= target.temperature %></p></td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>Ligands</td>-->
+<!--            <td></td>-->
+<!--            <td><p class="has-text-centered"><%#= rename_ligands(query.ligands) %></p></td>-->
+<!--            <td><p class="has-text-centered"><%#= rename_ligands(target.ligands) %></p></td>-->
+<!--          </tr>-->
+        </table>
+
+        <div class="columns is-mobile">
+
           <div class="column" style="padding: 3rem;">
             <!--            spinner for the structures loading-->
             <p id="loader" class="animate-bottom" style="display: none; left: 50%; top: 20%;"></p>
             <div id="viewport" style="width:100%; height:400px;"></div>
             <p class="has-text-weight-light has-margin-top-down"><small>
-              <a href="<%= pdb_show_url(target.pdb_id) %>" target="_blank"
-                 onclick="window.open('<%= pdb_show_url(query.pdb_id) %>');"
-              >Open coordinates <%= fa_icon 'file' %></a></small>
-            </p>
-            <figure class="image">
-              <%= image_tag("http://ufq.unq.edu.ar/codnasq/assets/dendograms/#{cluster.codnasq_id}_dendogram_2020.png") %>
-            </figure>
-            <p class="has-text-weight-light has-margin-top-down">
-              <small><a href="<%= "http://ufq.unq.edu.ar/codnasq/assets/dendograms/#{cluster.codnasq_id}_dendogram_2020.png" %>" target="_blank">Full size
-                <%= fa_icon 'image' %>
-              </a></small>
+              <span style="margin-right: 1rem">View coordinates files <%= fa_icon 'file' %></span>
+              <a href="<%= pdb_show_url(query.pdb_id) %>" target="_blank" style="margin-right: 1rem"
+              >query (<%= query.pdb_id %>)
+              </a>
+            <a href="<%= pdb_show_url(target.pdb_id) %>" target="_blank">
+              target (<%= target.pdb_id %>)
+            </a>
+            </small>
             </p>
           </div>
-          <div class="column">
-            <table class="table">
-              <thead>
-              <tr>
-                <th></th>
-                <th>Comparison</th>
-                <th><p class="has-text-centered"><%= query.pdb_id %> (query)</p>
-                </th>
-                <th><p class="has-text-centered"><%= target.pdb_id %> (target)</p>
-                </th>
+            <div class="column">
+              <figure class="image">
+                <%= image_tag("http://ufq.unq.edu.ar/codnasq/assets/dendograms/#{cluster.codnasq_id}_dendogram_2020.png") %>
+              </figure>
+              <p class="has-text-weight-light has-margin-top-down">
+                <small><a href="<%= "http://ufq.unq.edu.ar/codnasq/assets/dendograms/#{cluster.codnasq_id}_dendogram_2020.png" %>" target="_blank">
+                  View full size dendrogram
+                  <%= fa_icon 'image' %>
+                </a></small>
+              </p>
+            </div>
 
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td>Sequence Identity</td>
-                <td><p class="has-text-centered"><%= max_pair.sequence_identity %></p></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>RMSD</td>
-                <td><p class="has-text-centered has-text-weight-bold	"><%= max_pair.rmsd %> Å</p></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Structural similarity</td>
-                <td><p class="has-text-centered"><%= max_pair.structural_similarity %></p></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Coverage</td>
-                <td></td>
-                <td><p class="has-text-centered"><%= max_pair.query_cover %></p></td>
-                <td><p class="has-text-centered"><%= max_pair.target_cover %></p></td>
-              </tr>
-              <tr>
-                <td>Structurally equivalent residue pairs</td>
-                <td><p class="has-text-centered"><%= max_pair.structurally_equivalent_residue_pairs %></p></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Cover based on alignment length</td>
-                <td></td>
-                <td><p class="has-text-centered"><%= max_pair.query_cover_based_on_alignment_length %></p></td>
-                <td><p class="has-text-centered"><%= max_pair.target_cover_based_on_alignment_length %></p></td>
-              </tr>
-              <tr>
-                <td>Typical distance error</td>
-                <td><p class="has-text-centered"><%= max_pair.typical_distance_error %></p></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Biological Assembly</td>
-                <td></td>
-                <td><p class="has-text-centered"><%= query.biological_assembly %></p></td>
-                <td><p class="has-text-centered"><%= target.biological_assembly %></p></td>
-              </tr>
-              <tr>
-                <td>pH</td>
-                <td></td>
-                <td><p class="has-text-centered"><%= query.ph %></p></td>
-                <td><p class="has-text-centered"><%= target.ph %></p></td>
-              </tr>
-              <tr>
-                <td>Length</td>
-                <td></td>
-                <td><p class="has-text-centered"><%= query.length %></p></td>
-                <td><p class="has-text-centered"><%= target.length %></p></td>
-              </tr>
-              <tr>
-                <td>Resolution</td>
-                <td></td>
-                <td><p class="has-text-centered"><%= query.resolution %></p></td>
-                <td><p class="has-text-centered"><%= target.resolution %></p></td>
-              </tr>
-              <tr>
-                <td>Temperature</td>
-                <td></td>
-                <td><p class="has-text-centered"><%= query.temperature %></p></td>
-                <td><p class="has-text-centered"><%= target.temperature %></p></td>
-              </tr>
-              <tr>
-                <td>Ligands</td>
-                <td></td>
-                <td><p class="has-text-centered"><%= rename_ligands(query.ligands) %></p></td>
-                <td><p class="has-text-centered"><%= rename_ligands(target.ligands) %></p></td>
-              </tr>
-            </table>
-          </div>
         </div>
       </div>
     </div>
