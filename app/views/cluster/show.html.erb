@@ -1,34 +1,37 @@
 <script src="https://d3js.org/d3.v4.js"></script>
 
 
-<!-- Create a div where the graph will take place -->
-
 <div class="column">
   <script src="//unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
   <script>
+      // const loader = document.querySelector('#loader')
 
-    document.addEventListener("DOMContentLoaded", function () {
-      var stage = new NGL.Stage("viewport");
-      stage.setParameters( { backgroundColor: "white" } );
-      stage
-        .loadFile("<%= pdb_show_url(query.pdb_id) %>", {ext: "pdb"})
-        .then(function (structureComponent) {
-          structureComponent.addRepresentation("cartoon", {color: 'red'});
-          structureComponent.autoView();
-        });
+      document.addEventListener("DOMContentLoaded", function () {
+          loader.style.display = 'block'
+          var stage = new NGL.Stage("viewport");
+          stage.setParameters({backgroundColor: "white"});
+          stage
+              .loadFile("<%= pdb_show_url(query.pdb_id) %>", {ext: "pdb"})
+              .then(function (structureComponent) {
+                  structureComponent.addRepresentation("cartoon", {color: 'red'});
+                  structureComponent.autoView();
+                  loader.style.display = 'none'
 
-      stage
-        .loadFile("<%= pdb_show_url(target.pdb_id) %>", {ext: "pdb"})
-        .then(function (structureComponent) {
-          structureComponent.addRepresentation("cartoon", {color: 'green'});
-          structureComponent.autoView();
-        });
-    });
+              });
+          stage
+              .loadFile("<%= pdb_show_url(target.pdb_id) %>", {ext: "pdb"})
+              .then(function (structureComponent) {
+                  // loader.style.display = 'block'
+                  structureComponent.addRepresentation("cartoon", {color: 'green'});
+                  structureComponent.autoView();
+                  loader.style.display = 'none'
 
+              });
 
+      });
   </script>
 
-
+<!--Cluster information-->
   <div class="panel">
     <p class="panel-heading has-text-weight-bold">Cluster information</p>
     <div class="columns">
@@ -39,6 +42,7 @@
           <%= render 'panel_block', title: 'Oligomeric State', content: rename_olig_state(cluster.oligomeric_state) %>
           <%= render 'panel_block', title: 'Conformers', content: cluster.conformers_amount %>
           <%= render 'panel_block', title: 'Max RMSD Quaternary', content: "#{max_pair.rmsd} Å (#{ query.pdb_id}, #{target.pdb_id})" %>
+          <%= render 'panel_block', title: 'Max RMSD Tertiary', content: "#{cluster.max_rmsd_tertiary} Å (#{max_pair.max_rmsd_tert_q}, #{max_pair.max_rmsd_tert_t})" %>
         </div>
       </div>
       <div class="column">
@@ -48,153 +52,162 @@
           <%= render 'panel_block', title: 'Organism', content: query.organism %>
           <%= render 'panel_block', title: 'Description', content: query.description %>
           <%= render 'panel_block', title: 'Genes', content: query.gene_names %>
-          <%= render 'panel_block', title: 'Maximum Tertiary Pair', content: "#{cluster.max_rmsd_tertiary} Å (#{max_pair.max_rmsd_tert_q}, #{max_pair.max_rmsd_tert_t})" %>
         </div>
       </div>
-
       <div class="column">
         <p class="has-text-centered">maxRMSD distribution</p>
         <div id="my_dataviz"></div>
         <!-- Create a div where the graph will take place -->
         <script>
 
-          // set the dimensions and margins of the graph
-          var margin = {top: 10, right: 30, bottom: 40, left: 60},
-            width = 600 - margin.left - margin.right,
-            height = 380 - margin.top - margin.bottom;
+            // set the dimensions and margins of the graph
+            var margin = {top: 10, right: 30, bottom: 40, left: 60},
+                width = 600 - margin.left - margin.right,
+                height = 230 - margin.top - margin.bottom;
 
-          // append the svg object to the body of the page
-          var svg = d3.select("#my_dataviz")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform",
-              "translate(" + margin.left + "," + margin.top + ")");
+            // append the svg object to the body of the page
+            var svg = d3.select("#my_dataviz")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform",
+                    "translate(" + margin.left + "," + margin.top + ")");
 
-          // Add X axis
-          var x = d3.scaleLinear()
-            .domain([0, 8.15])
-            .range([0, width]);
-          svg.append("g")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x));
+            // Add X axis
+            var x = d3.scaleLinear()
+                .domain([0, 8.15])
+                .range([0, width]);
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
 
-          // Add Y axis
-          var y = d3.scaleLinear()
-            .domain([0, 2.7])
-            .range([height, 0]);
-          svg.append("g")
-            .call(d3.axisLeft(y));
+            // Add Y axis
+            var y = d3.scaleLinear()
+                .domain([0, 2.7])
+                .range([height, 0]);
+            svg.append("g")
+                .call(d3.axisLeft(y).tickValues([0,1,2]));
 
-          // Label Y
-          svg.append("text")
-            .attr("text-anchor", "end")
-            .attr("transform", "rotate(-90)")
-            .attr("y", -margin.left + 20)
-            .attr("x", -margin.top - height / 2 + 90)
-            .text("maxRMSD Tertiary (Å)")
-          // Label X
-          svg.append("text")
-            .attr("text-anchor", "end")
-            .attr("x", width / 2 + margin.left + 20)
-            .attr("y", height + margin.top + 25)
-            .text("maxRMSD Quaternary (Å)");
+            // Label Y
+            svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -margin.left + 20)
+                .attr("x", -margin.top - height / 2 + 90)
+                .text("maxRMSD Tertiary (Å)")
+            // Label X
+            svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("x", width / 2 + margin.left + 20)
+                .attr("y", height + margin.top + 25)
+                .text("maxRMSD Quaternary (Å)");
 
-          // Load maximos
-          var xPosRMSDQuat =
-          <%= max_pair.rmsd %>
-          var yPosRMSDTert =
-          <%= cluster.max_rmsd_tertiary  %>
+            // Load maximos
+            var xPosRMSDQuat =
+            <%= max_pair.rmsd %>
+            var yPosRMSDTert =
+            <%= cluster.max_rmsd_tertiary  %>
 
-          // Tooltip
-          var tooltip = d3.select("#my_dataviz")
-            .append("div")
-            .style("opacity", 0)
-            .attr("class", "tooltip")
-            .attr('style', 'position: absolute; opacity: 0;')
-            .style("background-color", "white")
-            .style("border", "solid")
-            .style("border-width", "1px")
-            .style("border-radius", "5px")
-            .style("padding", "10px")
+            // Tooltip
+            var tooltip = d3.select("#my_dataviz")
+                .append("div")
+                .style("opacity", 0)
+                .attr("class", "tooltip")
+                .attr('style', 'position: absolute; opacity: 0;')
+                .style("background-color", "white")
+                .style("border", "solid")
+                .style("border-width", "1px")
+                .style("border-radius", "5px")
+                .style("padding", "10px")
 
-          // Tooltip functions
-          var mouseover = function (d) {
-            tooltip
-              .style("opacity", 1)
-          }
+            // Tooltip functions
+            var mouseover = function (d) {
+                tooltip
+                    .style("opacity", 1)
+            }
 
-          var mousemove = function (d) {
-            tooltip
-              .html(`maxRMSD-Q: ${xPosRMSDQuat} Å <br> maxRMSD-T: ${yPosRMSDTert} Å `)
-              .style('left', (d3.event.pageX + 30) + 'px')
-              .style('top', (d3.event.pageY + 30) + 'px')
-          }
+            var mousemove = function (d) {
+                tooltip
+                    .html(`maxRMSD-Q: ${xPosRMSDQuat} Å <br> maxRMSD-T: ${yPosRMSDTert} Å `)
+                    .style('left', (d3.event.pageX + 30) + 'px')
+                    .style('top', (d3.event.pageY + 30) + 'px')
+            }
 
-          // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
-          var mouseleave = function (d) {
-            tooltip
-              .transition()
-              .duration(200)
-              .style("opacity", 0)
-          }
+            // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
+            var mouseleave = function (d) {
+                tooltip
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 0)
+            }
 
-          //Read the data
-          d3.csv("https://raw.githubusercontent.com/Nahuele/codnasq/master/app/assets/d3_sin_no_data.csv", function (data) {
-            // Color scale: give me a specie name, I return a color
-            var color = d3.scaleOrdinal()
-              .domain(["MM", "TD", "RB"])
-              .range(["#9EF35B", "#F35B5B", "#5B89FC"])
-            // Add dots
-            svg.append('g')
-              .selectAll("dot")
-              .data(data)
-              .enter()
-              .append("circle")
-              .attr("cx", function (d) {
-                return x(d.RMSD);
-              })
-              .attr("cy", function (d) {
-                return y(d.maxRMSDT);
-              })
-              .attr("r", 5)
-              .style("fill", function (d) {
-                return color(d.Group)
-              })
-              .style("opacity", 0.1)
+            //Read the data
+            d3.csv("https://raw.githubusercontent.com/Nahuele/codnasq/master/app/assets/d3_sin_no_data.csv", function (data) {
+                // Color scale: give me a specie name, I return a color
+                var color = d3.scaleOrdinal()
+                    .domain(["MM", "TD", "RB"])
+                    .range(["#9EF35B", "#F35B5B", "#5B89FC"])
+                // Add dots
+                svg.append('g')
+                    .selectAll("dot")
+                    .data(data)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", function (d) {
+                        return x(d.RMSD);
+                    })
+                    .attr("cy", function (d) {
+                        return y(d.maxRMSDT);
+                    })
+                    .attr("r", 5)
+                    .style("fill", function (d) {
+                        return color(d.Group)
+                    })
+                    .style("opacity", 0.1)
 
 
-            svg.append('g')
-              .selectAll("dot")
-              .data(data)
-              .enter()
-              .append("circle")
-              .attr("cx", x(xPosRMSDQuat))
-              .attr("cy", y(yPosRMSDTert))
-              .attr("r", 10)
-              .style("fill", "gray")
-              .on("mouseover", mouseover)
-              .on("mousemove", mousemove)
-              .on("mouseleave", mouseleave)
-          })
+                svg.append('g')
+                    .selectAll("dot")
+                    .data(data)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", x(xPosRMSDQuat))
+                    .attr("cy", y(yPosRMSDTert))
+                    .attr("r", 10)
+                    .style("fill", "gray")
+                    .on("mouseover", mouseover)
+                    .on("mousemove", mousemove)
+                    .on("mouseleave", mouseleave)
+            })
         </script>
       </div>
     </div>
   </div>
 
-
+<!--Max Comparison-->
   <div class="panel">
     <p class="panel-heading has-text-weight-bold">Maximum RMSD Quaternary pair Comparison</p>
     <div class="columns">
       <div class="column">
-
-        <div class="columns is-mobile">
-          <div class="column">
+        <div class="columns">
+          <div class="column" style="padding: 3rem;">
+            <!--            spinner for the structures loading-->
+            <p id="loader" class="animate-bottom" style="display: none; left: 50%; top: 20%;"></p>
             <div id="viewport" style="width:100%; height:400px;"></div>
-              <figure class="image" style="padding: 2rem;">
-                <%= image_tag("http://ufq.unq.edu.ar/codnasq/assets/dendograms/#{cluster.codnasq_id}_dendogram_2020.png") %>
-              </figure>
+            <p class="has-text-weight-light has-margin-top-down"><small>
+              <a href="<%= pdb_show_url(target.pdb_id) %>" target="_blank"
+                 onclick="window.open('<%= pdb_show_url(query.pdb_id) %>');"
+              >Open coordinates <%= fa_icon 'file' %></a></small>
+            </p>
+            <figure class="image">
+              <%= image_tag("http://ufq.unq.edu.ar/codnasq/assets/dendograms/#{cluster.codnasq_id}_dendogram_2020.png") %>
+            </figure>
+            <p class="has-text-weight-light has-margin-top-down">
+              <small><a href="<%= "http://ufq.unq.edu.ar/codnasq/assets/dendograms/#{cluster.codnasq_id}_dendogram_2020.png" %>" target="_blank">Full size
+                <%= fa_icon 'image' %>
+              </a></small>
+            </p>
           </div>
           <div class="column">
             <table class="table">
@@ -218,7 +231,7 @@
               </tr>
               <tr>
                 <td>RMSD</td>
-                <td><p class="has-text-centered has-text-weight-bold	" ><%= max_pair.rmsd %> Å</p></td>
+                <td><p class="has-text-centered has-text-weight-bold	"><%= max_pair.rmsd %> Å</p></td>
                 <td></td>
                 <td></td>
               </tr>
@@ -321,20 +334,19 @@
 </div>
 
 <script>
-  // prevent scrolling in NGL div
+    // prevent scrolling in NGL div
     let element = document.getElementById("viewport");
-    element.onmouseenter = function() {
+    element.onmouseenter = function () {
         const x = window.scrollX;
         const y = window.scrollY;
-        element.addEventListener('DOMMouseScroll',wheel,false);
+        element.addEventListener('DOMMouseScroll', wheel, false);
     }
 
-    function wheel(event)
-    {
+    function wheel(event) {
         event.preventDefault();
-        event.returnValue=false;
+        event.returnValue = false;
     }
 
-    element.onmousewheel=document.onmousewheel=wheel;
+    element.onmousewheel = document.onmousewheel = wheel;
 
 </script>
