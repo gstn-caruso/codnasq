@@ -1,17 +1,20 @@
-<div class="column">
+<div class="column" style="padding-right: 4rem; padding-left: 4rem">
   <script src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       var stage = new NGL.Stage("viewport");
+      stage.setParameters( { backgroundColor: "white" } );
       stage.loadFile(<%= "`rcsb://#{@conformer.pdb_id}`" %>, {defaultRepresentation: true});
     });
   </script>
 
   <div class="panel">
     <p class="panel-heading has-text-weight-bold">Conformer information</p>
+    <div class="columns">
+    <div class="column">
     <div class="panel-block">
       <p class="has-text-weight-semibold has-padding-r-7">PDB ID</p>
-      <p><%= link_to(@conformer.pdb_id, "https://www.rcsb.org/structure/#{@conformer.pdb_id}") %></p>
+      <p><%= link_to(@conformer.pdb_id, "https://www.rcsb.org/structure/#{@conformer.pdb_id}", target: "_blank") %></p>
     </div>
     <div class="panel-block">
       <p class="has-text-weight-semibold has-padding-r-7">Description</p>
@@ -21,13 +24,13 @@
       <p class="has-text-weight-semibold has-padding-r-7">Pfam IDs</p>
       <p>
         <% @conformer.pfam_ids.each do |pfam_id| %>
-          <%= link_to(pfam_id, "https://pfam.xfam.org/family/#{pfam_id}") %>
+          <%= link_to(pfam_id, "https://pfam.xfam.org/family/#{pfam_id}", target: "_blank") %>
         <% end %>
       </p>
     </div>
     <div class="panel-block">
       <p class="has-text-weight-semibold has-padding-r-7">UniProt ID</p>
-      <p><%= link_to(@conformer.uniprot_id, "https://www.uniprot.org/uniprot/#{@conformer.uniprot_id}") %></p>
+      <p><%= link_to(@conformer.uniprot_id, "https://www.uniprot.org/uniprot/#{@conformer.uniprot_id}", target: "_blank") %></p>
     </div>
     <div class="panel-block">
       <p class="has-text-weight-semibold has-padding-r-7">Gene names</p>
@@ -39,8 +42,10 @@
     </div>
     <div class="panel-block">
       <p class="has-text-weight-semibold has-padding-r-7">Ligands</p>
-      <p><%= @conformer.ligands %></p>
+      <p><%= rename_ligands(@conformer.ligands) %></p>
     </div>
+    </div>
+    <div class="column">
     <div class="panel-block">
       <p class="has-text-weight-semibold has-padding-r-7">Resolution</p>
       <p><%= @conformer.resolution %></p>
@@ -65,32 +70,42 @@
       <p class="has-text-weight-semibold has-padding-r-7">Temperature</p>
       <p><%= @conformer.temperature %></p>
     </div>
+    </div>
+    </div>
   </div>
 
-  <div class="panel">
-    <p class="panel-heading has-text-weight-bold">3D View</p>
-    <div id="viewport" style="width:100%; height:400px;"></div>
+  <div class="columns">
+    <div class="column">
+      <div class="panel">
+        <p class="panel-heading has-text-weight-bold">3D View</p>
+        <div id="viewport" style="width:100%; height:400px;"></div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="panel">
+        <p class="panel-heading has-text-weight-bold">Cluster information</p>
+        <div class="panel-block">
+          <p class="has-text-weight-semibold has-padding-r-7">Cluster ID</p>
+          <%= link_to("CQ#{@conformer.cluster.codnasq_id}", "https://codnasq.herokuapp.com/cluster/#{@conformer.cluster.codnasq_id}" ) %>
+        </div>
+        <div class="panel-block">
+          <p class="has-text-weight-semibold has-padding-r-7">Oligomeric State</p>
+          <p><%= rename_olig_state(@conformer.cluster.oligomeric_state) %></p>
+        </div>
+        <div class="panel-block">
+          <p class="has-text-weight-semibold has-padding-r-7">Conformers</p>
+          <p><%= @conformer.cluster.conformers_amount %></p>
+        </div>
+        <div class="panel-block">
+          <p class="has-text-weight-semibold has-padding-r-7">Resolution</p>
+          <p><%= @conformer.cluster.max_min_resolution %></p>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="panel">
-    <p class="panel-heading has-text-weight-bold">Cluster information</p>
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Cluster ID</p>
-      <p><%= "CQ#{@conformer.cluster.codnasq_id}" %></p>
-    </div>
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Oligomeric State</p>
-      <p><%= @conformer.cluster.oligomeric_state %></p>
-    </div>
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Conformers</p>
-      <p><%= @conformer.cluster.conformers_amount %></p>
-    </div>
-    <div class="panel-block">
-      <p class="has-text-weight-semibold has-padding-r-7">Resolution</p>
-      <p><%= @conformer.cluster.max_min_resolution %></p>
-    </div>
-  </div>
+
+
 
   <div class="panel">
     <p class="panel-heading has-text-weight-bold">Other conformers of the same cluster</p>
@@ -116,3 +131,22 @@
     </table>
   </div>
 </div>
+
+<script>
+    // prevent scrolling in NGL div
+    let element = document.getElementById("viewport")
+    element.onmouseenter = function() {
+        const x = window.scrollX;
+        const y = window.scrollY;
+        element.addEventListener('DOMMouseScroll',wheel,false);
+    }
+
+    function wheel(event)
+    {
+        event.preventDefault();
+        event.returnValue=false;
+    }
+
+    element.onmousewheel=document.onmousewheel=wheel;
+
+</script>
