@@ -3,7 +3,31 @@
 </p>
 <ul class="menu-list">
   <%= render partial: 'search_field', locals: { key: :cluster_id, label: 'Cluster ID' } %>
-  <%= render partial: 'search_field', locals: { key: :cluster_group, label: 'Group' } %>
+  <%#= render partial: 'search_field', locals: { key: :cluster_group, label: 'Group' } %>
   <%= render partial: 'search_field', locals: { key: :cluster_oligomeric_state, label: 'Oligomeric State' } %>
+  <div class="field">
+    <div class="label">
+      Group
+    </div>
+    <div class="columns is-centered">
+      <div class="column ">
+        <div class="control">
+          <label class="radio"><input id="TD" name="cluster_group" type="radio"
+                                      value="Tertiary Deformations"/>
+            Tertiary Deformations
+          </label>
+          <label class="radio">
+            <input id="MM" name="cluster_group" type="radio"
+                   value="Mixed Motions"/>Mixed Motions
+          </label>
+          <label class="radio">
+            <input id="RB" name="cluster_group" type="radio"
+                   value="Rigid Body"/>Rigid Body
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
   <%= render partial: 'search_field', locals: { key: :cluster_max_rmsd_tertiary, label: "Max RMSD Tertiary" } %>
 </ul>
+
