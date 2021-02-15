@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 2020_07_01_011636) do
     t.string "codnasq_id"
     t.integer "oligomeric_state"
     t.float "max_rmsd_tertiary"
+    t.float "max_rmsd_quaternary"
     t.string "cluster_group"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

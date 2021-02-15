@@ -16,6 +16,7 @@ CSV.open(csv_location, "r", {headers: true, col_sep: ";", quote_char: "\x00"}).e
       codnasq_id: row['Cluster ID'],
       oligomeric_state: row['Oligomeric State'],
       max_rmsd_tertiary: row['maxRMSD-T'],
+      max_rmsd_quaternary: row['maxRMSD-Q'],
       cluster_group: row['grupo'],
       created_at: Time.now,
       updated_at: Time.now,
