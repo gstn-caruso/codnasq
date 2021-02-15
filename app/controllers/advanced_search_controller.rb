@@ -1,6 +1,6 @@
 class AdvancedSearchController < ApplicationController
   def index
-    clusters_to_display = search_result.empty? ? Cluster.all : search_result
+    clusters_to_display = search_result
 
     @results = clusters_to_display.page(params[:page])
   end

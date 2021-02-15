@@ -10,8 +10,12 @@
     </aside>
   </div>
   <div class="search-results">
+    <% if @results.empty? %>
+      <%= render 'not_found' %>
+    <% else %>
     <% @results.each do |result| %>
       <%= render partial: 'cluster_search_result', locals: {result: result} %>
+    <% end %>
     <% end %>
   </div>
 </div>
