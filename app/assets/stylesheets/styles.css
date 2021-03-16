@@ -12,7 +12,7 @@
     background-color: steelblue !important;
 	border-top: #0000001f solid 1px;
     margin-top: 5%;
-    padding: 3rem 0 0;
+    padding: 10px 20px 20px 0 !important;
 }
 
 .footer a {
@@ -33,7 +33,7 @@
 	color: white;
 }
 
-.footer-section-titile {
+.footer-section-title {
 	/* margin-bottom: 3%; */
 	font-weight: bold;
 }

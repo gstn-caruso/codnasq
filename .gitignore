@@ -9,6 +9,6 @@
 .idea
 /db/development.sqlite3
 
-/db/dbq.csv
+/db/dbqmini.csv
 /db/dbqorig.csv
 /db/dbqtotal.csv
