@@ -3,11 +3,13 @@
     <%= image_tag('logo.png', alt: "codnas q logo", class: 'logo') %>
     <h1 class="title has-margin-t-7">Conformational Diversity of Native State - Quaternary</h1>
     <p>
-      CoDNaS-Q is a high-quality collection of homo-oligomeric conformers obtained from the <%= link_to('Protein Data Bank (PDB)', 'https://www.rcsb.org') %>.
+      CoDNaS-Q is a high-quality collection of homo-oligomeric conformers obtained from
+      the <%= link_to('Protein Data Bank (PDB)', 'https://www.rcsb.org', target: "_blank") %>.
     </p>
     <p>
       It allows the exploration of conformational diversity and its determinants at the quaternary level,
-      for a large number of proteins determined under different experimental conditions and from a wide variety of families and species.
+      for a large number of proteins determined under different experimental conditions and from a wide variety of
+      families and species.
     </p>
     <div>
       <%= form_tag(cluster_search_path, method: :get) do %>
@@ -24,21 +26,39 @@
           <span><small> | </small></span><small><a href="/cluster/search?query=Hydrolase&amp;criteria=type">Hydrolase</a></small><span><small> | </small></span><small><a href="/cluster/search?query=Mus+musculus&amp;criteria=source">Mus
           musculus</a></small></div>
       <% end %>
+    </div>
+    <div class="has-margin-top-down" style="margin-top: 5rem">
+      <p class="">browse by type of movement<small class="question-color" title="We can find three types of movements.
+Tertiary deformations: where exist a predominance of local variations.
+Rigid body: predominance of large displacements of subunits.
+Mixed motions: they have the save (no) variation at both levels.
+"> <%= fa_icon 'question-circle' %></small></p></div>
 
-      <div class="sample-gifs">
-        <%= link_to(
-                image_tag('tertiary_deformation.gif', alt: 'tertiary deformation clusters'),
-                advanced_search_path(cluster_group: 'Tertiary Deformations'))
-        %>
-        <%= link_to(
-                image_tag('mixed_motion.gif', alt: 'mixed motion clusters'),
-                advanced_search_path(cluster_group: 'Mixed Motions'))
-        %>
-        <%= link_to(
-                image_tag('rigid_body.gif', alt: 'rigid body clusters'),
-                advanced_search_path(cluster_group: 'Rigid Body'))
-        %>
+    <div class="columns is-0 is-centered">
+      <!--      <div class="column">-->
+      <div class="column is-one-quarter">      <%= link_to(
+                                                     image_tag('mov_tert.gif', alt: 'tertiary deformation clusters'),
+                                                     advanced_search_path(cluster_group: 'Tertiary Deformations'))
+      %>
+        <p class="has-text-danger is-size-5 has-text-weight-semibold">Tertiary Deformations</p>
       </div>
+      <div class="column is-one-quarter">      <%= link_to(
+                                                     image_tag('mov_mixed.gif', alt: 'mixed motion clusters'),
+                                                     advanced_search_path(cluster_group: 'Mixed Motions'))
+      %>
+        <p class="has-text-success is-size-5 has-text-weight-semibold">Mixed Motions</p>
+      </div>
+      <div class="column is-one-quarter">      <%= link_to(
+                                                     image_tag('mov_rigid.gif', alt: 'rigid body clusters'),
+                                                     advanced_search_path(cluster_group: 'Rigid Body'))
+      %>
+        <p class="has-text-link is-size-5 has-text-weight-semibold">Rigid Body</p>
+      </div>
+
+      <!--    <div class="sample-gifs">-->
+      <!--    </div>-->
+      <!--      </div>-->
     </div>
   </div>
 </div>
+

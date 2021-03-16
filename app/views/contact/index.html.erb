@@ -1,10 +1,12 @@
 <div class="column is-four-fifths is-offset-1">
   <div class="card-content">
-    <img src="http://ufq.unq.edu.ar/sbg/images/top.jpg" alt="Structural Bioinformatics Group logo">
-    <div class="has-margin-b-1">
+    <a href="http://ufq.unq.edu.ar/sbg/index.html" target="_blank">
+      <%= image_tag('sbg_logo.png', alt: 'logo unq') %>
+    </a>
+    <div class="has-margin-b-1 has-margin-top-down">
       <p class="has-margin-b-7">CoDNaS-Q is developed and maintained by the
-        <a href="http://ufq.unq.edu.ar/sbg/">Structural Bioinformatics Group</a> at
-        <a href="http://www.unq.edu.ar/">National University of Quilmes</a> in Bernal, Buenos Aires,
+        <a href="http://ufq.unq.edu.ar/sbg/" target="_blank">Structural Bioinformatics Group</a> at
+        <a href="http://www.unq.edu.ar/" target="_blank">National University of Quilmes</a> in Bernal, Buenos Aires,
         Argentina.</p>
       <p class="has-margin-b-7">The Structural Bioinformatics Group is a research group based in Bernal,
         Buenos Aires, Argentina. It is part of the Department of Science and Technology at National University of
@@ -16,39 +18,42 @@
         sequence reconstruction, protein promiscuity and interactions mediated by short linear motifs.</p>
       <p class="has-margin-b-7">Please contact us if you think we should work together. We are always
         looking forward to establish new and exciting collaborations!</p></div>
-    <h1 class="title">SBG Tools &amp; Databases</h1>
+    <h1 class="title has-margin-top-down">SBG Tools &amp; Databases</h1>
     <ul class="has-padding-bl-6" id="nil">
-      <li name="id="><a href="http://ufq.unq.edu.ar/sbg/software">List of SBG Software</a></li>
-      <li name="id="><a href="http://ufq.unq.edu.ar/codnas">CoDNaS</a></li>
-      <li name="id="><a href="http://ufq.unq.edu.ar/protmiscuity/#/home">ProtMiscuity</a></li>
-      <li name="id="><a href="http://revenant.inf.pucp.edu.pe">Revenant</a></li>
+      <li name="id="><a href="http://ufq.unq.edu.ar/sbg/software.html" target="_blank">List of SBG Software</a></li>
+      <li name="id="><a href="http://ufq.unq.edu.ar/codnas" target="_blank">CoDNaS</a></li>
+      <li name="id="><a href="http://ufq.unq.edu.ar/protmiscuity/#/home" target="_blank">ProtMiscuity</a></li>
+      <li name="id="><a href="http://revenant.inf.pucp.edu.pe" target="_blank">Revenant</a></li>
     </ul>
-    <h1 class="title">Lead Scientists</h1>
+    <h1 class="title has-margin-top-down">Lead Scientists</h1>
     <ul id="nil">
       <li class="has-padding-bl-4" name="id=">
         <p class="has-text-weight-bold is-inline-block has-padding-r-7">Nahuel Escobedo</p>
-        <a href="mailto:nahuelescobedo@gmail.com"><span><i class="fas fa-envelope" aria-hidden="true"></i></span></a>
+          <a href="https://gitlab.com/Nahuele" target="_blank"><%= fa_icon 'gitlab' %></a>
+          <a href="mailto:nahuelescobedo@gmail.com" target="_blank"><%= fa_icon 'envelope' %></a>
         <p>PhD student</p></li>
       <li class="has-padding-bl-4" name="id=">
         <p class="has-text-weight-bold is-inline-block has-padding-r-7">Gastón Caruso</p>
-        <a href="mailto:gstn.caruso@gmail.com" class="has-padding-r-7"><span><i class="fas fa-envelope" aria-hidden="true"></i></span></a><a href="https://github.com/gstn-caruso/"><span><i class="fab fa-github" aria-hidden="true"></i></span></a>
+          <a href="https://github.com/gstn-caruso/" target="_blank"><%= fa_icon 'github-alt' %></a>
+          <a href="mailto:gstn.caruso@gmail.com" target="_blank"><%= fa_icon 'envelope' %></a>
         <p>Software Developer</p></li>
       <li class="has-padding-bl-4" name="id=">
         <p class="has-text-weight-bold is-inline-block has-padding-r-7">Nicolás Palopoli</p>
-        <a href="mailto:nicopalo@gmail.com"><span><i class="fas fa-envelope" aria-hidden="true"></i></span></a>
+        <a href="https://github.com/NPalopoli/" target="_blank"><%= fa_icon 'gitlab' %></a>
+        <a href="mailto:nicopalo@gmail.com" target="_blank"><%= fa_icon 'envelope' %></a>
         <p>PhD, Adjunct Researcher (CONICET) &amp; Assistant Professor (UNQ)</p>
-        <a href="https://orcid.org/0000-0001-7925-6436">ORCID</a></li>
+        <a href="https://orcid.org/0000-0001-7925-6436" target="_blank"><small>ORCID</small></a></li>
       <li class="has-padding-bl-4" name="id=">
         <p class="has-text-weight-bold is-inline-block has-padding-r-7">Alexander Monzon</p>
-        <a href="mailto:monzon.alexander@gmail.com"><span><i class="fas fa-envelope" aria-hidden="true"></i></span></a>
+        <a href="mailto:monzon.alexander@gmail.com" target="_blank"><%= fa_icon 'envelope' %></a>
         <p>PhD, Postdoctoral Researcher (University of Padova)</p>
-        <a href="https://orcid.org/0000-0003-0362-8218">ORCID</a></li>
+        <a href="https://orcid.org/0000-0003-0362-8218" target="_blank"><small>ORCID</small></a></li>
       <li class="has-padding-bl-4" name="id=">
         <p class="has-text-weight-bold is-inline-block has-padding-r-7">Gustavo Parisi</p>
-        <a href="mailto:gusparisi@gmail.com"><span><i class="fas fa-envelope" aria-hidden="true"></i></span></a>
+        <a href="mailto:mgusparisi@gmail.com" target="_blank"><%= fa_icon 'envelope' %></a>
         <p>Director SBG</p>
         <p>PhD, Principal Researcher (CONICET) &amp; Professor (UNQ, UNLP)</p>
-        <a href="https://orcid.org/0000-0001-7444-1624">ORCID</a></li>
+        <a href="https://orcid.org/0000-0001-7444-1624" target="_blank"><small>ORCID</small></a></li>
     </ul>
   </div>
 </div>

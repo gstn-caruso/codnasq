@@ -1,6 +1,6 @@
 class AdvancedSearchController < ApplicationController
   def index
-    clusters_to_display = search_result.empty? ? Cluster.all : search_result
+    clusters_to_display = search_result
 
     @results = clusters_to_display.page(params[:page])
   end
@@ -34,7 +34,10 @@ class AdvancedSearchController < ApplicationController
     conditions[:codnasq_id] = params[:cluster_id] if params[:cluster_id].present?
     conditions[:cluster_group] = params[:cluster_group] if params[:cluster_group].present?
     conditions[:oligomeric_state] = params[:cluster_oligomeric_state] if params[:cluster_oligomeric_state].present?
-    conditions[:max_rmsd_tertiary] = params[:cluster_max_rmsd_tertiary] if params[:cluster_max_rmsd_tertiary].present?
+    # conditions[:max_rmsd_tertiary] = params[:cluster_max_rmsd_tertiary] if params[:cluster_max_rmsd_tertiary].present?
+    conditions[:max_rmsd_tertiary] = [params[:minRMSDT]..params[:maxRMSDT]] if params[:minRMSDT].present? || params[:maxRMSDT].present?
+    # conditions[:max_rmsd_quaternary] = params[:cluster_max_rmsd_quaternary] if params[:cluster_max_rmsd_quaternary].present?
+    conditions[:max_rmsd_quaternary] = [params[:minRMSDQ]..params[:maxRMSDQ]] if params[:minRMSDQ].present? || params[:maxRMSDQ].present?
 
     Cluster.where(conditions)
   end

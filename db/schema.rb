@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 2020_07_01_011636) do
     t.string "codnasq_id"
     t.integer "oligomeric_state"
     t.float "max_rmsd_tertiary"
+    t.float "max_rmsd_quaternary"
     t.string "cluster_group"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -39,6 +40,8 @@ ActiveRecord::Schema.define(version: 2020_07_01_011636) do
     t.integer "target_cover_based_on_alignment_length"
     t.float "typical_distance_error"
     t.float "rmsd"
+    t.string "max_rmsd_tert_q"
+    t.string "max_rmsd_tert_t"
     t.integer "sequence_identity"
     t.integer "permutations"
     t.datetime "created_at", precision: 6, null: false
@@ -60,8 +63,8 @@ ActiveRecord::Schema.define(version: 2020_07_01_011636) do
     t.string "uniprot_id"
     t.string "gene_names"
     t.string "pfam_id"
-    t.float "ph"
-    t.integer "temperature"
+    t.string "ph"
+    t.string "temperature"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["pdb_id"], name: "index_conformers_on_pdb_id", unique: true
