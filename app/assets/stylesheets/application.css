@@ -16,27 +16,32 @@
  */
 
 .has-padding-r-7 {
-  padding-right: 0.7rem;
+    padding-right: 0.7rem;
 }
 
 .search-results {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 1rem;
-  width: 100%;
-  margin: 0 1rem 0 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1rem;
+    width: 100%;
+    margin: 0 1rem 0 1rem;
 }
 
 .advanced-search {
-  display: flex;
-  margin-top: 1rem;
+    display: flex;
+    margin-top: 1rem;
 }
 
 .panel:hover {
-  box-shadow: 0 .5em 1em -.125em rgba(10,10,10,0.5),0 0 0 1px rgba(10,10,10,.02);
-  transition: box-shadow 0.3s ease-in-out;
+    box-shadow: 0 .5em 1em -.125em rgba(10, 10, 10, 0.5), 0 0 0 1px rgba(10, 10, 10, .02);
+    transition: box-shadow 0.3s ease-in-out;
 }
 
 .has-margin-top-down {
-  margin: 1rem 0;
+    margin: 1rem 0;
+}
+
+.has-more-margin-top-down {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
 }

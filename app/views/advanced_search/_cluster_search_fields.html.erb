@@ -3,7 +3,77 @@
 </p>
 <ul class="menu-list">
   <%= render partial: 'search_field', locals: { key: :cluster_id, label: 'Cluster ID' } %>
-  <%= render partial: 'search_field', locals: { key: :cluster_group, label: 'Group' } %>
+  <%#= render partial: 'search_field', locals: { key: :cluster_group, label: 'Group' } %>
   <%= render partial: 'search_field', locals: { key: :cluster_oligomeric_state, label: 'Oligomeric State' } %>
-  <%= render partial: 'search_field', locals: { key: :cluster_max_rmsd_tertiary, label: "Max RMSD Tertiary" } %>
+  <div class="field">
+    <div class="label">
+      Group
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-offset-1">
+        <div class="control">
+          <label class="radio"><input id="TD" name="cluster_group" type="radio"
+                                      value="Tertiary Deformations"/>
+            Tertiary Deformations
+          </label>
+          <label class="radio">
+            <input id="MM" name="cluster_group" type="radio"
+                   value="Mixed Motions"/>Mixed Motions
+          </label>
+          <label class="radio">
+            <input id="RB" name="cluster_group" type="radio"
+                   value="Rigid Body"/>Rigid Body
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="has-more-margin-top-down">
+    <div class="field ">
+      <div class="label">
+        Max RMSD Quaternary range
+      </div>
+      <div class="columns is-centered">
+        <div class="column is-one-fifth">
+          <div class="field">
+            <div class="control">
+              <input class="input" type="text" placeholder="min" name="minRMSDQ" value="0">
+            </div>
+          </div>
+        </div>
+        <div class="column is-one-fifth">
+          <div class="field">
+            <div class="control">
+              <input class="input" type="text" placeholder="max" name="maxRMSDQ" value="9">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="label">
+        Max RMSD Tertiary range
+      </div>
+      <div class="columns is-centered">
+        <div class="column is-one-fifth">
+          <div class="field">
+            <div class="control">
+              <input class="input" type="text" placeholder="min" name="minRMSDT" value="0">
+            </div>
+          </div>
+        </div>
+        <div class="column is-one-fifth">
+          <div class="field">
+            <div class="control">
+              <input class="input" type="text" placeholder="max" name="maxRMSDT" value="3">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </ul>
+
