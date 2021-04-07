@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_27_235048) do
+ActiveRecord::Schema.define(version: 2021_04_07_164811) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,10 +19,10 @@ ActiveRecord::Schema.define(version: 2020_06_27_235048) do
     t.string "codnasq_id"
     t.integer "oligomeric_state"
     t.float "max_rmsd_tertiary"
-    t.float "max_rmsd_quaternary"
     t.string "cluster_group"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.float "max_rmsd_quaternary"
     t.index ["codnasq_id"], name: "index_clusters_on_codnasq_id", unique: true
   end
 
@@ -40,19 +40,19 @@ ActiveRecord::Schema.define(version: 2020_06_27_235048) do
     t.integer "target_cover_based_on_alignment_length"
     t.float "typical_distance_error"
     t.float "rmsd"
-    t.string "max_rmsd_tert_q"
-    t.string "max_rmsd_tert_t"
     t.integer "sequence_identity"
     t.integer "permutations"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "max_rmsd_tert_q"
+    t.string "max_rmsd_tert_t"
     t.index ["query_id", "target_id"], name: "index_conformer_pairs_on_query_id_and_target_id", unique: true
   end
 
   create_table "conformers", force: :cascade do |t|
-    t.string "cluster_id"
-    t.string "pdb_id"
-    t.integer "biological_assembly"
+    t.string "cluster_id", null: false
+    t.string "pdb_id", null: false
+    t.integer "biological_assembly", null: false
     t.float "resolution"
     t.string "method"
     t.integer "length"
@@ -63,8 +63,8 @@ ActiveRecord::Schema.define(version: 2020_06_27_235048) do
     t.string "uniprot_id"
     t.string "gene_names"
     t.string "pfam_id"
-    t.string "ph"
-    t.string "temperature"
+    t.float "ph"
+    t.integer "temperature"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["pdb_id"], name: "index_conformers_on_pdb_id", unique: true
