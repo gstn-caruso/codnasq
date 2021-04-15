@@ -15,3 +15,4 @@ CoDNaS Quaternary possess a collection of redundant complexes experimentally det
 4. Start the database inside the docker file. Run `sudo docker-compose up`
 5. Now you'll need to backfill the database, `rails db:setup`.
 6. Run the server with `rails s`.
+
