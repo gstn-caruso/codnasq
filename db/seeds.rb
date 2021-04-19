@@ -1,8 +1,10 @@
 require 'csv'
+require 'open-uri'
 
 ActiveRecord::Base.logger = Logger.new(STDOUT)
 
-csv_location = "#{Rails.root}/db/dbq.csv"
+# csv_location = "#{Rails.root}/db/dbq.csv"
+csv_location = open("https://drive.google.com/uc?id=1l0DypCwYwPHbmD6H3RVMY_07E7yIxv32")
 
 clusters = []
 conformers = []
