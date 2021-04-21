@@ -5,12 +5,13 @@ ActiveRecord::Base.logger = Logger.new(STDOUT)
 
 # csv_location = "#{Rails.root}/db/dbqmini.csv"
 csv_location = open("http://ufq.unq.edu.ar/codnasq/dbqcomplete.csv")
+# csv_location = open("http://ufq.unq.edu.ar/codnasq/dbqmini.csv")
 
 clusters = []
 conformers = []
 pairs = []
 
-CSV.open(csv_location, "r", {headers: true, col_sep: ";", quote_char: "\x00"}).each do |row|
+CSV.foreach(csv_location, "r", {headers: true, col_sep: ";", quote_char: "\x00"}) do |row|
   begin
     next if row['Cluster ID'].include?('+') || row['PDB ID query'].include?('+') || row['PDB ID target'].include?('+')
 
