@@ -11,7 +11,7 @@ clusters = []
 conformers = []
 pairs = []
 
-CSV.foreach(csv_location, "r", {headers: true, col_sep: ";", quote_char: "\x00"}) do |row|
+CSV.open(csv_location, "r", {headers: true, col_sep: ";", quote_char: "\x00"}).each do |row|
   begin
     next if row['Cluster ID'].include?('+') || row['PDB ID query'].include?('+') || row['PDB ID target'].include?('+')
 
