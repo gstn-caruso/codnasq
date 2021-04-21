@@ -3,8 +3,8 @@ require 'open-uri'
 
 ActiveRecord::Base.logger = Logger.new(STDOUT)
 
-# csv_location = "#{Rails.root}/db/dbq.csv"
-csv_location = open("https://dl.dropbox.com/s/8xskw2jdpk2tq1a/dbqbig.csv?dl=0")
+# csv_location = "#{Rails.root}/db/dbqmini.csv"
+csv_location = open("http://ufq.unq.edu.ar/codnasq/dbq.csv")
 
 clusters = []
 conformers = []
