@@ -1,105 +1,53 @@
 require 'csv'
 require 'open-uri'
+require_relative './profiler'
+require_relative './csv_parse'
 
-ActiveRecord::Base.logger = Logger.new(STDOUT)
+LOCAL_MINI_DB = "#{Rails.root}/db/dbqmini.csv".freeze
+EXTERNAL_COMPLETE_DB = 'http://ufq.unq.edu.ar/codnasq/dbqcomplete.csv'.freeze
+EXTERNAL_MINI_DB = 'http://ufq.unq.edu.ar/codnasq/dbqmini.csv'.freeze
 
-# csv_location = "#{Rails.root}/db/dbqmini.csv"
-# csv_location = open("http://ufq.unq.edu.ar/codnasq/dbqcomplete.csv")
-csv_location = open("http://ufq.unq.edu.ar/codnasq/dbqmini.csv")
+external_csv_to_import = EXTERNAL_COMPLETE_DB
 
-clusters = []
-conformers = []
-pairs = []
 
-CSV.foreach(csv_location, "r", {headers: true, col_sep: ";", quote_char: "\x00"}) do |row|
-  begin
-    next if row['Cluster ID'].include?('+') || row['PDB ID query'].include?('+') || row['PDB ID target'].include?('+')
+puts("Amount of Cluster: #{Cluster.count}")
+puts("Amount of Conformer: #{Conformer.count}")
+puts("Amount of ConformerPair: #{ConformerPair.count}")
 
-    cluster = {
-      codnasq_id: row['Cluster ID'],
-      oligomeric_state: row['Oligomeric State'],
-      max_rmsd_tertiary: row['maxRMSD-T'],
-      max_rmsd_quaternary: row['maxRMSD-Q'],
-      cluster_group: row['grupo'],
-      created_at: Time.now,
-      updated_at: Time.now,
-    }
+profile do
+  puts("Opening: #{external_csv_to_import}")
 
-    query = {
-      cluster_id: row['Cluster ID'],
-      pdb_id: row['PDB ID query'],
-      biological_assembly: row['Biological Assembly query'],
-      resolution: row['Query resolution'],
-      method: row['Query method'],
-      length: row['Query length'],
-      name: row['Query name'],
-      organism: row['Query organism'],
-      ligands: row['Query ligands'].sub('|', ','),
-      description: row['Query description'],
-      uniprot_id: row['Query UniProt ID'],
-      gene_names: row['Query Gene names'],
-      pfam_id: row['Query Pfam'],
-      ph: row['query pH'],
-      temperature: row['query Temperature'],
-      created_at: Time.now,
-      updated_at: Time.now,
-    }
+  URI.open(external_csv_to_import) do |file|
+    csv_headers = file.first
 
-    target = {
-      cluster_id: row['Cluster ID'],
-      pdb_id: row['PDB ID target'],
-      biological_assembly: row['Biological Assembly target'],
-      resolution: row['Target resolution'],
-      method: row['Target method'],
-      length: row['Target length'],
-      name: row['Target name'],
-      organism: row['Target organism'],
-      ligands: row['Target ligands'].sub('|', ','),
-      description: row['Target description'],
-      uniprot_id: row['Target UniProt ID'],
-      gene_names: row['Target Gene names'],
-      pfam_id: row['Target Pfam'],
-      ph: row['target pH'],
-      temperature: row['target Temperature'],
-      created_at: Time.now,
-      updated_at: Time.now,
-    }
+    file.lazy.each_slice(2000) do |file_lines|
+      clusters = []
+      conformers = []
+      pairs = []
 
-    pair = {
-      query_id: row['PDB ID query'],
-      target_id: row['PDB ID target'],
-      cluster_id: row['Cluster ID'],
-      alignment_type: row['Type of alignment'],
-      alignment_rank: row['Rank of alignment'],
-      structural_similarity: row['Structural similarity'],
-      query_cover: row['Query cover'],
-      target_cover: row['Target cover'],
-      structurally_equivalent_residue_pairs: row['Structurally equivalent residue pairs'],
-      query_cover_based_on_alignment_length: row['Query cover based on alignment length'],
-      target_cover_based_on_alignment_length: row['Target cover based on alignment length'],
-      typical_distance_error: row['Typical distance error'],
-      rmsd: row['RMSD'],
-      max_rmsd_tert_q: row['QueryChainID'],
-      max_rmsd_tert_t: row['TargetChainID'],
-      sequence_identity: row['Sequenceidentity'],
-      permutations: row['Permutations'],
-      created_at: Time.now,
-      updated_at: Time.now,
-    }
+      parse_csv_rows(csv_headers, file_lines).each do |row|
+        clusters << parse_cluster(row)
+        pairs << parse_pair(row)
+        conformers << parse_query(row)
+        conformers << parse_target(row)
+      end
 
-    clusters << cluster
-    conformers << query
-    conformers << target
-    pairs << pair
+      clusters_to_save = clusters.uniq { |cluster| cluster[:codnasq_id] }
+      conformers_to_save = conformers.uniq { |conformer| conformer[:pdb_id] }
+
+      puts("About to insert Cluster: #{clusters_to_save.size}, Conformer: #{conformers_to_save.size}, ConformerPair: #{pairs.size}")
+
+      Cluster.insert_all(clusters_to_save)
+      Conformer.insert_all(conformers_to_save)
+      ConformerPair.insert_all(pairs)
+    end
   end
-rescue CSV::MalformedCSVError => er
-  puts er.message
-  next
 end
 
-Cluster.insert_all(clusters.uniq { |cluster| cluster[:codnasq_id] })
-Conformer.insert_all(conformers.uniq { |conformer| conformer[:pdb_id] })
-ConformerPair.insert_all(pairs)
+puts('Import finished')
+puts("Amount of Cluster: #{Cluster.count}")
+puts("Amount of Conformer: #{Conformer.count}")
+puts("Amount of ConformerPair: #{ConformerPair.count}")
 
 Dir[File.join(Rails.root, 'db/data_migrations/**/*.rb')].sort.each do |data_migration|
   load data_migration
