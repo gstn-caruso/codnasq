@@ -30,7 +30,7 @@ module CodnasqRails
     # the framework and any gems in your application.
 
     # Esto es para ver las imagenes sin SSL de UNQ
-    config.middleware.use Rack::SslEnforcer, :only_hosts => 'ufq.unq.edu.ar'
+    config.middleware.use Rack::SslEnforcer, only_hosts: 'ufq.unq.edu.ar/codnasq/assets'
 
     # Don't generate system test files.
     config.generators.system_tests = nil
