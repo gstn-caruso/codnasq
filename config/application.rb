@@ -29,6 +29,9 @@ module CodnasqRails
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
 
+    # Esto es para ver las imagenes sin SSL de UNQ
+    config.middleware.use Rack::SslEnforcer, :only_hosts => 'ufq.unq.edu.ar'
+
     # Don't generate system test files.
     config.generators.system_tests = nil
   end
