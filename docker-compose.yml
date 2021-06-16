@@ -1,10 +1,17 @@
 version: '3'
 services:
-  db:
-    image: postgres:12.2-alpine
+  codnasq-db:
+    image: raphsoft/codnasq:db-1.0
     environment:
-      POSTGRES_DB: codnasq_dev
-      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    expose:
+    - "5432"
+
+  codnasq-web:
+    image: raphsoft/codnasq:web-1.0
+    depends_on: 
+      - codnasq-db
+    environment:
+      DATABASE_HOST: codnasq-db
     ports:
-    - "5432:5432"
+    - "80:3000"
