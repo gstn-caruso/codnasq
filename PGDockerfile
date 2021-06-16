@@ -1,0 +1,5 @@
+FROM postgres:12.2-alpine
+COPY ./init-codnasq-data.sql.tar.gz /init-codnasq-data.sql.tar.gz
+RUN tar -zxvf /init-codnasq-data.sql.tar.gz
+RUN mv /init-codnasq-data.sql /docker-entrypoint-initdb.d/init-codnasq-data.sql
+EXPOSE 5432

@@ -2,9 +2,15 @@ development:
   adapter: postgresql
   username: postgres
   password: postgres
-  host: localhost
+  host: <%= ENV['DATABASE_HOST'] %>
   pool: 5
   database: codnasq_dev
 
 production:
-  url: <%= ENV['DATABASE_URL'] %>
+  adapter: postgresql
+  username: postgres
+  password: postgres
+  host: <%= ENV['DATABASE_HOST'] %>
+  pool: 5
+  database: codnasq_dev
+
